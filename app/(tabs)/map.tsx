@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import { Circle, ClipPath, Defs, Ellipse, G, RadialGradient, Rect, Stop, Svg } from "react-native-svg";
 import Icon from 'react-native-vector-icons/FontAwesome6';
 
 export default function Tab() {
@@ -43,10 +44,11 @@ export default function Tab() {
       <View style={styles.infoBar}>
         
       </View>
+      
 
 
 
-    </View>
+    </View >
 
   );
 }
@@ -61,7 +63,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAFAFA",
     flexDirection: "row",
     padding: 15,
-    gap:10,
+    gap: 10,
     alignItems: "center"
   },
 
