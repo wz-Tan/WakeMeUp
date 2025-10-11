@@ -1,11 +1,16 @@
-import { useState } from 'react';
+import { useGoogleMap } from '@/contexts/GoogleMapContext';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-import { Circle, ClipPath, Defs, Ellipse, G, RadialGradient, Rect, Stop, Svg } from "react-native-svg";
 import Icon from 'react-native-vector-icons/FontAwesome6';
 
+
 export default function Tab() {
-  const [currentRegion, setCurrentRegion] = useState<any>({
+  const {google} = useGoogleMap();
+  console.log("Google is ", google)
+
+
+  const [currentRegion, setCurrentRegion] = useState({
     latitude: 3.0567,
     longitude: 101.5851,
     latitudeDelta: 0.0922,
