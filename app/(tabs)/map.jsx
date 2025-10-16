@@ -6,22 +6,18 @@ import Icon from 'react-native-vector-icons/FontAwesome6';
 
 
 export default function Tab() {
-  const { google } = useGoogleMap();
-  console.log("Google is",google)
+  const { getPlaceID } = useGoogleMap();
 
 
 
+  useEffect(()=>{
+    async function startUpFunction(){
+      await getPlaceID("Burung Hantu SS15")
+    }
 
-  useEffect(
-    () => {
-      async function getPlaces() {
-         const { Place } = await google.maps.importLibrary("places");
-    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-    console.log("Place is ",Place)
-      }
-
-      getPlaces()
-    }, [])
+    startUpFunction()
+    
+  }, [])
 
 
 
