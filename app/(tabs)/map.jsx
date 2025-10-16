@@ -6,8 +6,23 @@ import Icon from 'react-native-vector-icons/FontAwesome6';
 
 
 export default function Tab() {
-  const {google} = useGoogleMap();
-  console.log("Google is ", google)
+  const { google } = useGoogleMap();
+  console.log("Google is",google)
+
+
+
+
+  useEffect(
+    () => {
+      async function getPlaces() {
+         const { Place } = await google.maps.importLibrary("places");
+    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+    console.log("Place is ",Place)
+      }
+
+      getPlaces()
+    }, [])
+
 
 
   const [currentRegion, setCurrentRegion] = useState({
@@ -47,9 +62,9 @@ export default function Tab() {
 
       {/* Info Bar at the Bottom */}
       <View style={styles.infoBar}>
-        
+
       </View>
-      
+
 
 
 
