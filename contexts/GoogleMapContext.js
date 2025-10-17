@@ -73,7 +73,8 @@ export const GoogleMapProvider = ({ children }) => {
         let coordinates = response.location;
         let photoName = response.photos;
 
-        return {locationName, address, coordinates, photo1: await getPlaceImages(photoName[0].name), photo2: await getPlaceImages(photoName[1].name)}
+        return {locationName, address, coordinates}
+        // return {locationName, address, coordinates, photo1: await getPlaceImages(photoName[0].name), photo2: await getPlaceImages(photoName[1].name)}
     }
 
     async function getPlaceImages(photoName) {
