@@ -6,20 +6,18 @@ import Icon from 'react-native-vector-icons/FontAwesome6';
 
 
 export default function Tab() {
-  const { getPlaceID } = useGoogleMap();
+  const { getPlaceDetails } = useGoogleMap();
 
 
 
   useEffect(()=>{
     async function startUpFunction(){
-      await getPlaceID("Burung Hantu SS15")
+      let result=await getPlaceDetails("Burung hantu ss15");
     }
 
     startUpFunction()
     
   }, [])
-
-
 
   const [currentRegion, setCurrentRegion] = useState({
     latitude: 3.0567,
