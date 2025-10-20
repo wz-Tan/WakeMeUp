@@ -4,7 +4,6 @@ import React, { createContext, useContext, useState } from 'react';
 const GoogleMapContext = createContext();
 
 export const GoogleMapProvider = ({ children }) => {
-    const [loading, setLoading] = useState(false);
     const APIKEY = process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY;
 
     //Find the Place ID via place name or coordinates to Query Place Details
@@ -46,44 +45,57 @@ export const GoogleMapProvider = ({ children }) => {
 
     //Get Details to Display (Place Coordinates Should be [lat,long])
     async function getPlaceDetails(placeName, placeCoordinates) {
-        let placeID;
+        try {
+            let placeID;
 
-        if (placeName) {
-            placeID = await getPlaceID(placeName, null);
+            if (placeName) {
+                placeID = await getPlaceID(placeName, null);
+            }
+
+            //Use Coordinates For Geocoding
+            else if (placeCoordinates) {
+                placeID = await getPlaceID(null, placeCoordinates)
+            }
+
+            let response = await fetch(`https://places.googleapis.com/v1/places/${placeID}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Goog-Api-Key": APIKEY,
+                    "X-Goog-FieldMask": "displayName,shortFormattedAddress,location,photos"
+                },
+            })
+
+            response = await response.json();
+
+            //Extract Display Data 
+            let locationName = response.displayName.text;
+            let address = response.shortFormattedAddress;
+            let coordinates = response.location;
+            let photoName = response.photos;
+
+            if (photoName) {
+                if (photoName.length >= 1) {
+                    return { locationName, address, coordinates, photo: await getPlaceImages(photoName[0].name) }
+                }
+            }
+
+            else {
+                return { locationName, address, coordinates, photo: null }
+            }
         }
 
-        //Use Coordinates For Geocoding
-        else if (placeCoordinates) {
-            placeID = await getPlaceID(null, placeCoordinates)
+        catch (error) {
+            return { error }
         }
-
-        let response = await fetch(`https://places.googleapis.com/v1/places/${placeID}`, {
-            headers: {
-                "Content-Type": "application/json",
-                "X-Goog-Api-Key": APIKEY,
-                "X-Goog-FieldMask": "displayName,formattedAddress,location,photos"
-            },
-        })
-
-        response = await response.json();
-
-        //Extract Display Data 
-        let locationName = response.displayName.text;
-        let address = response.formattedAddress;
-        let coordinates = response.location;
-        let photoName = response.photos;
-
-        return {locationName, address, coordinates}
-        // return {locationName, address, coordinates, photo1: await getPlaceImages(photoName[0].name), photo2: await getPlaceImages(photoName[1].name)}
     }
 
     async function getPlaceImages(photoName) {
-        let imageObject = await fetch(`https://places.googleapis.com/v1/${photoName}/media?key=${APIKEY}&maxHeightPx=100`, { method: "GET" });
+        let imageObject = await fetch(`https://places.googleapis.com/v1/${photoName}/media?key=${APIKEY}&maxHeightPx=500`, { method: "GET" });
         return imageObject.url;
     }
 
     return (
-        <GoogleMapContext.Provider value={{ loading, getPlaceDetails }}>
+        <GoogleMapContext.Provider value={{ getPlaceDetails }}>
             {children}
         </GoogleMapContext.Provider>
     )

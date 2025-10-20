@@ -75,16 +75,13 @@ export default function NavBar() {
 const styleSheet = StyleSheet.create({
     navBar: {
         backgroundColor: "#FFFFFF",
-        position: "absolute",
-        width: "90%",
-        flex: 1,
-        alignSelf: "center",
-        bottom: 30,
+        width: "100%",
+
+        alignSelf: "flex-end",
         flexDirection: "row",
-        borderRadius: 30,
         padding: 10,
         justifyContent: "space-around",
-        boxShadow: "0px 2px 15px #C4C1C1FF"
+        boxShadow: "0px 5px 10px #C4C1C1FF"
     },
 
     iconCol: {
