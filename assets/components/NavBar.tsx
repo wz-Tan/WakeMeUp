@@ -76,7 +76,7 @@ const styleSheet = StyleSheet.create({
     navBar: {
         backgroundColor: "#FFFFFF",
         width: "100%",
-
+        height:55,
         alignSelf: "flex-end",
         flexDirection: "row",
         padding: 10,

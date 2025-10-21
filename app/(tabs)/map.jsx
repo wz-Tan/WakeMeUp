@@ -5,12 +5,14 @@ import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import MapView from 'react-native-maps';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import ImageNotFound from "@/assets/icon/noImage.png"
+import { Gesture } from 'react-native-gesture-handler';
+import MapDetailBox from '@/assets/components/MapDetailBox';
 
 export default function Tab() {
   const { getPlaceDetails } = useGoogleMap();
   const [locationName, setLocationName] = useState("");
   const [address, setAddress] = useState("");
-  const [showBottomBar, setShowBottomBar] = useState(false);
+  const [showBottomBar, setShowBottomBar] = useState(true);
   const [loading, setLoading] = useState(true);
   const [photoURL, setPhotoURL] = useState(null);
 
@@ -53,10 +55,7 @@ export default function Tab() {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
-
-  //UI Sizes
-  let ScreenWidth = Dimensions.get("screen").width;
-  let ScreenHeight = Dimensions.get("screen").height;
+  
 
   return (
     <View style={{
@@ -66,12 +65,7 @@ export default function Tab() {
       <View style={{ flex: 1 }}>
         <MapView
           style={{ zIndex: -10, flex: 1, height: "100%", width: "100%" }}
-          initialRegion={{
-            latitude: 3.0567,
-            longitude: 101.5851,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
+          initialRegion={currentRegion}
 
           onRegionChangeComplete={
             (region) => {
@@ -107,67 +101,7 @@ export default function Tab() {
       </View>
 
       {/* Info Bar at the Bottom */}
-      {
-        showBottomBar ?
-          <View style={styles.infoBar}>
-            <Canvas style={{ width: "100%", height: "100%", backgroundColor: "transparent", position: "absolute", top: 0 }}>
-              <Circle
-                cx={ScreenWidth / 2}
-                cy={ScreenHeight * 0.45}
-                r={ScreenWidth}
-                color={"#F3EEFF"}
-              />
-            </Canvas>
-
-            <View style={styles.infoBarTextBox}>
-              <TouchableOpacity style={{ alignSelf: "center", position: "absolute", top: -40 }} onPress={() => setShowBottomBar(false)}>
-                <Icon
-                  name="grip-lines"
-                  color="#000000"
-                  size={18}
-                />
-              </TouchableOpacity>
-
-              <Text style={styles.locationName}>
-                {locationName}
-              </Text>
-
-              <Text style={styles.addressText}>
-                {address}
-              </Text>
-
-              <View style={[{ width: "100%", position: "absolute", bottom: 30}]}>
-                <View style={styles.imageRow}>
-                {photoURL? 
-                  <Image style={styles.imageBox} source={{uri:`${photoURL}`}}/>
-                  :
-                  <Image style={styles.imageBox} source={ImageNotFound}/>
-                }
-              </View>
-              
-                <TouchableOpacity style={[styles.button, { backgroundColor: "#359DFF" }]}>
-                  <Text style={styles.buttonText}>Set Active ✅</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={[styles.button, { backgroundColor: "#FF358C" }]}>
-                  <Text style={styles.buttonText}>Favourite 🧡</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View> :
-
-          <View style={styles.miniBottomBar}>
-            <TouchableOpacity onPress={() => setShowBottomBar(true)}>
-              <Icon
-                name="grip-lines"
-                color="#000000"
-                size={18}
-              />
-            </TouchableOpacity>
-
-            <Text style={styles.locationName}>{loading ? "Loading..." : locationName}</Text>
-          </View>
-      }
+      <MapDetailBox locationName={locationName} address={address} photoURL={photoURL} setShowBottomBar={setShowBottomBar} showBottomBar={showBottomBar}/>
     </View >
 
   );
