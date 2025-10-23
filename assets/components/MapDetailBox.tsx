@@ -17,23 +17,24 @@ const MapDetailBox = ({ locationName, address, photoURL, setShowBottomBar, showB
     const MIDLINE = (EXPANDEDOFFSET + MINIMISEDOFFSET)/2;
 
     let offsetY = useSharedValue(MINIMISEDOFFSET);
-    let dragStarted = useSharedValue(false)
+    let originalDifference = useSharedValue(0)
     let startPoint = useSharedValue(0);
     let difference = useSharedValue(0);
-
+    
+    //Pan value = difference of start point and current drag - original (moves the item down to its supposed position)
     const pan = Gesture.Pan()
         .onBegin((event) => {
             startPoint.value = event.absoluteY;
-
+            originalDifference.value = offsetY.value;
         })
 
         .onChange((event) => {
-            difference.value = event.absoluteY - startPoint.value;
+            difference.value = event.absoluteY - startPoint.value - originalDifference.value;
             console.log("Actual movement is ", difference.value)
             console.log("Offset value is ", offsetY.value)
 
             //TODO: Offset is too sensitive as it uses a startpoint. Need to set a objective difference from height and the point of contact.
-            offsetY.value -= difference.value;
+            offsetY.value = -difference.value;
             
 
             //Logic Check to Keep Bar within Bounds
