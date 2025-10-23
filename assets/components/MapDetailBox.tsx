@@ -7,38 +7,57 @@ import Icon from "react-native-vector-icons/FontAwesome6"
 
 const MapDetailBox = ({ locationName, address, photoURL, setShowBottomBar, showBottomBar }:
     { locationName: string, address: String, photoURL: string, setShowBottomBar: Function, showBottomBar: boolean }) => {
-    const MAXHEIGHT = -35;
-
     //UI Sizes
-    let ScreenWidth = Dimensions.get("screen").width;
     let ScreenHeight = Dimensions.get("screen").height;
-
     let containerHeight = 0;
-    let offsetY = useSharedValue(0);
+    
+    //Constants 
+    const EXPANDEDOFFSET = - ScreenHeight* 0.05;
+    const MINIMISEDOFFSET = - ScreenHeight* 0.38;
+    const MIDLINE = (EXPANDEDOFFSET + MINIMISEDOFFSET)/2;
+
+    let offsetY = useSharedValue(MINIMISEDOFFSET);
+    let dragStarted = useSharedValue(false)
+    let startPoint = useSharedValue(0);
+    let difference = useSharedValue(0);
 
     const pan = Gesture.Pan()
         .onBegin((event) => {
-            console.log("Begin to pan ")
+            startPoint.value = event.absoluteY;
+
         })
 
         .onChange((event) => {
-            console.log(event.translationY)
-            offsetY.value = containerHeight + event.translationY;
-            console.log("Container height is ", containerHeight)
+            difference.value = event.absoluteY - startPoint.value;
+            console.log("Actual movement is ", difference.value)
+            console.log("Offset value is ", offsetY.value)
+
+            //TODO: Offset is too sensitive as it uses a startpoint. Need to set a objective difference from height and the point of contact.
+            offsetY.value -= difference.value;
+            
+
+            //Logic Check to Keep Bar within Bounds
+            if (offsetY.value>=EXPANDEDOFFSET){
+                offsetY.value=EXPANDEDOFFSET;
+            }
+
+            else if (offsetY.value<=MINIMISEDOFFSET){
+                offsetY.value=MINIMISEDOFFSET;
+            }
         })
 
-        .onFinalize((event)=>{
-            offsetY.value=withSpring(0)
+        .onFinalize(()=>{
+            offsetY.value = offsetY.value <= MIDLINE?  withSpring(MINIMISEDOFFSET, {duration: 1000}) : withSpring(EXPANDEDOFFSET, {duration: 1000})
         })
     
         const animatedStyle = useAnimatedStyle(()=>({
-            transform:[{translateY: offsetY.value}]
+            bottom: offsetY.value
         }))
 
     return (
         <GestureDetector gesture={pan}>
             <Animated.View 
-            style={[styles.infoBar, { bottom: -35 }, animatedStyle]}
+            style={[styles.infoBar, animatedStyle]}
             onLayout={(event)=>{
                 if (containerHeight==0){
                     containerHeight=event.nativeEvent.layout.height;
@@ -62,7 +81,7 @@ const MapDetailBox = ({ locationName, address, photoURL, setShowBottomBar, showB
                         {address}
                     </Text>
 
-                    <View style={[{ width: "100%", position: "absolute", bottom: 30 }]}>
+                    <View style={[{ width: "100%", position: "absolute", bottom: 25 }]}>
                         <View style={styles.imageBox}>
                             {photoURL ?
                                 <Image style={styles.image} source={{ uri: `${photoURL}` }} />
