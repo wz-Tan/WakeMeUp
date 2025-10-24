@@ -2,11 +2,12 @@ import ImageNotFound from "@/assets/icon/noImage.png"
 import React from 'react'
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Gesture, GestureDetector } from "react-native-gesture-handler"
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated"
+import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated"
 import Icon from "react-native-vector-icons/FontAwesome6"
 
-const MapDetailBox = ({ locationName, address, photoURL, setShowBottomBar, showBottomBar }:
-    { locationName: string, address: String, photoURL: string, setShowBottomBar: Function, showBottomBar: boolean }) => {
+const MapDetailBox = ({ locationName, address, photoURL, setHideDestinationIcon, loading }:
+    {locationName:string, address: string, photoURL: string, setHideDestinationIcon:React.Dispatch<React.SetStateAction<boolean>> , loading: boolean}
+)=> {
     //UI Sizes
     let ScreenHeight = Dimensions.get("screen").height;
     let containerHeight = 0;
@@ -26,14 +27,18 @@ const MapDetailBox = ({ locationName, address, photoURL, setShowBottomBar, showB
         .onBegin((event) => {
             startPoint.value = event.absoluteY;
             originalDifference.value = offsetY.value;
-        })
+            try{
+              runOnJS(setHideDestinationIcon)(true)
+            }
+            catch(error){
+                console.log("error is ", error)
+            }
+            
+            })
 
         .onChange((event) => {
             difference.value = event.absoluteY - startPoint.value - originalDifference.value;
-            console.log("Actual movement is ", difference.value)
-            console.log("Offset value is ", offsetY.value)
-
-            //TODO: Offset is too sensitive as it uses a startpoint. Need to set a objective difference from height and the point of contact.
+            
             offsetY.value = -difference.value;
             
 
@@ -48,7 +53,16 @@ const MapDetailBox = ({ locationName, address, photoURL, setShowBottomBar, showB
         })
 
         .onFinalize(()=>{
-            offsetY.value = offsetY.value <= MIDLINE?  withSpring(MINIMISEDOFFSET, {duration: 1000}) : withSpring(EXPANDEDOFFSET, {duration: 1000})
+            if (offsetY.value <= MIDLINE){
+                offsetY.value = withSpring(MINIMISEDOFFSET, {duration: 1000}) 
+                runOnJS(setHideDestinationIcon)(false)
+            }
+            else{
+                offsetY.value = withSpring(EXPANDEDOFFSET, {duration: 1000}) 
+                runOnJS(setHideDestinationIcon)(true)
+            }
+            
+            
         })
     
         const animatedStyle = useAnimatedStyle(()=>({
@@ -65,7 +79,7 @@ const MapDetailBox = ({ locationName, address, photoURL, setShowBottomBar, showB
                 }
             }}
             >
-                <TouchableOpacity style={{ alignSelf: "center", paddingTop: 15 }} onPress={() => setShowBottomBar(!showBottomBar)}>
+                <TouchableOpacity style={{ alignSelf: "center", paddingTop: 15 }}>
                     <Icon
                         name="grip-lines"
                         color="#000000"
@@ -75,11 +89,11 @@ const MapDetailBox = ({ locationName, address, photoURL, setShowBottomBar, showB
                 </TouchableOpacity>
                 <View style={styles.infoBarContentBox}>
                     <Text style={styles.locationName}>
-                        {locationName}
+                        {loading? "Loading..." : locationName}
                     </Text>
 
                     <Text style={styles.addressText}>
-                        {address}
+                        {loading? "" : address}
                     </Text>
 
                     <View style={[{ width: "100%", position: "absolute", bottom: 25 }]}>
@@ -114,7 +128,8 @@ const styles = StyleSheet.create({
         borderRadius: 45,
         flexDirection: "column",
         alignItems: "center",
-        paddingBottom: 15
+        paddingBottom: 15,
+        zIndex: 100
     },
 
     infoBarContentBox: {
