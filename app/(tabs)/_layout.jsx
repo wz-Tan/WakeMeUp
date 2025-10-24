@@ -2,7 +2,7 @@ import NavBar from '@/assets/components/NavBar';
 import { useGoogleMap } from '@/contexts/GoogleMapContext';
 import { Tabs } from 'expo-router';
 import React from 'react';
-
+import ToastManager from "toastify-react-native";
 import { Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -41,9 +41,10 @@ export default function TabLayout() {
         </View>
 
       </GestureHandlerRootView>
+      
 
 
-
+    <ToastManager/>
     </SafeAreaView>
 
 

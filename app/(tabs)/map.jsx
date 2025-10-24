@@ -1,17 +1,20 @@
+import MapDetailBox from '@/assets/components/MapDetailBox';
 import { useGoogleMap } from '@/contexts/GoogleMapContext';
 import { useEffect, useState } from 'react';
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View, TextInput } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import MapView from 'react-native-maps';
 import Icon from 'react-native-vector-icons/FontAwesome6';
-import MapDetailBox from '@/assets/components/MapDetailBox';
+import { Toast } from 'toastify-react-native';
 
 export default function Tab() {
-  const { getPlaceDetails } = useGoogleMap();
+  const {getPlaceDetails, getPlaceAutocomplete } = useGoogleMap();
   const [locationName, setLocationName] = useState("");
   const [address, setAddress] = useState("");
   const [hideDestinationIcon, setHideDestinationIcon] = useState(false);
   const [loading, setLoading] = useState(true);
   const [photoURL, setPhotoURL] = useState(null);
+  const [inputText, setInputText] = useState("");
+  const [autocompleteLocations, setAutocompleteLocations] = useState(undefined)
 
   //Fetches and Sets Location Data 
   async function refreshLocationData() {
@@ -19,16 +22,16 @@ export default function Tab() {
     let result = await getPlaceDetails(null, [currentRegion.latitude, currentRegion.longitude]);
 
     if (result.error) {
-      console.log("Something went wrong", result.error);
+      Toast.error("Could Not Find Location Data!", "bottom")
     }
 
     else {
       setLocationName(result.locationName)
       setAddress(result.address)
-      if (result.photo){
+      if (result.photo) {
         setPhotoURL(result.photo)
       }
-      else{
+      else {
         setPhotoURL(null)
       }
     }
@@ -44,7 +47,7 @@ export default function Tab() {
 
     startUpFunction()
   }, [])
-  
+
 
 
   const [currentRegion, setCurrentRegion] = useState({
@@ -53,7 +56,7 @@ export default function Tab() {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
-  
+
 
   return (
     <View style={{
@@ -77,7 +80,7 @@ export default function Tab() {
         </MapView>
 
         {/* Center Icon */}
-        {hideDestinationIcon? null: <View style={{ zIndex: 10, position: "absolute", top: "50%", left: "50%", transform: [{ translateX: -15 }, { translateY: -40 }] }}>
+        {hideDestinationIcon ? null : <View style={{ zIndex: 10, position: "absolute", top: "50%", left: "50%", transform: [{ translateX: -15 }, { translateY: -40 }] }}>
           <Icon
             name="location-dot"
             color="#ED0000"
@@ -90,16 +93,40 @@ export default function Tab() {
 
       {/* Search Bar -> Google Autocomplete */}
       <View style={styles.searchBar}>
-        <Icon
-          name="magnifying-glass"
-          color="#000000"
-          size={20}
+        <TouchableOpacity
+
+          onPress={async () => {
+            let response = await getPlaceAutocomplete(inputText, currentRegion)
+
+            if (response.error){
+              Toast.error("Error occured when getting autocomplete results :(", "bottom")
+            }
+
+            else{
+              console.log("retured autocomplete results are ", response)
+            }
+
+          }}
+
+          style={{paddingLeft: 10}}
+        >
+          <Icon
+            name="magnifying-glass"
+            color="#000000"
+            size={20}
+          />
+        </TouchableOpacity>
+
+        <TextInput
+          style={styles.searchBarText}
+          placeholder='Enter Place Name Here...'
+          onChangeText={setInputText}
+          value={inputText}
         />
-        <TextInput/>
       </View>
 
       {/* Info Bar at the Bottom */}
-      <MapDetailBox locationName={locationName} address={address} photoURL={photoURL} setHideDestinationIcon={setHideDestinationIcon} loading={loading}/>
+      <MapDetailBox locationName={locationName} address={address} photoURL={photoURL} setHideDestinationIcon={setHideDestinationIcon} loading={loading} />
     </View >
 
   );
@@ -114,9 +141,17 @@ const styles = StyleSheet.create({
     width: "80%",
     backgroundColor: "#FAFAFA",
     flexDirection: "row",
-    padding: 15,
+    padding: 5,
     gap: 10,
     alignItems: "center"
   },
+
+  searchBarText: {
+    paddingHorizontal: 10,
+    fontFamily: "regular",
+    fontSize: 12,
+    color: "#000000",
+    width: "90%"
+  }
 
 });

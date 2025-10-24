@@ -1,10 +1,51 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext } from 'react';
 
 //Context as a Shareable Item, Provider as a Definition and Usage, useContext to Allow Usage of Provider
 const GoogleMapContext = createContext();
 
 export const GoogleMapProvider = ({ children }) => {
     const APIKEY = process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY;
+
+    async function getPlaceAutocomplete(inputString, currentLocation){
+        let {latitude, longitude} = currentLocation;
+        let response = await fetch("https://places.googleapis.com/v1/places:autocomplete",{
+            method: "POST",
+            headers:{
+                "Content-Type" : "application/json",
+                "X-Goog-Api-Key" : APIKEY,
+                "X-Goog-FieldMask" : "suggestions.placePrediction"
+            },
+            body: JSON.stringify({
+                input : inputString,
+                locationBias : {
+                    circle: {
+                        center:{
+                           latitude:  latitude,
+                            longitude: longitude 
+                        },
+                        radius: 500
+                    },
+                },
+                origin: {
+                    latitude: latitude,
+                    longitude: longitude
+                }
+            })
+        })
+
+        response = await response.json();
+
+        //Return Top 3 Searches (Get Place Prediction -> text.text and distanceMeters)
+        try{
+          let suggestions = response.suggestions;
+          
+          return {response: suggestions.slice(0,3)}
+        }
+
+        catch(error){
+            return {error:error}
+        }
+    }
 
     //Find the Place ID via place name or coordinates to Query Place Details
     async function getPlaceID(placeName, placeCoordinates) {
@@ -95,7 +136,7 @@ export const GoogleMapProvider = ({ children }) => {
     }
 
     return (
-        <GoogleMapContext.Provider value={{ getPlaceDetails }}>
+        <GoogleMapContext.Provider value={{ getPlaceDetails, getPlaceAutocomplete }}>
             {children}
         </GoogleMapContext.Provider>
     )
