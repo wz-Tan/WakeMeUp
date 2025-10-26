@@ -1,7 +1,7 @@
 import DestinationBox from "@/assets/components/DestinationBox";
 import CloudyIcon from "@/assets/icon/cloudy.png";
 import { Image, StyleSheet, Text, View } from "react-native";
-import { GestureHandlerRootView, ScrollView } from "react-native-gesture-handler";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function Tab() {
   return (
@@ -79,6 +79,6 @@ const styleSheet = StyleSheet.create({
     color: "#000000",
     fontFamily: "bold",
     marginBottom: -10
-  }
+  },
 
 })

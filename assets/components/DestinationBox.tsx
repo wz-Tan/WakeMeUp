@@ -47,11 +47,11 @@ function DestinationBox() {
             //Cap at Zero 
             if (dragPoint < 0 || dragPoint > originalWidth) return;
 
-            if (direction.value == "LTR") {
+            if (direction.value === "LTR") {
                 if (dragPoint <= allowedMovement) offset.value = dragPoint;
             }
 
-            else if (direction.value == "RTL") {
+            else if (direction.value === "RTL") {
                 let difference = originalWidth - dragPoint;
                 if (difference <= allowedMovement) offset.value = -difference;
             }
@@ -69,18 +69,18 @@ function DestinationBox() {
     const containerStyle = useAnimatedStyle(() => ({
         transform: [
             { translateX: 
-                direction.value=="RTL"? offset.value -3  :
-                direction.value=="LTR"? offset.value + 3  : 0
+                direction.value==="RTL"? offset.value -3  :
+                direction.value==="LTR"? offset.value + 3  : 0
             }
         ]
     }))
 
     const leftContainerStyle = useAnimatedStyle(()=>({
-        width: direction.value=="LTR" ? offset.value : 0,
+        width: direction.value==="LTR" ? offset.value : 0,
     }))
 
     const rightContainerStyle = useAnimatedStyle(()=>({
-        width: direction.value=="RTL" ? Math.abs(offset.value) : 0,
+        width: direction.value==="RTL" ? Math.abs(offset.value) : 0,
     }))
 
     const iconStyle = useAnimatedStyle(()=>({

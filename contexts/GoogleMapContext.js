@@ -1,10 +1,17 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 //Context as a Shareable Item, Provider as a Definition and Usage, useContext to Allow Usage of Provider
 const GoogleMapContext = createContext();
 
 export const GoogleMapProvider = ({ children }) => {
     const APIKEY = process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY;
+    //TODO : Change to CURRENT Location
+    const [currentRegion, setCurrentRegion] = useState({
+      latitude: 3.2144774,
+      longitude: 101.6721846,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    })
 
     async function getPlaceAutocomplete(inputString, currentLocation){
         let {latitude, longitude} = currentLocation;
@@ -38,8 +45,7 @@ export const GoogleMapProvider = ({ children }) => {
         //Return Top 3 Searches (Get Place Prediction -> text.text and distanceMeters)
         try{
           let suggestions = response.suggestions;
-          
-          return {response: suggestions.slice(0,3)}
+          return {data: suggestions.slice(0,3)}
         }
 
         catch(error){
@@ -136,7 +142,7 @@ export const GoogleMapProvider = ({ children }) => {
     }
 
     return (
-        <GoogleMapContext.Provider value={{ getPlaceDetails, getPlaceAutocomplete }}>
+        <GoogleMapContext.Provider value={{ getPlaceDetails, getPlaceAutocomplete, currentRegion, setCurrentRegion }}>
             {children}
         </GoogleMapContext.Provider>
     )

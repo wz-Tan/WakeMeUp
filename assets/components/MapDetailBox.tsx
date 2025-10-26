@@ -4,6 +4,7 @@ import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated"
 import Icon from "react-native-vector-icons/FontAwesome6"
+import { scheduleOnRN } from "react-native-worklets"
 
 const MapDetailBox = ({ locationName, address, photoURL, setHideDestinationIcon, loading }:
     {locationName:string, address: string, photoURL: string, setHideDestinationIcon:React.Dispatch<React.SetStateAction<boolean>> , loading: boolean}
@@ -28,7 +29,7 @@ const MapDetailBox = ({ locationName, address, photoURL, setHideDestinationIcon,
             startPoint.value = event.absoluteY;
             originalDifference.value = offsetY.value;
             try{
-              runOnJS(setHideDestinationIcon)(true)
+              scheduleOnRN(()=>setHideDestinationIcon(true))
             }
             catch(error){
                 console.log("error is ", error)
@@ -55,11 +56,11 @@ const MapDetailBox = ({ locationName, address, photoURL, setHideDestinationIcon,
         .onFinalize(()=>{
             if (offsetY.value <= MIDLINE){
                 offsetY.value = withSpring(MINIMISEDOFFSET, {duration: 1000}) 
-                runOnJS(setHideDestinationIcon)(false)
+                scheduleOnRN(()=>setHideDestinationIcon(false))
             }
             else{
                 offsetY.value = withSpring(EXPANDEDOFFSET, {duration: 1000}) 
-                runOnJS(setHideDestinationIcon)(true)
+                scheduleOnRN(()=>setHideDestinationIcon(true))
             }
             
             
