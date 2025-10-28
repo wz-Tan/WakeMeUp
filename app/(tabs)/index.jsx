@@ -5,39 +5,37 @@ import { ScrollView } from "react-native-gesture-handler";
 
 export default function Tab() {
   return (
-        <ScrollView
-        
-          style={{
-            flex: 1,
-            padding: 20,
-            flexDirection: "column",
-            backgroundColor:"#F3EFFF"
-          }}
-        >
-          {/* Header, Left is Title and Time, Right is Weather Icon */}
-          <View style={styleSheet.headerView}>
-            <View style={styleSheet.flexCol}>
-              <Text style={styleSheet.headerText}>WakeMeUp</Text>
-              <Text style={styleSheet.headerSubText}>Monday, 10:30 a.m.</Text>
-            </View>
+    <ScrollView
+      style={{
+        flex: 1,
+        padding: 20,
+        flexDirection: "column",
+        backgroundColor: "#F3EFFF",
+      }}
+    >
+      {/* Header, Left is Title and Time, Right is Weather Icon */}
+      <View style={styleSheet.headerView}>
+        <View style={styleSheet.flexCol}>
+          <Text style={styleSheet.headerText}>WakeMeUp</Text>
+          <Text style={styleSheet.headerSubText}>Monday, 10:30 a.m.</Text>
+        </View>
 
-            <Image source={CloudyIcon} style={{width:40, height: 40}} />
-          </View>
+        <Image source={CloudyIcon} style={{ width: 40, height: 40 }} />
+      </View>
 
-          {/* List Here */}
-          <View style={styleSheet.List}>
-            <Text style={styleSheet.listTitle}>Recents</Text>
-            <DestinationBox/>
-            <DestinationBox/>
-            <DestinationBox/>
-          </View>
+      {/* List Here */}
+      <View style={styleSheet.List}>
+        <Text style={styleSheet.listTitle}>Recents</Text>
+        <DestinationBox />
+        <DestinationBox />
+        <DestinationBox />
+      </View>
 
-          <View style={styleSheet.List}>
-            <Text style={styleSheet.listTitle}>Favourites</Text>
-            <DestinationBox/>
-          </View>
-
-        </ScrollView>
+      <View style={styleSheet.List}>
+        <Text style={styleSheet.listTitle}>Favourites</Text>
+        <DestinationBox />
+      </View>
+    </ScrollView>
   );
 }
 
@@ -47,38 +45,36 @@ const styleSheet = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center"
-    
+    alignItems: "center",
   },
 
   headerText: {
     fontSize: 20,
     color: "#000000",
     fontFamily: "bold",
-    lineHeight: 28
-  }, 
+    lineHeight: 28,
+  },
 
-  headerSubText:{
+  headerSubText: {
     fontSize: 18,
     color: "#999999",
-    fontFamily: "regular"
+    fontFamily: "regular",
   },
 
-  flexCol:{
-    flexDirection: "column"
+  flexCol: {
+    flexDirection: "column",
   },
 
-  List:{
+  List: {
     paddingTop: 10,
     flexDirection: "column",
-    gap: 10
+    gap: 10,
   },
 
-  listTitle:{
+  listTitle: {
     fontSize: 18,
     color: "#000000",
     fontFamily: "bold",
-    marginBottom: -10
+    marginBottom: -10,
   },
-
-})
+});

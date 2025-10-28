@@ -20,6 +20,7 @@ export default function TabLayout() {
     
 
   return (
+    <View style={{flex:1, backgroundColor:"#FAFAFA"}}>
     <SafeAreaView style={{ flex: 1 }}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
@@ -50,6 +51,7 @@ export default function TabLayout() {
 
     <ToastManager/>
     </SafeAreaView>
+    </View>
 
 
   );

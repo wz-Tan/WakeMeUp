@@ -29,7 +29,7 @@ const MapDetailBox = ({ locationName, address, photoURL, setHideDestinationIcon,
             startPoint.value = event.absoluteY;
             originalDifference.value = offsetY.value;
             try{
-              scheduleOnRN(()=>setHideDestinationIcon(true))
+              runOnJS(setHideDestinationIcon)(true)
             }
             catch(error){
                 console.log("error is ", error)
@@ -56,11 +56,11 @@ const MapDetailBox = ({ locationName, address, photoURL, setHideDestinationIcon,
         .onFinalize(()=>{
             if (offsetY.value <= MIDLINE){
                 offsetY.value = withSpring(MINIMISEDOFFSET, {duration: 1000}) 
-                scheduleOnRN(()=>setHideDestinationIcon(false))
+                runOnJS(setHideDestinationIcon)(false)
             }
             else{
                 offsetY.value = withSpring(EXPANDEDOFFSET, {duration: 1000}) 
-                scheduleOnRN(()=>setHideDestinationIcon(true))
+                runOnJS(setHideDestinationIcon)(true)
             }
             
             

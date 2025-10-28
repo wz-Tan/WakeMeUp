@@ -134,6 +134,8 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingLeft: 15,
     alignItems: "center",
+    borderColor: "#000000",
+    borderWidth: 1
   },
 
   searchBarText: {
