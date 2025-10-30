@@ -13,8 +13,8 @@ export const GoogleMapProvider = ({ children }) => {
       longitudeDelta: 0.0421,
     })
 
-    async function getPlaceAutocomplete(inputString, currentLocation){
-        let {latitude, longitude} = currentLocation;
+    async function getPlaceAutocomplete(inputLocationName){
+        let {latitude, longitude} = currentRegion;
         let response = await fetch("https://places.googleapis.com/v1/places:autocomplete",{
             method: "POST",
             headers:{
@@ -23,7 +23,7 @@ export const GoogleMapProvider = ({ children }) => {
                 "X-Goog-FieldMask" : "suggestions.placePrediction"
             },
             body: JSON.stringify({
-                input : inputString,
+                input : inputLocationName,
                 locationBias : {
                     circle: {
                         center:{
