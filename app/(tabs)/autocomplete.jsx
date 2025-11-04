@@ -4,32 +4,18 @@ import {
   TextInput,
   TouchableOpacity,
   Text,
+  FlatList,
 } from "react-native";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Icon from "react-native-vector-icons/FontAwesome6";
 import { useGoogleMap } from "@/contexts/GoogleMapContext";
 import { Toast } from "toastify-react-native";
-import { FlatList } from "react-native";
-import { useRef } from "react";
+import AutocompleteResultBox from "@/assets/components/AutocompleteResultBox";
 
 export default function Tab() {
   const [inputLocationName, setInputLocationName] = useState("");
   const { getPlaceAutocomplete, setCurrentRegion } = useGoogleMap();
-
-  const DATA = [
-    {
-      id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-      title: "First Item",
-    },
-    {
-      id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-      title: "Second Item",
-    },
-    {
-      id: "58694a0f-3da1-471f-bd96-145571e29d72",
-      title: "Third Item",
-    },
-  ];
+  const [locationData, setLocationData] = useState();
 
   //Handle Toast Notifs For the Autocomplete Call
   async function handleAutocompleteResults() {
@@ -41,9 +27,9 @@ export default function Tab() {
         "bottom",
       );
     } else {
-      console.log("retured autocomplete results are ", response.data);
-      //Display As List
-      console.log("The first returned item is ", response.data[0]);
+      //Successfully Acquiring The Data
+      console.log("Passing in ", response.data);
+      setLocationData(response.data);
     }
   }
 
@@ -104,14 +90,12 @@ export default function Tab() {
         <Text style={styles.subtitle}>Results</Text>
 
         <FlatList
-          data={DATA}
+          data={locationData}
           style={{ width: "100%" }}
-          renderItem={({ item }) => (
-            <View>
-              <Text>{item.title} </Text>
-            </View>
-          )}
-          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
+            return <AutocompleteResultBox locationInfo={item} />;
+          }}
+          keyExtractor={(item) => item.placeId}
         />
       </View>
     </View>
