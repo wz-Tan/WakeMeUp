@@ -24,7 +24,7 @@ export const GoogleMapProvider = ({ children }) => {
           "Content-Type": "application/json",
           "X-Goog-Api-Key": APIKEY,
           "X-Goog-FieldMask":
-            "suggestions.placePrediction.distanceMeters,suggestions.placePrediction.placeId,suggestions.placePrediction.text.text",
+            "suggestions.placePrediction.distanceMeters,suggestions.placePrediction.placeId,suggestions.placePrediction.structuredFormat.mainText.text,suggestions.placePrediction.structuredFormat.secondaryText.text",
         },
         body: JSON.stringify({
           input: inputLocationName,
@@ -46,16 +46,13 @@ export const GoogleMapProvider = ({ children }) => {
     );
 
     response = await response.json();
-    let suggestions = response.suggestions;
-
-    //TODO: Format The Output to Send to Front End
-    for (let i = 0; i < AUTOCOMPLETERESULTS; i++) {
-      suggestions[i]=suggestions[i].placePrediction
-    }
 
     //Return Top 3 Searches (Get Place Prediction -> text.text and distanceMeters)
     try {
       let suggestions = response.suggestions;
+      for (let i = 0; i < AUTOCOMPLETERESULTS; i++) {
+        suggestions[i] = suggestions[i].placePrediction;
+      }
       return { data: suggestions.slice(0, AUTOCOMPLETERESULTS) };
     } catch (error) {
       return { error: error };

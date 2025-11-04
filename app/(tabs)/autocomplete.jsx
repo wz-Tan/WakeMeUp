@@ -13,13 +13,13 @@ import { Toast } from "toastify-react-native";
 import AutocompleteResultBox from "@/assets/components/AutocompleteResultBox";
 
 export default function Tab() {
-  const [inputLocationName, setInputLocationName] = useState("");
+  const inputLocationName = useRef();
   const { getPlaceAutocomplete, setCurrentRegion } = useGoogleMap();
   const [locationData, setLocationData] = useState();
 
   //Handle Toast Notifs For the Autocomplete Call
   async function handleAutocompleteResults() {
-    let response = await getPlaceAutocomplete(inputLocationName);
+    let response = await getPlaceAutocomplete(inputLocationName.current);
 
     if (response.error) {
       Toast.error(
@@ -28,7 +28,6 @@ export default function Tab() {
       );
     } else {
       //Successfully Acquiring The Data
-      console.log("Passing in ", response.data);
       setLocationData(response.data);
     }
   }
@@ -37,7 +36,7 @@ export default function Tab() {
   function useDebounce() {
     //Create a Timeout Object
     const timeoutObject = useRef();
-    const delay = 500;
+    const delay = 700;
 
     //Return The Function with One Timeout Only -> We Can Reuse It
     return function () {
@@ -78,17 +77,14 @@ export default function Tab() {
           style={styles.searchBarText}
           placeholder="Enter Place Name Here..."
           onChangeText={(text) => {
-            setInputLocationName(text);
+            inputLocationName.current = text;
             DebounceCall(); //Start the Debounce Call on Text Change
           }}
-          value={inputLocationName}
         />
       </View>
 
       {/* Results Field*/}
       <View style={styles.resultsView}>
-        <Text style={styles.subtitle}>Results</Text>
-
         <FlatList
           data={locationData}
           style={{ width: "100%" }}
@@ -111,7 +107,7 @@ const styles = StyleSheet.create({
   },
 
   resultsView: {
-    marginTop: "10%",
+    marginTop: "5%",
     width: "90%",
     alignSelf: "center",
     flex: 1,

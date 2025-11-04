@@ -1,36 +1,67 @@
 import { View, Text, StyleSheet } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome6";
 const AutocompleteResultBox = ({ locationInfo }: { locationInfo: any }) => {
   console.log("location is ", locationInfo);
 
-  let locationName = locationInfo.text.text;
-  let distance = locationInfo.distanceMetersl;
+  let mainLocationText = locationInfo.structuredFormat.mainText.text;
+  let subLocationText = locationInfo.structuredFormat.secondaryText.text;
+  let distance = locationInfo.distanceMeters;
+  let formattedDistance = distance / 1000;
 
-  //TODO : Format Output
+  //TODO : Find Shorter SubAddress?
   return (
     <View style={styles.container}>
-      <Text style={styles.locationText}>{locationName}</Text>
+      <View style={{ justifyContent: "center" }}>
+        <View style={styles.iconCircle}>
+          <Icon name="location-dot" size={20} color="#FFFFFF" />
+        </View>
+        <Text style={styles.locationSubtext}>
+          {formattedDistance.toFixed(1)}km
+        </Text>
+      </View>
+
+      <View style={{ paddingHorizontal: 10, borderRadius: 15, flexShrink: 1 }}>
+        <Text style={styles.locationText}>{mainLocationText}</Text>
+        <Text style={styles.locationSubtext}>{subLocationText}</Text>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
     paddingVertical: 5,
     width: "100%",
     borderRadius: 15,
     backgroundColor: "#FFFFFF",
     flexDirection: "row",
-    justifyContent: "space-between",
+    alignItems: "center",
+    boxShadow: "0px 5px 5px #C4C1C1FF",
+    marginVertical: 5,
+    marginHorizontal: 5,
+    alignSelf: "center",
+    overflow: "hidden",
+  },
+
+  iconCircle: {
+    width: 30,
+    height: 30,
+    borderRadius: 180,
+    backgroundColor: "#000000",
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
   },
 
   locationText: {
     fontSize: 16,
     fontFamily: "bold",
+    lineHeight: 20,
   },
 
   locationSubtext: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: "regular",
     color: "#999999",
   },
