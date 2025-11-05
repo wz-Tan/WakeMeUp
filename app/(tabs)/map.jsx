@@ -22,7 +22,6 @@ export default function Tab() {
   const [hideDestinationIcon, setHideDestinationIcon] = useState(false);
   const [loading, setLoading] = useState(true);
   const [photoURL, setPhotoURL] = useState(null);
-  const [inputText, setInputText] = useState("");
 
   //Fetches and Sets Location Data
   async function refreshLocationData() {
@@ -134,8 +133,7 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingLeft: 15,
     alignItems: "center",
-    borderColor: "#000000",
-    borderWidth: 1
+    boxShadow: "0px 5px 10px #C4C1C1FF",
   },
 
   searchBarText: {

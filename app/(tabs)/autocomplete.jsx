@@ -11,23 +11,24 @@ import Icon from "react-native-vector-icons/FontAwesome6";
 import { useGoogleMap } from "@/contexts/GoogleMapContext";
 import { Toast } from "toastify-react-native";
 import AutocompleteResultBox from "@/assets/components/AutocompleteResultBox";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Tab() {
+  const navigation = useNavigation();
   const inputLocationName = useRef();
   const { getPlaceAutocomplete, setCurrentRegion } = useGoogleMap();
   const [locationData, setLocationData] = useState();
+  const [showNoResults, setShowNoResults] = useState(false);
 
   //Handle Toast Notifs For the Autocomplete Call
   async function handleAutocompleteResults() {
     let response = await getPlaceAutocomplete(inputLocationName.current);
 
     if (response.error) {
-      Toast.error(
-        "Error occured when getting autocomplete results :(",
-        "bottom",
-      );
+      setShowNoResults(true);
     } else {
       //Successfully Acquiring The Data
+      if (setShowNoResults) setShowNoResults(false);
       setLocationData(response.data);
     }
   }
@@ -64,35 +65,38 @@ export default function Tab() {
       <Text style={styles.title}>Select a Destination</Text>
       {/* Input Field*/}
       <View style={styles.searchBar}>
-        <TouchableOpacity
-          onPress={async () => {
-            await handleAutocompleteResults();
-          }}
-        >
-          {/* <Icon name="arrow-left" color="#000000" size={20} />*/}
-          <Icon name="magnifying-glass" color="#000000" size={20} />
+        <TouchableOpacity onPress={() => navigation.navigate("map")}>
+          <Icon name="arrow-left" color="#000000" size={20} />
         </TouchableOpacity>
 
         <TextInput
           style={styles.searchBarText}
           placeholder="Enter Place Name Here..."
           onChangeText={(text) => {
-            inputLocationName.current = text;
-            DebounceCall(); //Start the Debounce Call on Text Change
+            if (text !== "") {
+              inputLocationName.current = text;
+              DebounceCall(); //Start the Debounce Call on Text Change
+            }
           }}
         />
       </View>
 
       {/* Results Field*/}
       <View style={styles.resultsView}>
-        <FlatList
-          data={locationData}
-          style={{ width: "100%" }}
-          renderItem={({ item }) => {
-            return <AutocompleteResultBox locationInfo={item} />;
-          }}
-          keyExtractor={(item) => item.placeId}
-        />
+        {showNoResults ? (
+          <View>
+            <Text style={styles.subtitle}>No Results Found.</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={locationData}
+            style={{flex:1 , paddingHorizontal: 5 }}
+            renderItem={({ item }) => {
+              return <AutocompleteResultBox locationInfo={item} />;
+            }}
+            keyExtractor={(item) => item.placeId}
+          />
+        )}
       </View>
     </View>
   );
@@ -129,8 +133,7 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingLeft: 15,
     alignItems: "center",
-    borderColor: "#000000",
-    borderWidth: 1,
+    boxShadow: "0px 5px 10px #C4C1C1FF",
     marginTop: 5,
   },
 

@@ -16,7 +16,7 @@ export default function NavBar() {
       >
         <Icon name="house" color="#000000" size={25} />
 
-        <View style={{ opacity: pathName == "/" ? 1 : 0 }}>
+        <View style={{ opacity: pathName === "/" ? 1 : 0 }}>
           <Icon name="circle-dot" color="#63099c" size={10} />
         </View>
       </TouchableOpacity>
@@ -24,7 +24,7 @@ export default function NavBar() {
       <TouchableOpacity
         style={styleSheet.iconCol}
         onPress={() => {
-          if (pathName != "/map") router.navigate("/(tabs)/map");
+          if (pathName !== "/map") router.navigate("/(tabs)/map");
         }}
       >
         <Icon name="map" color="#000000" size={25} />
@@ -37,12 +37,12 @@ export default function NavBar() {
       <TouchableOpacity
         style={styleSheet.iconCol}
         onPress={() => {
-          if (pathName != "/settings") router.navigate("/(tabs)/settings");
+          if (pathName !== "/settings") router.navigate("/(tabs)/settings");
         }}
       >
         <Icon name="user" color="#000000" size={25} />
 
-        <View style={{ opacity: pathName == "/settings" ? 1 : 0 }}>
+        <View style={{ opacity: pathName === "/settings" ? 1 : 0 }}>
           <Icon name="circle-dot" color="#63099c" size={10} />
         </View>
       </TouchableOpacity>

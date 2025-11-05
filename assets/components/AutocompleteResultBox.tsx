@@ -8,16 +8,20 @@ const AutocompleteResultBox = ({ locationInfo }: { locationInfo: any }) => {
   let distance = locationInfo.distanceMeters;
   let formattedDistance = distance / 1000;
 
-  //TODO : Find Shorter SubAddress?
+  //TODO : Reroute Map on Click
   return (
     <View style={styles.container}>
       <View style={{ justifyContent: "center" }}>
         <View style={styles.iconCircle}>
           <Icon name="location-dot" size={20} color="#FFFFFF" />
         </View>
-        <Text style={styles.locationSubtext}>
-          {formattedDistance.toFixed(1)}km
-        </Text>
+
+        {/*In Cases Where Distance is NaN*/}
+        {!Number.isNaN(formattedDistance) && (
+          <Text style={styles.locationSubtext}>
+            {formattedDistance.toFixed(1)}km
+          </Text>
+        )}
       </View>
 
       <View style={{ paddingHorizontal: 10, borderRadius: 15, flexShrink: 1 }}>
@@ -38,8 +42,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     boxShadow: "0px 5px 5px #C4C1C1FF",
-    marginVertical: 5,
-    marginHorizontal: 5,
+    marginVertical: 10,
     alignSelf: "center",
     overflow: "hidden",
   },

@@ -5,7 +5,9 @@ const GoogleMapContext = createContext();
 
 export const GoogleMapProvider = ({ children }) => {
   const APIKEY = process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY;
-  const AUTOCOMPLETERESULTS = 3;
+  const AUTOCOMPLETERESULTS = 6;
+  const DETECTRADIUS = 50; //Max 50KM radius
+
   //TODO : Change to CURRENT Location
   const [currentRegion, setCurrentRegion] = useState({
     latitude: 3.2144774,
@@ -25,16 +27,16 @@ export const GoogleMapProvider = ({ children }) => {
           "X-Goog-Api-Key": APIKEY,
           "X-Goog-FieldMask":
             "suggestions.placePrediction.distanceMeters,suggestions.placePrediction.placeId,suggestions.placePrediction.structuredFormat.mainText.text,suggestions.placePrediction.structuredFormat.secondaryText.text",
-        },
+        }, //Use the main text + secondary text to query for location details
         body: JSON.stringify({
           input: inputLocationName,
-          locationBias: {
+          locationRestriction: {
             circle: {
               center: {
                 latitude: latitude,
                 longitude: longitude,
               },
-              radius: 500,
+              radius: DETECTRADIUS * 1000, //999 Km Radius
             },
           },
           origin: {
@@ -50,11 +52,17 @@ export const GoogleMapProvider = ({ children }) => {
     //Return Top 3 Searches (Get Place Prediction -> text.text and distanceMeters)
     try {
       let suggestions = response.suggestions;
-      for (let i = 0; i < AUTOCOMPLETERESULTS; i++) {
+      for (let i = 0; i < suggestions.length; i++) {
         suggestions[i] = suggestions[i].placePrediction;
       }
-      return { data: suggestions.slice(0, AUTOCOMPLETERESULTS) };
+
+      //Cap At Desired Amount of Results
+      return suggestions.length >= AUTOCOMPLETERESULTS
+        ? { data: suggestions.slice(0, AUTOCOMPLETERESULTS) }
+        : { data: suggestions };
     } catch (error) {
+      //If Error -> No Results Found
+      console.log("Autocomplete Context Error: ", error);
       return { error: error };
     }
   }
