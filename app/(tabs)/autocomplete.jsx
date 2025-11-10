@@ -16,7 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 export default function Tab() {
   const navigation = useNavigation();
   const inputLocationName = useRef();
-  const { getPlaceAutocomplete, setCurrentRegion } = useGoogleMap();
+  const {getPlaceAutocomplete, setCurrentRegion } = useGoogleMap();
   const [locationData, setLocationData] = useState();
   const [showNoResults, setShowNoResults] = useState(false);
 
@@ -90,9 +90,14 @@ export default function Tab() {
         ) : (
           <FlatList
             data={locationData}
-            style={{flex:1 , paddingHorizontal: 5 }}
+            style={{ flex: 1, paddingHorizontal: 5 }}
             renderItem={({ item }) => {
-              return <AutocompleteResultBox locationInfo={item} />;
+              return (
+                <AutocompleteResultBox
+                  locationInfo={item}
+                  navigation={navigation}
+                />
+              );
             }}
             keyExtractor={(item) => item.placeId}
           />

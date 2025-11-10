@@ -9,12 +9,16 @@ export const GoogleMapProvider = ({ children }) => {
   const DETECTRADIUS = 50; //Max 50KM radius
 
   //TODO : Change to CURRENT Location
+  // User Location
   const [currentRegion, setCurrentRegion] = useState({
     latitude: 3.2144774,
     longitude: 101.6721846,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
+
+  // Target Location
+  const [currentDestination, setCurrentDestination] = useState(currentRegion);
 
   async function getPlaceAutocomplete(inputLocationName) {
     let { latitude, longitude } = currentRegion;
@@ -174,6 +178,8 @@ export const GoogleMapProvider = ({ children }) => {
         getPlaceAutocomplete,
         currentRegion,
         setCurrentRegion,
+        currentDestination,
+        setCurrentDestination,
       }}
     >
       {children}

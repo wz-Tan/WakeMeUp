@@ -1,6 +1,6 @@
 import MapDetailBox from "@/assets/components/MapDetailBox";
 import { useGoogleMap } from "@/contexts/GoogleMapContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -16,19 +16,45 @@ import { useNavigation } from "@react-navigation/native";
 export default function Tab() {
   const navigation = useNavigation();
 
-  const { getPlaceDetails, currentRegion, setCurrentRegion } = useGoogleMap();
+  const {
+    getPlaceDetails,
+    currentRegion,
+    currentDestination,
+    setCurrentDestination,
+  } = useGoogleMap();
   const [locationName, setLocationName] = useState("");
   const [address, setAddress] = useState("");
   const [hideDestinationIcon, setHideDestinationIcon] = useState(false);
   const [loading, setLoading] = useState(true);
   const [photoURL, setPhotoURL] = useState(null);
 
+  const mapRef = useRef(null);
+
+  //Used to Set Map Relocation
+  const [cameraValues, setCameraValues] = useState({
+    center: {
+      latitude: currentDestination.latitude,
+      longitude: currentDestination.longitude,
+    },
+    pitch: 10,
+    heading: 10,
+  });
+
+  function resetCamera() {
+    if (mapRef.current) {
+      mapRef.current.animateCamera(cameraValues);
+      console.log("Resetting camera");
+    } else {
+      console.log("The reference is not found ");
+    }
+  }
+
   //Fetches and Sets Location Data
   async function refreshLocationData() {
     setLoading(true);
     let result = await getPlaceDetails(null, [
-      currentRegion.latitude,
-      currentRegion.longitude,
+      currentDestination.latitude,
+      currentDestination.longitude,
     ]);
 
     if (result.error) {
@@ -54,6 +80,7 @@ export default function Tab() {
     startUpFunction();
   }, []);
 
+  //TODO: Pass in Camera To The Autocomplete Components
   return (
     <View
       style={{
@@ -63,14 +90,19 @@ export default function Tab() {
     >
       <View style={{ flex: 1 }}>
         <MapView
+          ref={mapRef}
           style={{ zIndex: -10, flex: 1, height: "100%", width: "100%" }}
-          initialRegion={currentRegion}
-          onRegionChangeComplete={(region) => {
-            setCurrentRegion(region);
-            refreshLocationData();
+          loadingEnabled={true}
+          initialRegion={currentDestination}
+          onRegionChangeComplete={(region, isGesture) => {
+            if (isGesture) {
+              setCurrentDestination(region);
+              refreshLocationData();
+
+              // mapRef.current.animateCamera(cameraValues);
+            }
           }}
         ></MapView>
-
         {/* Center Icon */}
         {hideDestinationIcon ? null : (
           <View
@@ -90,7 +122,6 @@ export default function Tab() {
       {/* Search Bar Click -> Redirect to Another Page*/}
       <View style={styles.searchBarArea}>
         <TouchableOpacity onPress={() => navigation.navigate("autocomplete")}>
-          {/* Input Field*/}
           <View style={styles.searchBar}>
             <Icon name="magnifying-glass" color="#000000" size={20} />
             <TextInput
@@ -101,7 +132,7 @@ export default function Tab() {
           </View>
         </TouchableOpacity>
       </View>
-      
+
       {/* Info Bar at the Bottom */}
       <MapDetailBox
         locationName={locationName}
@@ -110,6 +141,14 @@ export default function Tab() {
         setHideDestinationIcon={setHideDestinationIcon}
         loading={loading}
       />
+
+      {/* Recenter Button */}
+      <TouchableOpacity
+        onPress={() => resetCamera()}
+        style={styles.recenterButton}
+      >
+        <Icon name="location-arrow" color="#000000" size={20} />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -142,5 +181,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#000000",
     width: "90%",
+  },
+
+  recenterButton: {
+    position: "absolute",
+    width: 30,
+    height: 30,
+    borderRadius: 90,
+    top: 100,
+    right: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FAFAFA",
   },
 });

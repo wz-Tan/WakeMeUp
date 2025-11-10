@@ -1,34 +1,39 @@
-import { View, Text, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome6";
-const AutocompleteResultBox = ({ locationInfo }: { locationInfo: any }) => {
+const AutocompleteResultBox = ({ locationInfo, navigation }: { locationInfo: any, navigation: any }) => {
   console.log("location is ", locationInfo);
 
   let mainLocationText = locationInfo.structuredFormat.mainText.text;
   let subLocationText = locationInfo.structuredFormat.secondaryText.text;
   let distance = locationInfo.distanceMeters;
   let formattedDistance = distance / 1000;
-
+  
   //TODO : Reroute Map on Click
   return (
-    <View style={styles.container}>
-      <View style={{ justifyContent: "center" }}>
-        <View style={styles.iconCircle}>
-          <Icon name="location-dot" size={20} color="#FFFFFF" />
+    <TouchableOpacity onPress={()=>navigation.navigate("map")}>
+      <View style={styles.container}>
+        <View style={{ justifyContent: "center" }}>
+          <View style={styles.iconCircle}>
+            <Icon name="location-dot" size={20} color="#FFFFFF" />
+          </View>
+
+          {/*In Cases Where Distance is NaN*/}
+          {!Number.isNaN(formattedDistance) && (
+            <Text style={styles.locationSubtext}>
+              {formattedDistance.toFixed(1)}km
+            </Text>
+          )}
         </View>
 
-        {/*In Cases Where Distance is NaN*/}
-        {!Number.isNaN(formattedDistance) && (
-          <Text style={styles.locationSubtext}>
-            {formattedDistance.toFixed(1)}km
-          </Text>
-        )}
+        <View
+          style={{ paddingHorizontal: 10, borderRadius: 15, flexShrink: 1 }}
+        >
+          <Text style={styles.locationText}>{mainLocationText}</Text>
+          <Text style={styles.locationSubtext}>{subLocationText}</Text>
+        </View>
       </View>
-
-      <View style={{ paddingHorizontal: 10, borderRadius: 15, flexShrink: 1 }}>
-        <Text style={styles.locationText}>{mainLocationText}</Text>
-        <Text style={styles.locationSubtext}>{subLocationText}</Text>
-      </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
