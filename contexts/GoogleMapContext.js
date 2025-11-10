@@ -17,9 +17,32 @@ export const GoogleMapProvider = ({ children }) => {
     longitudeDelta: 0.0421,
   });
 
-  // Target Location
+  // Camera Location
+  const [cameraValues, setCameraValues] = useState({
+    center: {
+      latitude: currentRegion.latitude,
+      longitude: currentRegion.longitude,
+    },
+    pitch: 10,
+    heading: 10,
+  });
+
+  // Map Value Changes
+  function recenterCamera() {
+    setCameraValues({
+      center: {
+        latitude: currentRegion.latitude,
+        longitude: currentRegion.longitude,
+      },
+      pitch: 10,
+      heading: 10,
+    });
+  }
+
+  // Current Destination is Used for the Detail Box on Map Screen
   const [currentDestination, setCurrentDestination] = useState(currentRegion);
 
+  // Google Map API Calls
   async function getPlaceAutocomplete(inputLocationName) {
     let { latitude, longitude } = currentRegion;
     let response = await fetch(
@@ -53,7 +76,6 @@ export const GoogleMapProvider = ({ children }) => {
 
     response = await response.json();
 
-    //Return Top 3 Searches (Get Place Prediction -> text.text and distanceMeters)
     try {
       let suggestions = response.suggestions;
       for (let i = 0; i < suggestions.length; i++) {
@@ -114,6 +136,7 @@ export const GoogleMapProvider = ({ children }) => {
 
   //Get Details to Display (Place Coordinates Should be [lat,long])
   async function getPlaceDetails(placeName, placeCoordinates) {
+    console.log("Acquiring Place Details");
     try {
       let placeID;
 
@@ -180,6 +203,9 @@ export const GoogleMapProvider = ({ children }) => {
         setCurrentRegion,
         currentDestination,
         setCurrentDestination,
+        cameraValues,
+        setCameraValues,
+        recenterCamera,
       }}
     >
       {children}

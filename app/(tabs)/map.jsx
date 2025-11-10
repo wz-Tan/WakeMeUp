@@ -18,9 +18,11 @@ export default function Tab() {
 
   const {
     getPlaceDetails,
-    currentRegion,
+    cameraValues,
+    setCameraValues,
     currentDestination,
     setCurrentDestination,
+    recenterCamera,
   } = useGoogleMap();
   const [locationName, setLocationName] = useState("");
   const [address, setAddress] = useState("");
@@ -30,28 +32,20 @@ export default function Tab() {
 
   const mapRef = useRef(null);
 
-  //Used to Set Map Relocation
-  const [cameraValues, setCameraValues] = useState({
-    center: {
-      latitude: currentDestination.latitude,
-      longitude: currentDestination.longitude,
-    },
-    pitch: 10,
-    heading: 10,
-  });
-
-  function resetCamera() {
+  // Animate Camera Value on Context Value Change
+  useEffect(() => {
     if (mapRef.current) {
       mapRef.current.animateCamera(cameraValues);
-      console.log("Resetting camera");
+      console.log("Animating Camera");
     } else {
-      console.log("The reference is not found ");
+      console.log("The reference is not found.");
     }
-  }
+  }, [cameraValues]);
 
   //Fetches and Sets Location Data
   async function refreshLocationData() {
     setLoading(true);
+    console.log("Refreshing Location Data");
     let result = await getPlaceDetails(null, [
       currentDestination.latitude,
       currentDestination.longitude,
@@ -72,15 +66,16 @@ export default function Tab() {
     setLoading(false);
   }
 
+  // Get The Details of The Current Location (Only Needed Once on Startup)
   useEffect(() => {
     async function startUpFunction() {
+      console.log("Running start up function");
       await refreshLocationData();
     }
 
     startUpFunction();
   }, []);
 
-  //TODO: Pass in Camera To The Autocomplete Components
   return (
     <View
       style={{
@@ -94,13 +89,10 @@ export default function Tab() {
           style={{ zIndex: -10, flex: 1, height: "100%", width: "100%" }}
           loadingEnabled={true}
           initialRegion={currentDestination}
-          onRegionChangeComplete={(region, isGesture) => {
-            if (isGesture) {
-              setCurrentDestination(region);
-              refreshLocationData();
-
-              // mapRef.current.animateCamera(cameraValues);
-            }
+          onRegionChangeComplete={(region) => {
+            setCurrentDestination(region);
+            refreshLocationData();
+            console.log("Map has Moved");
           }}
         ></MapView>
         {/* Center Icon */}
@@ -144,10 +136,10 @@ export default function Tab() {
 
       {/* Recenter Button */}
       <TouchableOpacity
-        onPress={() => resetCamera()}
+        onPress={() => recenterCamera()}
         style={styles.recenterButton}
       >
-        <Icon name="location-arrow" color="#000000" size={20} />
+        <Icon name="location-crosshairs" color="#000000" size={20} />
       </TouchableOpacity>
     </View>
   );
@@ -185,8 +177,8 @@ const styles = StyleSheet.create({
 
   recenterButton: {
     position: "absolute",
-    width: 30,
-    height: 30,
+    width: 40,
+    height: 40,
     borderRadius: 90,
     top: 100,
     right: 20,

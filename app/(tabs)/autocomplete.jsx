@@ -16,7 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 export default function Tab() {
   const navigation = useNavigation();
   const inputLocationName = useRef();
-  const {getPlaceAutocomplete, setCurrentRegion } = useGoogleMap();
+  const { getPlaceAutocomplete } = useGoogleMap();
   const [locationData, setLocationData] = useState();
   const [showNoResults, setShowNoResults] = useState(false);
 

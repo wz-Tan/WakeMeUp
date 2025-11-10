@@ -1,17 +1,62 @@
+import { useGoogleMap } from "@/contexts/GoogleMapContext";
 import { useNavigation } from "@react-navigation/native";
+import { useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome6";
-const AutocompleteResultBox = ({ locationInfo, navigation }: { locationInfo: any, navigation: any }) => {
-  console.log("location is ", locationInfo);
+const AutocompleteResultBox = ({
+  locationInfo,
+  navigation,
+}: {
+  locationInfo: any;
+  navigation: any;
+  setCameraValues: any;
+}) => {
+  const { getPlaceDetails, setCameraValues } = useGoogleMap();
 
   let mainLocationText = locationInfo.structuredFormat.mainText.text;
   let subLocationText = locationInfo.structuredFormat.secondaryText.text;
   let distance = locationInfo.distanceMeters;
   let formattedDistance = distance / 1000;
-  
-  //TODO : Reroute Map on Click
+  let latitude: number;
+  let longitude: number;
+
+  useEffect(() => {
+    async function GetPlaceDetails() {
+      let result = await getPlaceDetails(mainLocationText, null);
+      console.log("Result is ", result);
+      latitude = result.coordinates.latitude;
+      longitude = result.coordinates.longitude;
+      console.log("Longitude and latitude is ");
+      console.log(latitude, longitude);
+    }
+    GetPlaceDetails();
+  });
+
   return (
-    <TouchableOpacity onPress={()=>navigation.navigate("map")}>
+    <TouchableOpacity
+      onPress={() => {
+        // Change Context Camera Value to Current Location
+        if (latitude && longitude) {
+          setCameraValues({
+            center: {
+              latitude: latitude,
+              longitude: longitude,
+            },
+            pitch: 10,
+            heading: 10,
+          });
+        }
+
+        // Data Not Loaded Yet
+        else {
+          console.log(
+            "Autocomplete Result Box Cannot Retrieve The Coordinates Yet",
+          );
+        }
+
+        navigation.navigate("map");
+      }}
+    >
       <View style={styles.container}>
         <View style={{ justifyContent: "center" }}>
           <View style={styles.iconCircle}>
