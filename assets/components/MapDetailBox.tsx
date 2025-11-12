@@ -1,5 +1,5 @@
 import ImageNotFound from "@/assets/icon/noImage.png";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dimensions,
   Image,
@@ -11,6 +11,7 @@ import {
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
+  useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -35,16 +36,34 @@ const MapDetailBox = ({
   let ScreenHeight = Dimensions.get("screen").height;
 
   //Constants
-  const EXPANDEDOFFSET = -ScreenHeight * 0.05;
-  const MINIMISEDOFFSET = -ScreenHeight * 0.38;
-  const MIDLINE = (EXPANDEDOFFSET + MINIMISEDOFFSET) / 2;
+  const NAVBARMARGIN = 45;
 
   // Box Sizes
-  let minimisedHeight = useSharedValue(-100);
-  let containerHeight = useSharedValue(0);
+  let minimisedHeight = useSharedValue(0);
+  let expandedHeight = useSharedValue(0);
+
+  // Offset - Calculations Based off Box Sizes
+  let midline = useSharedValue(0);
+  let expandedOffset = useSharedValue(0);
+  let minimisedOffset = useSharedValue(0);
+
+  // Listen to Height Changes (Adjust for Offset Changes When Dragging and for Initialisation)
+  useAnimatedReaction(
+    () => expandedHeight.value,
+    (currentHeight, previousHeight) => {
+      // Update Offsets
+      if (currentHeight !== previousHeight) {
+        minimisedOffset.value = Math.round(
+          -expandedHeight.value + minimisedHeight.value + NAVBARMARGIN,
+        );
+        expandedOffset.value = -NAVBARMARGIN;
+        midline.value = (minimisedOffset.value + expandedOffset.value) / 2;
+      }
+    },
+  );
 
   // By Default, offset Y is Set to Minimise the Screen
-  let offsetY = useSharedValue(MINIMISEDOFFSET);
+  let offsetY = useSharedValue(-ScreenHeight); // Arbitrary Number For Initialisation
   let originalDifference = useSharedValue(0);
   let startPoint = useSharedValue(0);
   let difference = useSharedValue(0);
@@ -68,32 +87,46 @@ const MapDetailBox = ({
       offsetY.value = -difference.value;
 
       // Keep Bar within Bounds
-      if (offsetY.value >= EXPANDEDOFFSET) {
-        offsetY.value = EXPANDEDOFFSET;
-      } else if (offsetY.value <= -ScreenHeight + minimisedHeight.value) {
-        offsetY.value = -ScreenHeight + minimisedHeight.value;
+      if (offsetY.value >= expandedOffset.value) {
+        offsetY.value = expandedOffset.value;
+      } else if (offsetY.value <= minimisedOffset.value) {
+        offsetY.value = minimisedOffset.value;
       }
     })
 
     .onFinalize(() => {
-      console.log("Screen Height is ", ScreenHeight);
-      console.log("container height is ", containerHeight.value);
-      if (offsetY.value <= MIDLINE) {
-        offsetY.value = withSpring(
-          -containerHeight.value + minimisedHeight.value + 50,
-          {
-            duration: 1000,
-          },
-        );
+      if (offsetY.value <= midline.value) {
+        offsetY.value = withSpring(minimisedOffset.value, {
+          duration: 1000,
+        });
         runOnJS(setHideDestinationIcon)(false);
       } else {
-        offsetY.value = withSpring(EXPANDEDOFFSET, { duration: 1000 });
+        offsetY.value = withSpring(expandedOffset.value, { duration: 1000 });
         runOnJS(setHideDestinationIcon)(true);
       }
     });
 
+  // Opacity - The Item Is Misaligned At First, Make It Transparent
+  let boxOpacity = useSharedValue(0);
+
+  // Initialise Position (First Run of onLayout Triggers This)
+  useAnimatedReaction(
+    () => ({
+      expanded: expandedHeight.value,
+      minimised: minimisedHeight.value,
+    }),
+    (heights) => {
+      const { expanded, minimised } = heights;
+      if (expanded !== 0 && minimised !== 0 && offsetY.value <= -ScreenHeight) {
+        offsetY.value = -expanded + minimised + NAVBARMARGIN;
+        boxOpacity.value = withSpring(1, { duration: 1000 });
+      }
+    },
+  );
+
   const animatedStyle = useAnimatedStyle(() => ({
     bottom: offsetY.value,
+    opacity: boxOpacity.value,
   }));
 
   return (
@@ -101,7 +134,7 @@ const MapDetailBox = ({
       <Animated.View
         style={[styles.infoBar, animatedStyle]}
         onLayout={(e) => {
-          containerHeight.value = e.nativeEvent.layout.height; // Gather Height of The Entire Detail Box
+          expandedHeight.value = e.nativeEvent.layout.height; // Gather Height of The Entire Detail Box
         }}
       >
         <TouchableOpacity style={{ alignSelf: "center", paddingTop: 15 }}>
@@ -113,7 +146,6 @@ const MapDetailBox = ({
             onLayout={(e) => {
               minimisedHeight.value = e.nativeEvent.layout.height; // Gather Height of Displayed Content in Minimised Version
             }}
-            style={{ backgroundColor: "#FAFAFA" }}
           >
             <Text style={styles.locationName}>
               {loading ? "Loading..." : locationName}
