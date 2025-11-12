@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useRef, useState } from "react";
 
 //Context as a Shareable Item, Provider as a Definition and Usage, useContext to Allow Usage of Provider
 const GoogleMapContext = createContext();
@@ -39,8 +39,12 @@ export const GoogleMapProvider = ({ children }) => {
     });
   }
 
-  // Current Destination is Used for the Detail Box on Map Screen
-  const [currentDestination, setCurrentDestination] = useState(currentRegion);
+  // Current Destination is Used for the Detail Box on Map Screen, Updated Via Dragging Map or Selecting Autocomplete Result
+  let currentDestination = useRef(currentRegion);
+
+  function setCurrentDestination(newDestination) {
+    currentDestination.current = newDestination;
+  }
 
   // Google Map API Calls
   async function getPlaceAutocomplete(inputLocationName) {
@@ -95,42 +99,46 @@ export const GoogleMapProvider = ({ children }) => {
 
   //Find the Place ID via place name or coordinates to Query Place Details
   async function getPlaceID(placeName, placeCoordinates) {
-    let places;
-    if (placeName) {
-      let response = await fetch(
-        "https://places.googleapis.com/v1/places:searchText",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Goog-Api-Key": APIKEY,
-            "X-Goog-FieldMask": "places.id",
+    try {
+      let places;
+      if (placeName) {
+        let response = await fetch(
+          "https://places.googleapis.com/v1/places:searchText",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Goog-Api-Key": APIKEY,
+              "X-Goog-FieldMask": "places.id",
+            },
+            body: JSON.stringify({
+              textQuery: placeName,
+            }),
           },
-          body: JSON.stringify({
-            textQuery: placeName,
-          }),
-        },
-      );
+        );
 
-      response = await response.json();
-      places = response.places;
-      return places[0].id;
-    } else if (placeCoordinates) {
-      let response = await fetch(
-        `https://geocode.googleapis.com/v4beta/geocode/location/${placeCoordinates[0]},${placeCoordinates[1]}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Goog-Api-Key": APIKEY,
-            "X-Goog-FieldMask": "results.placeId",
+        response = await response.json();
+        places = response.places;
+        return places[0].id;
+      } else if (placeCoordinates) {
+        let response = await fetch(
+          `https://geocode.googleapis.com/v4beta/geocode/location/${placeCoordinates[0]},${placeCoordinates[1]}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Goog-Api-Key": APIKEY,
+              "X-Goog-FieldMask": "results.placeId",
+            },
           },
-        },
-      );
+        );
 
-      response = await response.json();
-      places = response.results;
-      return places[0].placeId;
+        response = await response.json();
+        places = response.results;
+        return places[0].placeId;
+      }
+    } catch (e) {
+      console.log("Error fetching placeID: ", e);
     }
   }
 
@@ -167,6 +175,7 @@ export const GoogleMapProvider = ({ children }) => {
       let address = response.shortFormattedAddress;
       let coordinates = response.location;
       let photoName = response.photos;
+
 
       if (photoName) {
         return {

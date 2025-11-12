@@ -1,12 +1,7 @@
 import MapDetailBox from "@/assets/components/MapDetailBox";
 import { useGoogleMap } from "@/contexts/GoogleMapContext";
 import { useEffect, useState, useRef } from "react";
-import {
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import MapView from "react-native-maps";
 import Icon from "react-native-vector-icons/FontAwesome6";
 import { Toast } from "toastify-react-native";
@@ -42,23 +37,25 @@ export default function Tab() {
   //Fetches and Sets Location Data
   async function refreshLocationData() {
     setLoading(true);
-    let result = await getPlaceDetails(null, [
-      currentDestination.latitude,
-      currentDestination.longitude,
-    ]);
+    try {
+      let result = await getPlaceDetails(null, [
+        currentDestination.current.latitude,
+        currentDestination.current.longitude,
+      ]);
 
-    if (result.error) {
-      Toast.error("Could Not Find Location Data!", "bottom");
-    } else {
-      // TODO: Find Why The Location Returned is The Same Despite Different Coordinates (supposingly) - context and on region change end are suspects
-      console.log("Acquired Location Data is ", result);
-      setLocationName(result.locationName);
-      setAddress(result.address);
-      if (result.photo) {
-        setPhotoURL(result.photo);
+      if (result.error) {
+        Toast.error("Could Not Find Location Data!", "bottom");
       } else {
-        setPhotoURL(null);
+        setLocationName(result.locationName);
+        setAddress(result.address);
+        if (result.photo) {
+          setPhotoURL(result.photo);
+        } else {
+          setPhotoURL(null);
+        }
       }
+    } catch (e) {
+      console.log("Error getting place details ", e);
     }
 
     setLoading(false);
@@ -73,9 +70,6 @@ export default function Tab() {
     startUpFunction();
   }, []);
 
-  // Hydration Issue for Place Details
-  useEffect(() => {}, [locationName]);
-
   return (
     <View
       style={{
@@ -88,7 +82,7 @@ export default function Tab() {
           ref={mapRef}
           style={{ zIndex: -10, flex: 1, height: "100%", width: "100%" }}
           loadingEnabled={true}
-          initialRegion={currentDestination}
+          initialRegion={currentDestination.current}
           onRegionChangeComplete={(region) => {
             // Update the Context To Store Current Destination (may move this out of context), Then Refresh the Bottom Bar's Details
             setCurrentDestination(region);

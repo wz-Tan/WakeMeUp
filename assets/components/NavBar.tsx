@@ -59,7 +59,7 @@ const styleSheet = StyleSheet.create({
     flexDirection: "row",
     padding: 10,
     justifyContent: "space-around",
-    boxShadow: "0px 5px 10px #C4C1C1FF",
+
   },
 
   iconCol: {

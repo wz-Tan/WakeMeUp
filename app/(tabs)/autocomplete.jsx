@@ -4,14 +4,13 @@ import {
   TextInput,
   TouchableOpacity,
   Text,
-  FlatList,
 } from "react-native";
 import { useState, useRef } from "react";
 import Icon from "react-native-vector-icons/FontAwesome6";
 import { useGoogleMap } from "@/contexts/GoogleMapContext";
-import { Toast } from "toastify-react-native";
 import AutocompleteResultBox from "@/assets/components/AutocompleteResultBox";
 import { useNavigation } from "@react-navigation/native";
+import Animated, { LinearTransition } from "react-native-reanimated";
 
 export default function Tab() {
   const navigation = useNavigation();
@@ -88,9 +87,10 @@ export default function Tab() {
             <Text style={styles.subtitle}>No Results Found.</Text>
           </View>
         ) : (
-          <FlatList
+          <Animated.FlatList
             data={locationData}
             style={{ flex: 1, paddingHorizontal: 5 }}
+            layout={LinearTransition}
             renderItem={({ item }) => {
               return (
                 <AutocompleteResultBox
