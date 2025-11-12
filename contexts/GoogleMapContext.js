@@ -23,8 +23,8 @@ export const GoogleMapProvider = ({ children }) => {
       latitude: currentRegion.latitude,
       longitude: currentRegion.longitude,
     },
-    pitch: 10,
-    heading: 10,
+    pitch: 5,
+    heading: 5,
   });
 
   // Map Value Changes
@@ -136,7 +136,6 @@ export const GoogleMapProvider = ({ children }) => {
 
   //Get Details to Display (Place Coordinates Should be [lat,long])
   async function getPlaceDetails(placeName, placeCoordinates) {
-    console.log("Acquiring Place Details");
     try {
       let placeID;
 
@@ -170,14 +169,12 @@ export const GoogleMapProvider = ({ children }) => {
       let photoName = response.photos;
 
       if (photoName) {
-        if (photoName.length >= 1) {
-          return {
-            locationName,
-            address,
-            coordinates,
-            photo: await getPlaceImages(photoName[0].name),
-          };
-        }
+        return {
+          locationName,
+          address,
+          coordinates,
+          photo: await getPlaceImages(photoName[0].name),
+        };
       } else {
         return { locationName, address, coordinates, photo: null };
       }

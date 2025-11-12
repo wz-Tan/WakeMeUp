@@ -6,7 +6,6 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Text,
 } from "react-native";
 import MapView from "react-native-maps";
 import Icon from "react-native-vector-icons/FontAwesome6";
@@ -19,7 +18,6 @@ export default function Tab() {
   const {
     getPlaceDetails,
     cameraValues,
-    setCameraValues,
     currentDestination,
     setCurrentDestination,
     recenterCamera,
@@ -36,7 +34,6 @@ export default function Tab() {
   useEffect(() => {
     if (mapRef.current) {
       mapRef.current.animateCamera(cameraValues);
-      console.log("Animating Camera");
     } else {
       console.log("The reference is not found.");
     }
@@ -45,7 +42,6 @@ export default function Tab() {
   //Fetches and Sets Location Data
   async function refreshLocationData() {
     setLoading(true);
-    console.log("Refreshing Location Data");
     let result = await getPlaceDetails(null, [
       currentDestination.latitude,
       currentDestination.longitude,
@@ -54,6 +50,8 @@ export default function Tab() {
     if (result.error) {
       Toast.error("Could Not Find Location Data!", "bottom");
     } else {
+      // TODO: Find Why The Location Returned is The Same Despite Different Coordinates (supposingly) - context and on region change end are suspects
+      console.log("Acquired Location Data is ", result);
       setLocationName(result.locationName);
       setAddress(result.address);
       if (result.photo) {
@@ -69,12 +67,14 @@ export default function Tab() {
   // Get The Details of The Current Location (Only Needed Once on Startup)
   useEffect(() => {
     async function startUpFunction() {
-      console.log("Running start up function");
       await refreshLocationData();
     }
 
     startUpFunction();
   }, []);
+
+  // Hydration Issue for Place Details
+  useEffect(() => {}, [locationName]);
 
   return (
     <View
@@ -90,9 +90,9 @@ export default function Tab() {
           loadingEnabled={true}
           initialRegion={currentDestination}
           onRegionChangeComplete={(region) => {
+            // Update the Context To Store Current Destination (may move this out of context), Then Refresh the Bottom Bar's Details
             setCurrentDestination(region);
             refreshLocationData();
-            console.log("Map has Moved");
           }}
         ></MapView>
         {/* Center Icon */}

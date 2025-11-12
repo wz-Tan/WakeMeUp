@@ -1,5 +1,5 @@
 import ImageNotFound from "@/assets/icon/noImage.png";
-import React from "react";
+import React, { useState } from "react";
 import {
   Dimensions,
   Image,
@@ -33,13 +33,17 @@ const MapDetailBox = ({
 }) => {
   //UI Sizes
   let ScreenHeight = Dimensions.get("screen").height;
-  let containerHeight = 0;
 
   //Constants
   const EXPANDEDOFFSET = -ScreenHeight * 0.05;
   const MINIMISEDOFFSET = -ScreenHeight * 0.38;
   const MIDLINE = (EXPANDEDOFFSET + MINIMISEDOFFSET) / 2;
 
+  // Box Sizes
+  let minimisedHeight = useSharedValue(-100);
+  let containerHeight = useSharedValue(0);
+
+  // By Default, offset Y is Set to Minimise the Screen
   let offsetY = useSharedValue(MINIMISEDOFFSET);
   let originalDifference = useSharedValue(0);
   let startPoint = useSharedValue(0);
@@ -63,17 +67,24 @@ const MapDetailBox = ({
 
       offsetY.value = -difference.value;
 
-      //Logic Check to Keep Bar within Bounds
+      // Keep Bar within Bounds
       if (offsetY.value >= EXPANDEDOFFSET) {
         offsetY.value = EXPANDEDOFFSET;
-      } else if (offsetY.value <= MINIMISEDOFFSET) {
-        offsetY.value = MINIMISEDOFFSET;
+      } else if (offsetY.value <= -ScreenHeight + minimisedHeight.value) {
+        offsetY.value = -ScreenHeight + minimisedHeight.value;
       }
     })
 
     .onFinalize(() => {
+      console.log("Screen Height is ", ScreenHeight);
+      console.log("container height is ", containerHeight.value);
       if (offsetY.value <= MIDLINE) {
-        offsetY.value = withSpring(MINIMISEDOFFSET, { duration: 1000 });
+        offsetY.value = withSpring(
+          -containerHeight.value + minimisedHeight.value + 50,
+          {
+            duration: 1000,
+          },
+        );
         runOnJS(setHideDestinationIcon)(false);
       } else {
         offsetY.value = withSpring(EXPANDEDOFFSET, { duration: 1000 });
@@ -89,43 +100,47 @@ const MapDetailBox = ({
     <GestureDetector gesture={pan}>
       <Animated.View
         style={[styles.infoBar, animatedStyle]}
-        onLayout={(event) => {
-          if (containerHeight == 0) {
-            containerHeight = event.nativeEvent.layout.height;
-          }
+        onLayout={(e) => {
+          containerHeight.value = e.nativeEvent.layout.height; // Gather Height of The Entire Detail Box
         }}
       >
         <TouchableOpacity style={{ alignSelf: "center", paddingTop: 15 }}>
           <Icon name="grip-lines" color="#000000" size={18} zIndex={20} />
         </TouchableOpacity>
+
         <View style={styles.infoBarContentBox}>
-          <Text style={styles.locationName}>
-            {loading ? "Loading..." : locationName}
-          </Text>
+          <View
+            onLayout={(e) => {
+              minimisedHeight.value = e.nativeEvent.layout.height; // Gather Height of Displayed Content in Minimised Version
+            }}
+            style={{ backgroundColor: "#FAFAFA" }}
+          >
+            <Text style={styles.locationName}>
+              {loading ? "Loading..." : locationName}
+            </Text>
 
-          <Text style={styles.addressText}>{loading ? "" : address}</Text>
-
-          <View style={[{ width: "100%", position: "absolute", bottom: 25 }]}>
-            <View style={styles.imageBox}>
-              {photoURL ? (
-                <Image style={styles.image} source={{ uri: `${photoURL}` }} />
-              ) : (
-                <Image style={styles.image} source={ImageNotFound} />
-              )}
-            </View>
-
-            <TouchableOpacity
-              style={[styles.button, { backgroundColor: "#359DFF" }]}
-            >
-              <Text style={styles.buttonText}>Set Active ✅</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.button, { backgroundColor: "#FF358C" }]}
-            >
-              <Text style={styles.buttonText}>Favourite 🧡</Text>
-            </TouchableOpacity>
+            <Text style={styles.addressText}>{loading ? "" : address}</Text>
           </View>
+
+          <View style={styles.imageBox}>
+            {photoURL ? (
+              <Image style={styles.image} source={{ uri: `${photoURL}` }} />
+            ) : (
+              <Image style={styles.image} source={ImageNotFound} />
+            )}
+          </View>
+
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: "#359DFF" }]}
+          >
+            <Text style={styles.buttonText}>Set Active ✅</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: "#FF358C" }]}
+          >
+            <Text style={styles.buttonText}>Favourite 🧡</Text>
+          </TouchableOpacity>
         </View>
       </Animated.View>
     </GestureDetector>
@@ -136,17 +151,16 @@ const styles = StyleSheet.create({
   infoBar: {
     position: "absolute",
     width: "100%",
-    height: "60%",
     backgroundColor: "#F3EEFF",
     borderRadius: 45,
     flexDirection: "column",
     alignItems: "center",
-    paddingBottom: 15,
+    paddingBottom: 55,
     zIndex: 100,
   },
 
   infoBarContentBox: {
-    paddingTop: 10,
+    paddingTop: 5,
     width: "90%",
     height: "90%",
     flexDirection: "column",
