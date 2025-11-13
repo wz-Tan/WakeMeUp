@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
-  runOnJS,
   useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
@@ -74,7 +73,7 @@ const MapDetailBox = ({
       startPoint.value = event.absoluteY;
       originalDifference.value = offsetY.value;
       try {
-        runOnJS(setHideDestinationIcon)(true);
+        scheduleOnRN(setHideDestinationIcon, true);
       } catch (error) {
         console.log("error is ", error);
       }
@@ -99,10 +98,10 @@ const MapDetailBox = ({
         offsetY.value = withSpring(minimisedOffset.value, {
           duration: 1000,
         });
-        runOnJS(setHideDestinationIcon)(false);
+        scheduleOnRN(setHideDestinationIcon, false);
       } else {
         offsetY.value = withSpring(expandedOffset.value, { duration: 1000 });
-        runOnJS(setHideDestinationIcon)(true);
+        scheduleOnRN(setHideDestinationIcon, true);
       }
     });
 
