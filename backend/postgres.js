@@ -26,3 +26,7 @@ async function createTable() {
 }
 
 createTable();
+
+async function addLocation() {
+  await client.query("");
+}
