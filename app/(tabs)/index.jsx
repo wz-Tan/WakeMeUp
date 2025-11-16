@@ -10,7 +10,6 @@ export default function Tab() {
         flex: 1,
         padding: 20,
         flexDirection: "column",
-        backgroundColor: "#F3EFFF",
       }}
     >
       {/* Header, Left is Title and Time, Right is Weather Icon */}

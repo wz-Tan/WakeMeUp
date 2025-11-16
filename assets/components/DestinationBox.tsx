@@ -165,6 +165,7 @@ const styleSheet = StyleSheet.create({
         backgroundColor: "#FFFFFF",
         flexDirection: "row",
         justifyContent: "space-between",
+        boxShadow: "0px 5px 5px #C4C1C1FF",
     },
 
     flexCol: {
