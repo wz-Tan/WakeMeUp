@@ -6,14 +6,21 @@ import ToastManager from "toastify-react-native";
 import { Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuth } from "@/contexts/AuthContext";
 
 //Main Layout (Safe Area -> Gesture -> View -> Outlet)
 export default function TabLayout() {
   const { loading } = useGoogleMap();
-  if (loading) {
+  const { authLoading } = useAuth();
+
+  if (loading || authLoading) {
     return (
       <SafeAreaView style={{ flex: 1 }}>
-        <Text>Loading Google Map</Text>
+        {loading ? (
+          <Text>Loading Google Map...</Text>
+        ) : (
+          <Text>Loading Auth...</Text>
+        )}
       </SafeAreaView>
     );
   }
@@ -42,7 +49,6 @@ export default function TabLayout() {
             <NavBar />
           </View>
         </GestureHandlerRootView>
-
         <ToastManager />
       </SafeAreaView>
     </View>

@@ -1,6 +1,10 @@
 const express = require("express");
 const app = express();
 const port = 4000;
+import { init } from "./postgres";
+
+// Wait for PostGresql to Init First
+await init();
 
 // Create Port
 app.listen(port, () => {

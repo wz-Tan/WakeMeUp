@@ -49,11 +49,12 @@ export default function Tab() {
           <Icon name="language" color="#000000" size={30} />
           <Text style={styles.settingText}>Language</Text>
         </View>
+        
+        <View style={styles.settingSelection}>
+          <Icon name="right-from-bracket" color="#000000" size={30} />
+          <Text style={styles.settingText}>Log Out</Text>
+        </View>
       </View>
-
-      <TouchableOpacity style={[styles.button, { backgroundColor: "#FF0000" }]}>
-        <Text style={styles.buttonText}>Log Out</Text>
-      </TouchableOpacity>
     </View>
   );
 }
