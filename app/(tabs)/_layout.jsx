@@ -1,26 +1,20 @@
 import NavBar from "@/assets/components/NavBar";
 import { useGoogleMap } from "@/contexts/GoogleMapContext";
 import { Tabs } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import ToastManager from "toastify-react-native";
 import { Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAuth } from "@/contexts/AuthContext";
+import { useNavigation } from "@react-navigation/native";
 
 //Main Layout (Safe Area -> Gesture -> View -> Outlet)
 export default function TabLayout() {
   const { loading } = useGoogleMap();
-  const { authLoading } = useAuth();
-
-  if (loading || authLoading) {
+  if (loading) {
     return (
       <SafeAreaView style={{ flex: 1 }}>
-        {loading ? (
-          <Text>Loading Google Map...</Text>
-        ) : (
-          <Text>Loading Auth...</Text>
-        )}
+        <Text>Loading Google Map...</Text>
       </SafeAreaView>
     );
   }

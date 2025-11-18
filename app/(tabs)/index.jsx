@@ -1,9 +1,12 @@
 import DestinationBox from "@/assets/components/DestinationBox";
 import CloudyIcon from "@/assets/icon/cloudy.png";
+import { useNavigation } from "@react-navigation/native";
+import { useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 export default function Tab() {
+
   return (
     <ScrollView
       style={{

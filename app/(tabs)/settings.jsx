@@ -49,7 +49,7 @@ export default function Tab() {
           <Icon name="language" color="#000000" size={30} />
           <Text style={styles.settingText}>Language</Text>
         </View>
-        
+
         <View style={styles.settingSelection}>
           <Icon name="right-from-bracket" color="#000000" size={30} />
           <Text style={styles.settingText}>Log Out</Text>
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     color: "#999999",
     fontFamily: "regular",
   },
-  settingText:{
+  settingText: {
     fontSize: 16,
     color: "#999999",
     fontFamily: "regular",
@@ -108,9 +108,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     boxShadow: "0px 3px 5px #C4C1C1FF",
-    position:"absolute",
+    position: "absolute",
     bottom: 20,
-    alignSelf: "center"
+    alignSelf: "center",
   },
 
   buttonText: {

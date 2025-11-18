@@ -6,6 +6,8 @@ import { init } from "./postgres";
 // Wait for PostGresql to Init First
 await init();
 
+// TODO: Test Create User Function
+
 // Create Port
 app.listen(port, () => {
   console.log(`ExpressJS is listening on port ${port}`);
