@@ -22,18 +22,20 @@ export async function init() {
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL
     )`);
-
-    console.log("Table Created");
   } catch (err) {
     console.log("Error creating table ", err);
   }
 }
 
-async function AddUser(name, email, password) {
+export async function createUser(name, email, password) {
   try {
-    await client.query(`INSERT INTO ${TABLENAME} (name, email, password)
-        VALUES (${name},${email},${password})
-      `);
+    await client.query(
+      `INSERT INTO ${TABLENAME} (name, email, password)
+        VALUES ($1,$2,$3)
+      `,
+      [name, email, password],
+    );
+    console.log("Created User");
   } catch (err) {
     console.error("Error when creating user, ", err);
   }

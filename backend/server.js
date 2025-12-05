@@ -1,12 +1,13 @@
-const express = require("express");
+import express from "express";
 const app = express();
 const port = 4000;
-import { init } from "./postgres";
+import { init, createUser } from "./postgres.js";
+
+// Extracts Data from JSON
+app.use(express.json());
 
 // Wait for PostGresql to Init First
 await init();
-
-// TODO: Test Create User Function
 
 // Create Port
 app.listen(port, () => {
@@ -16,4 +17,12 @@ app.listen(port, () => {
 // GET Responses
 app.get("/", (req, res) => {
   res.send("This Port is Running.");
+});
+
+// Create User
+app.post("/user/create", async (req, res) => {
+  console.log("Received create user command ");
+  const { userName, email, password } = req.body;
+  await createUser(userName, email, password);
+  res.send();
 });

@@ -5,7 +5,7 @@ import { Stack } from "expo-router";
 import { useState } from "react";
 import { Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import LoginPage from "./login";
+import AuthLanding from "./authLanding";
 
 export default function RootLayout() {
   const [hasAccount, setHasAccount] = useState(false);
@@ -28,7 +28,7 @@ export default function RootLayout() {
 
   // Display Login Screen
   if (!hasAccount) {
-    return <LoginPage />;
+    return <AuthLanding />;
   }
 
   return (

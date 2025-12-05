@@ -1,13 +1,18 @@
+import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { TextInput } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-native-safe-area-context";
+import SignUp from "./signUp";
 
-export default function LoginPage() {
+export default function AuthLanding() {
   // 0 for Selection Page, 1 for Signing Up, 2 for Logging In
-  const [shownPage, setShownPage] = useState(0);
+  const [shownPage, setShownPage] = useState(1);
+  const navigator = useNavigation();
 
   if (shownPage === 0) {
     return (
-      <View
+      <SafeAreaView
         style={{
           flex: 1,
           padding: 20,
@@ -31,24 +36,13 @@ export default function LoginPage() {
         >
           <Text style={[styles.buttonText, { color: "#000000" }]}>Log In</Text>
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     );
   }
+
   // Sign Up
   else if (shownPage === 1) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          padding: 20,
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Text style={styles.headerText}>Sign Up Page</Text>
-      </View>
-    );
+    return <SignUp />;
   }
 }
 
