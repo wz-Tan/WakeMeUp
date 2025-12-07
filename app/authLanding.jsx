@@ -1,41 +1,80 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SignUp from "./signUp";
 
 export default function AuthLanding() {
-  // 0 for Selection Page, 1 for Signing Up, 2 for Logging In
-  const [shownPage, setShownPage] = useState(1);
+  // Default is Log In, Navigate to Sign Up
+  const [shownPage, setShownPage] = useState(0);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigator = useNavigation();
+
+  async function signIn() {}
 
   if (shownPage === 0) {
     return (
       <SafeAreaView
         style={{
           flex: 1,
-          padding: 20,
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
         }}
       >
-        <Text style={styles.headerText}>WakeMeUp</Text>
-        <Text style={styles.headerSubText}>Your Friendly Pocket Alarm</Text>
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: "#000000" }]}
-          onPress={() => setShownPage(1)}
+        <View
+          style={{
+            flex: 1,
+            padding: 20,
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "#FAFAFA",
+          }}
         >
-          <Text style={styles.buttonText}>Sign Up</Text>
-        </TouchableOpacity>
+          <Text style={styles.headerText}>WakeMeUp</Text>
+          <Text style={styles.headerSubText}>Log In</Text>
+          <View style={{ width: "95%", gap: 20 }}>
+            <TextInput
+              style={styles.textInput}
+              onChangeText={setEmail}
+              value={email}
+              placeholder="Enter Email Here"
+            />
 
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: "#FAFAFA" }]}
-          onPress={() => setShownPage(2)}
-        >
-          <Text style={[styles.buttonText, { color: "#000000" }]}>Log In</Text>
-        </TouchableOpacity>
+            <TextInput
+              style={styles.textInput}
+              onChangeText={setPassword}
+              value={password}
+              secureTextEntry={true}
+              placeholder="Enter Your Password Here"
+            />
+          </View>
+
+          <TouchableOpacity style={styles.button} onPress={() => signIn()}>
+            <Text style={styles.buttonText}>Log In</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[{ width: "95%", marginTop: 10 }]}
+            onPress={() => {
+              // change to sign up screen
+            }}
+          >
+            <Text
+              style={[
+                styles.buttonText,
+                { color: "#001F3F", textAlign: "center" },
+              ]}
+            >
+              Create An Account
+            </Text>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     );
   }
@@ -48,31 +87,50 @@ export default function AuthLanding() {
 
 const styles = StyleSheet.create({
   headerText: {
-    fontSize: 20,
+    fontSize: 24,
     color: "#000000",
     fontFamily: "bold",
     lineHeight: 28,
+    margin: 15,
   },
 
   headerSubText: {
     fontSize: 18,
-    color: "#999999",
+    color: "#050505",
     fontFamily: "regular",
+    lineHeight: 24,
+    alignSelf: "flex-start",
+    margin: 10,
   },
   button: {
-    width: "100%",
-    padding: 10,
+    width: "95%",
+    paddingHorizontal: 10,
+    paddingVertical: 15,
     borderRadius: 5,
     justifyContent: "center",
     alignItems: "center",
-    boxShadow: "0px 3px 5px #C4C1C1FF",
+    boxShadow: "0px 3px 5px #C4C1FF",
     marginTop: 15,
+    backgroundColor: "#001F3F",
   },
 
   buttonText: {
     color: "#FFFFFF",
     fontSize: 14,
-    fontFamily: "bold",
-    lineHeight: 18,
+    fontFamily: "regular",
+    lineHeight: 20,
+  },
+
+  textInput: {
+    width: "100%",
+    fontSize: 14,
+    fontFamily: "regular",
+    lineHeight: 20,
+    boxShadow: "1px 5px 5px #D3D3D3",
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    color: "#000000",
+    backgroundColor: "#FAFAFA",
+    height: 50,
   },
 });

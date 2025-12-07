@@ -14,7 +14,7 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  async function verifySignUp() {
+  async function signIn() {
     //Todo : Refine Sign Up Conditions
     if (password === confirmPassword && password != "") {
       const response = await fetch("http://192.168.0.152:4000/user/create", {
@@ -46,7 +46,7 @@ export default function SignUp() {
     >
       <Text style={styles.headerText}>WakeMeUp</Text>
       <Text style={styles.headerSubText}>Create An Account</Text>
-      <View style={{ width: "100%", gap: 20 }}>
+      <View style={{ width: "95%", gap: 20 }}>
         <TextInput
           style={styles.textInput}
           onChangeText={setUsername}
@@ -77,7 +77,7 @@ export default function SignUp() {
           placeholder="Confirm Password"
         />
       </View>
-      <TouchableOpacity style={styles.button} onPress={() => verifySignUp()}>
+      <TouchableOpacity style={styles.button} onPress={() => signIn()}>
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -104,11 +104,11 @@ const styles = StyleSheet.create({
   button: {
     width: "95%",
     paddingHorizontal: 10,
-    paddingVertical: 20,
+    paddingVertical: 15,
     borderRadius: 5,
     justifyContent: "center",
     alignItems: "center",
-    boxShadow: "0px 3px 5px #C4C1C1FF",
+    boxShadow: "0px 5px 5px #C4C1C1FF",
     marginTop: 15,
     backgroundColor: "#001F3F",
   },
@@ -121,13 +121,12 @@ const styles = StyleSheet.create({
   },
 
   textInput: {
-    width: "95%",
-    alignSelf: "center",
+    width: "100%",
     fontSize: 14,
     fontFamily: "regular",
     lineHeight: 20,
-    boxShadow: "0px 5px 5px #C4C1C1FF",
-    paddingHorizontal: 15,
+    boxShadow: "1px 5px 5px #D3D3D3",
+    paddingHorizontal: 20,
     borderRadius: 5,
     color: "#000000",
     backgroundColor: "#FAFAFA",
