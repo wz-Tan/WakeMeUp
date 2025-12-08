@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   Text,
@@ -15,9 +15,18 @@ export default function AuthLanding() {
   const [shownPage, setShownPage] = useState(0);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigator = useNavigation();
+  const router = useRouter();
 
-  async function signIn() {}
+  async function signIn() {
+    await fetch("http://192.168.0.152:4000/user/signIn", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    });
+  }
 
   if (shownPage === 0) {
     return (
@@ -37,13 +46,13 @@ export default function AuthLanding() {
           }}
         >
           <Text style={styles.headerText}>WakeMeUp</Text>
-          <Text style={styles.headerSubText}>Log In</Text>
+          <Text style={styles.headerSubText}>Log Into an Existing Account</Text>
           <View style={{ width: "95%", gap: 20 }}>
             <TextInput
               style={styles.textInput}
               onChangeText={setEmail}
               value={email}
-              placeholder="Enter Email Here"
+              placeholder="Enter Email"
             />
 
             <TextInput
@@ -51,19 +60,17 @@ export default function AuthLanding() {
               onChangeText={setPassword}
               value={password}
               secureTextEntry={true}
-              placeholder="Enter Your Password Here"
+              placeholder="Enter Your Password"
             />
           </View>
 
           <TouchableOpacity style={styles.button} onPress={() => signIn()}>
-            <Text style={styles.buttonText}>Log In</Text>
+            <Text style={styles.buttonText}>Sign In</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={[{ width: "95%", marginTop: 10 }]}
-            onPress={() => {
-              // change to sign up screen
-            }}
+            onPress={() => router.push("/signUp")}
           >
             <Text
               style={[

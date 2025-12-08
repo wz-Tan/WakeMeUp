@@ -41,4 +41,21 @@ export async function createUser(name, email, password) {
   }
 }
 
+// Match Sign In Credentials
+export async function signIn(email, password) {
+  console.log("Sign in called");
+  try {
+    let result = await client.query(
+      `SELECT * from ${TABLENAME} where email=$1 AND password=$2`,
+      [email, password],
+    );
+
+    // Found User
+    return result.rowCount > 0 ? true : false;
+  } catch (err) {
+    console.log("Error Signing In: ", err);
+    return false;
+  }
+}
+
 // Start Listening For Changes Here

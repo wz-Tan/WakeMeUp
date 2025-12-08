@@ -1,7 +1,7 @@
 import express from "express";
 const app = express();
 const port = 4000;
-import { init, createUser } from "./postgres.js";
+import { init, createUser, signIn } from "./postgres.js";
 
 // Extracts Data from JSON
 app.use(express.json());
@@ -21,8 +21,17 @@ app.get("/", (req, res) => {
 
 // Create User
 app.post("/user/create", async (req, res) => {
-  console.log("Received create user command ");
+  console.log("Create User");
   const { userName, email, password } = req.body;
   await createUser(userName, email, password);
+  res.send();
+});
+
+// Sign In
+app.post("/user/signIn", async (req, res) => {
+  console.log("Sign In");
+  const { email, password } = req.body;
+  const userExists = await signIn(email, password);
+  userExists ? console.log("User Found") : console.log("User not found");
   res.send();
 });

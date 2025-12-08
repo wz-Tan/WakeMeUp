@@ -7,8 +7,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 
 export default function SignUp() {
+  const router = useRouter();
   const [userName, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,14 +53,14 @@ export default function SignUp() {
           style={styles.textInput}
           onChangeText={setUsername}
           value={userName}
-          placeholder="Enter Username Here"
+          placeholder="Enter Username"
         />
 
         <TextInput
           style={styles.textInput}
           onChangeText={setEmail}
           value={email}
-          placeholder="Enter Your Email Here"
+          placeholder="Enter Your Email"
         />
 
         <TextInput
@@ -66,7 +68,7 @@ export default function SignUp() {
           onChangeText={setPassword}
           value={password}
           secureTextEntry={true}
-          placeholder="Enter Your Password Here"
+          placeholder="Enter Your Password"
         />
 
         <TextInput
@@ -79,6 +81,16 @@ export default function SignUp() {
       </View>
       <TouchableOpacity style={styles.button} onPress={() => signIn()}>
         <Text style={styles.buttonText}>Sign Up</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[{ width: "95%", marginTop: 10 }]}
+        onPress={() => router.back()}
+      >
+        <Text
+          style={[styles.buttonText, { color: "#001F3F", textAlign: "center" }]}
+        >
+          I Have An Account
+        </Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
