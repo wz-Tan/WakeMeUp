@@ -29,15 +29,35 @@ export async function init() {
 
 export async function createUser(name, email, password) {
   try {
+    let userExists = checkUserExists(email);
+
+    if (userExists) {
+      return { error: "User Already Exists" };
+    }
+
     await client.query(
       `INSERT INTO ${TABLENAME} (name, email, password)
         VALUES ($1,$2,$3)
       `,
       [name, email, password],
     );
-    console.log("Created User");
+    return { status: 200 }; // On Success Return Code 200
   } catch (err) {
-    console.error("Error when creating user, ", err);
+    return { error: `Error when creating user, ${err}` };
+  }
+}
+
+async function checkUserExists(email) {
+  try {
+    let result = await client.query(
+      `SELECT * FROM ${TABLENAME}
+      where email = $1
+      `,
+      [email],
+    );
+    return result.rowCount > 0 ? true : false;
+  } catch (err) {
+    console.error("Error when checking user exists, ", err);
   }
 }
 
@@ -50,11 +70,10 @@ export async function signIn(email, password) {
       [email, password],
     );
 
-    // Found User
-    return result.rowCount > 0 ? true : false;
+    // Found User (or Not)
+    return result.rowCount > 0 ? { status: 200 } : { error: "User Not Found" };
   } catch (err) {
-    console.log("Error Signing In: ", err);
-    return false;
+    return { error: `Error Retrieving Sign In Credentials: ${err}` };
   }
 }
 

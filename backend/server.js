@@ -1,13 +1,10 @@
 import express from "express";
 const app = express();
 const port = 4000;
-import { init, createUser, signIn } from "./postgres.js";
+import { createUser, signIn } from "./postgres.js";
 
 // Extracts Data from JSON
 app.use(express.json());
-
-// Wait for PostGresql to Init First
-await init();
 
 // Create Port
 app.listen(port, () => {
@@ -23,15 +20,15 @@ app.get("/", (req, res) => {
 app.post("/user/create", async (req, res) => {
   console.log("Create User");
   const { userName, email, password } = req.body;
-  await createUser(userName, email, password);
-  res.send();
+  let response = await createUser(userName, email, password);
+  res.json(response);
 });
 
 // Sign In
 app.post("/user/signIn", async (req, res) => {
   console.log("Sign In");
   const { email, password } = req.body;
-  const userExists = await signIn(email, password);
-  userExists ? console.log("User Found") : console.log("User not found");
-  res.send();
+  let response = await signIn(email, password);
+  console.log("Response from signIn is", response);
+  res.json(response);
 });

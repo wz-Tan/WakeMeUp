@@ -18,7 +18,7 @@ export default function AuthLanding() {
   const router = useRouter();
 
   async function signIn() {
-    await fetch("http://192.168.0.152:4000/user/signIn", {
+    let response = await fetch("http://192.168.0.152:4000/user/signIn", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -26,6 +26,8 @@ export default function AuthLanding() {
         password,
       }),
     });
+    response = await response.json();
+    console.log("Sign in response from the backend is ", response);
   }
 
   if (shownPage === 0) {

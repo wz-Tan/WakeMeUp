@@ -17,9 +17,9 @@ export default function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   async function signIn() {
-    //Todo : Refine Sign Up Conditions
+    //Todo : Refine Sign Up Conditions + Encrypt Password
     if (password === confirmPassword && password != "") {
-      const response = await fetch("http://192.168.0.152:4000/user/create", {
+      let response = await fetch("http://192.168.0.152:4000/user/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -29,6 +29,8 @@ export default function SignUp() {
         }),
       });
 
+      response = await response.json();
+      console.log("Create Account Response", response);
       //To Do: Loading Screen
     } else {
       console.log("Invalid Sign Up Details");
