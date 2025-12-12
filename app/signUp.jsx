@@ -12,6 +12,7 @@ import LoadingPopUp from "../assets/components/Loading";
 
 export default function SignUp() {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const router = useRouter();
   const [userName, setUsername] = useState("");
@@ -21,25 +22,29 @@ export default function SignUp() {
 
   async function signIn() {
     setLoading(true);
-    //Todo : Refine Sign Up Conditions + Encrypt Password
+    //Todo : Refine Sign Up Conditions
     if (password === confirmPassword && password != "") {
-      let response = await fetch("http://192.168.0.152:4000/user/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userName,
-          email,
-          password,
-        }),
-      });
+      try {
+        let response = await fetch("http://192.168.0.152:4000/user/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userName,
+            email,
+            password,
+          }),
+        });
 
-      response = await response.json();
-      console.log("Create Account Response", response);
+        response = await response.json();
+        console.log("Create Account Response", response);
 
-      if (response.status === 200) {
-        router.back();
-      } else if (response.error) {
-        // set error message
+        if (response.status === 200) {
+          router.back();
+        } else if (response.error) {
+          setError(response.error);
+        }
+      } catch (err) {
+        setError(err);
       }
     } else {
       console.log("Invalid Sign Up Details");
@@ -60,6 +65,8 @@ export default function SignUp() {
         }}
       >
         {loading && LoadingPopUp("Creating Account...")}
+
+        {error && ErrorPopUp(error)}
 
         <Text style={styles.headerText}>WakeMeUp</Text>
         <Text style={styles.headerSubText}>Create An Account</Text>

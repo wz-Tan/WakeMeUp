@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Text,
   View,
@@ -9,27 +9,47 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LoadingPopUp from "../assets/components/Loading";
+import ErrorPopUp from "../assets/components/Error";
+import { LayoutContext } from "./_layout";
 
 export default function AuthLanding() {
+  // Context For Layout
+  const { changeLoginState } = useContext(LayoutContext);
+
   // Default is Log In, Navigate to Sign Up
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
 
   async function signIn() {
     setLoading(true);
 
-    let response = await fetch("http://192.168.0.152:4000/user/signIn", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
-    response = await response.json();
-    console.log("Sign in response from the backend is ", response);
+    try {
+      let response = await fetch("http://192.168.0.152:4000/user/signIn", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+      response = await response.json();
+
+      if (response.status === 200) {
+        // Switch to Tabs Interface
+        setLoading(false);
+        changeLoginState(true);
+      } 
+      else if (response.error) {
+        setError(response.error);
+      }
+
+      console.log("Sign in response from the backend is ", response);
+    } catch (err) {
+      setError(err);
+    }
 
     setLoading(false);
   }
@@ -42,6 +62,9 @@ export default function AuthLanding() {
     >
       {/* Loading Message*/}
       {loading && LoadingPopUp("Signing You In...")}
+
+      {/* Error Message*/}
+      {/* {error && ErrorPopUp(error)}*/}
 
       <View
         style={{
