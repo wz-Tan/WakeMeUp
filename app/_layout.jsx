@@ -7,7 +7,7 @@ import { Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RootLayout() {
-  const [hasAccount, setHasAccount] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
   const [fontsLoaded] = useFonts({
     regular: require("../assets/fonts/Poppins-Regular.ttf"),
     bold: require("../assets/fonts/Poppins-Bold.ttf"),
@@ -26,15 +26,17 @@ export default function RootLayout() {
   }
 
   // Display Login Screen
-  if (!hasAccount) {
-    return  <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="authLanding" options={{ headerShown: false }} />
-      <Stack.Screen name="signUp" options={{ headerShown: false }} />
-    </Stack>
+  if (!loggedIn) {
+    return (
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="authLanding" options={{ headerShown: false }} />
+        <Stack.Screen name="signUp" options={{ headerShown: false }} />
+      </Stack>
+    );
   }
 
   return (

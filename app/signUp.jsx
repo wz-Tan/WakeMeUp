@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import LoadingPopUp from "../assets/components/Loading";
 
 export default function SignUp() {
   const [loading, setLoading] = useState(false);
@@ -47,62 +48,69 @@ export default function SignUp() {
   }
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        padding: 20,
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#FAFAFA",
-      }}
-    >
-      <Text style={styles.headerText}>WakeMeUp</Text>
-      <Text style={styles.headerSubText}>Create An Account</Text>
-      <View style={{ width: "95%", gap: 20 }}>
-        <TextInput
-          style={styles.textInput}
-          onChangeText={setUsername}
-          value={userName}
-          placeholder="Enter Username"
-        />
-
-        <TextInput
-          style={styles.textInput}
-          onChangeText={setEmail}
-          value={email}
-          placeholder="Enter Your Email"
-        />
-
-        <TextInput
-          style={styles.textInput}
-          onChangeText={setPassword}
-          value={password}
-          secureTextEntry={true}
-          placeholder="Enter Your Password"
-        />
-
-        <TextInput
-          style={styles.textInput}
-          onChangeText={setConfirmPassword}
-          value={confirmPassword}
-          secureTextEntry={true}
-          placeholder="Confirm Password"
-        />
-      </View>
-      <TouchableOpacity style={styles.button} onPress={() => signIn()}>
-        <Text style={styles.buttonText}>Sign Up</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[{ width: "95%", marginTop: 10 }]}
-        onPress={() => router.back()}
+    <SafeAreaView style={{ flex: 1 }}>
+      <View
+        style={{
+          flex: 1,
+          padding: 20,
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#FAFAFA",
+        }}
       >
-        <Text
-          style={[styles.buttonText, { color: "#001F3F", textAlign: "center" }]}
+        {loading && LoadingPopUp("Creating Account...")}
+
+        <Text style={styles.headerText}>WakeMeUp</Text>
+        <Text style={styles.headerSubText}>Create An Account</Text>
+        <View style={{ width: "95%", gap: 20 }}>
+          <TextInput
+            style={styles.textInput}
+            onChangeText={setUsername}
+            value={userName}
+            placeholder="Enter Username"
+          />
+
+          <TextInput
+            style={styles.textInput}
+            onChangeText={setEmail}
+            value={email}
+            placeholder="Enter Your Email"
+          />
+
+          <TextInput
+            style={styles.textInput}
+            onChangeText={setPassword}
+            value={password}
+            secureTextEntry={true}
+            placeholder="Enter Your Password"
+          />
+
+          <TextInput
+            style={styles.textInput}
+            onChangeText={setConfirmPassword}
+            value={confirmPassword}
+            secureTextEntry={true}
+            placeholder="Confirm Password"
+          />
+        </View>
+        <TouchableOpacity style={styles.button} onPress={() => signIn()}>
+          <Text style={styles.buttonText}>Sign Up</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[{ width: "95%", marginTop: 10 }]}
+          onPress={() => router.back()}
         >
-          I Have An Account
-        </Text>
-      </TouchableOpacity>
+          <Text
+            style={[
+              styles.buttonText,
+              { color: "#001F3F", textAlign: "center" },
+            ]}
+          >
+            I Have An Account
+          </Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }

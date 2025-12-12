@@ -8,6 +8,7 @@ import {
   TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import LoadingPopUp from "../assets/components/Loading";
 
 export default function AuthLanding() {
   // Default is Log In, Navigate to Sign Up
@@ -39,6 +40,9 @@ export default function AuthLanding() {
         flex: 1,
       }}
     >
+      {/* Loading Message*/}
+      {loading && LoadingPopUp("Signing You In...")}
+
       <View
         style={{
           flex: 1,
