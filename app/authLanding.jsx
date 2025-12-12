@@ -41,14 +41,15 @@ export default function AuthLanding() {
         // Switch to Tabs Interface
         setLoading(false);
         changeLoginState(true);
-      } 
-      else if (response.error) {
+      } else if (response.error) {
+        console.log("error is", response.error);
         setError(response.error);
       }
 
       console.log("Sign in response from the backend is ", response);
     } catch (err) {
-      setError(err);
+      // Server Side Error
+      setError(err.message);
     }
 
     setLoading(false);
@@ -64,7 +65,7 @@ export default function AuthLanding() {
       {loading && LoadingPopUp("Signing You In...")}
 
       {/* Error Message*/}
-      {/* {error && ErrorPopUp(error)}*/}
+      {error && ErrorPopUp(error, () => setError(""))}
 
       <View
         style={{
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     justifyContent: "center",
     alignItems: "center",
-    boxShadow: "0px 3px 5px #C4C1FF",
+    boxShadow: "0px 3px 5px #C4C1CC",
     marginTop: 15,
     backgroundColor: "#001F3F",
   },

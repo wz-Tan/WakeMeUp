@@ -9,6 +9,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import LoadingPopUp from "../assets/components/Loading";
+import ErrorPopUp from "../assets/components/Error";
 
 export default function SignUp() {
   const [loading, setLoading] = useState(false);
@@ -38,13 +39,14 @@ export default function SignUp() {
         response = await response.json();
         console.log("Create Account Response", response);
 
+        // Successful Sign Up, Return to Sign In Page
         if (response.status === 200) {
           router.back();
         } else if (response.error) {
           setError(response.error);
         }
       } catch (err) {
-        setError(err);
+        setError(err.message);
       }
     } else {
       console.log("Invalid Sign Up Details");
@@ -66,7 +68,7 @@ export default function SignUp() {
       >
         {loading && LoadingPopUp("Creating Account...")}
 
-        {error && ErrorPopUp(error)}
+        {error && ErrorPopUp(error, () => setError(""))}
 
         <Text style={styles.headerText}>WakeMeUp</Text>
         <Text style={styles.headerSubText}>Create An Account</Text>
