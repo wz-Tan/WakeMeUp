@@ -8,16 +8,17 @@ import {
   TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import SignUp from "./signUp";
 
 export default function AuthLanding() {
   // Default is Log In, Navigate to Sign Up
-  const [shownPage, setShownPage] = useState(0);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   async function signIn() {
+    setLoading(true);
+
     let response = await fetch("http://192.168.0.152:4000/user/signIn", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -28,70 +29,65 @@ export default function AuthLanding() {
     });
     response = await response.json();
     console.log("Sign in response from the backend is ", response);
+
+    setLoading(false);
   }
 
-  if (shownPage === 0) {
-    return (
-      <SafeAreaView
+  return (
+    <SafeAreaView
+      style={{
+        flex: 1,
+      }}
+    >
+      <View
         style={{
           flex: 1,
+          padding: 20,
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#FAFAFA",
         }}
       >
-        <View
-          style={{
-            flex: 1,
-            padding: 20,
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "#FAFAFA",
-          }}
-        >
-          <Text style={styles.headerText}>WakeMeUp</Text>
-          <Text style={styles.headerSubText}>Log Into an Existing Account</Text>
-          <View style={{ width: "95%", gap: 20 }}>
-            <TextInput
-              style={styles.textInput}
-              onChangeText={setEmail}
-              value={email}
-              placeholder="Enter Email"
-            />
+        <Text style={styles.headerText}>WakeMeUp</Text>
+        <Text style={styles.headerSubText}>Log Into an Existing Account</Text>
+        <View style={{ width: "95%", gap: 20 }}>
+          <TextInput
+            style={styles.textInput}
+            onChangeText={setEmail}
+            value={email}
+            placeholder="Enter Email"
+          />
 
-            <TextInput
-              style={styles.textInput}
-              onChangeText={setPassword}
-              value={password}
-              secureTextEntry={true}
-              placeholder="Enter Your Password"
-            />
-          </View>
-
-          <TouchableOpacity style={styles.button} onPress={() => signIn()}>
-            <Text style={styles.buttonText}>Sign In</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[{ width: "95%", marginTop: 10 }]}
-            onPress={() => router.push("/signUp")}
-          >
-            <Text
-              style={[
-                styles.buttonText,
-                { color: "#001F3F", textAlign: "center" },
-              ]}
-            >
-              Create An Account
-            </Text>
-          </TouchableOpacity>
+          <TextInput
+            style={styles.textInput}
+            onChangeText={setPassword}
+            value={password}
+            secureTextEntry={true}
+            placeholder="Enter Your Password"
+          />
         </View>
-      </SafeAreaView>
-    );
-  }
 
-  // Sign Up
-  else if (shownPage === 1) {
-    return <SignUp />;
-  }
+        <TouchableOpacity style={styles.button} onPress={() => signIn()}>
+          <Text style={styles.buttonText}>Sign In</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[{ width: "95%", marginTop: 10 }]}
+          onPress={() => router.push("/signUp")}
+        >
+          <Text
+            style={[
+              styles.buttonText,
+              { color: "#001F3F", textAlign: "center" },
+            ]}
+          >
+            Create An Account
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({

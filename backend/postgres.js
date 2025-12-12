@@ -29,7 +29,7 @@ export async function init() {
 
 export async function createUser(name, email, password) {
   try {
-    let userExists = checkUserExists(email);
+    let userExists = await checkUserExists(email);
 
     if (userExists) {
       return { error: "User Already Exists" };
@@ -55,7 +55,7 @@ async function checkUserExists(email) {
       `,
       [email],
     );
-    return result.rowCount > 0 ? true : false;
+    return result.rowCount > 0;
   } catch (err) {
     console.error("Error when checking user exists, ", err);
   }
@@ -65,16 +65,30 @@ async function checkUserExists(email) {
 export async function signIn(email, password) {
   console.log("Sign in called");
   try {
+    // Find Email and Password Match
     let result = await client.query(
       `SELECT * from ${TABLENAME} where email=$1 AND password=$2`,
       [email, password],
     );
 
-    // Found User (or Not)
-    return result.rowCount > 0 ? { status: 200 } : { error: "User Not Found" };
+    // No Match
+    if (!result.rowCount) {
+      let emailExists = await client.query(
+        `SELECT * from ${TABLENAME} where email=$1`,
+        [email],
+      );
+
+      // Password Issue
+      if (emailExists.rowCount > 0) {
+        return { error: "Incorrect Password" };
+      } else {
+        return { error: "User Not Found" };
+      }
+    }
+
+    // Found User
+    return { status: 200 };
   } catch (err) {
     return { error: `Error Retrieving Sign In Credentials: ${err}` };
   }
 }
-
-// Start Listening For Changes Here

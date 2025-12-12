@@ -10,6 +10,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 
 export default function SignUp() {
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter();
   const [userName, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -17,6 +19,7 @@ export default function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   async function signIn() {
+    setLoading(true);
     //Todo : Refine Sign Up Conditions + Encrypt Password
     if (password === confirmPassword && password != "") {
       let response = await fetch("http://192.168.0.152:4000/user/create", {
@@ -31,10 +34,16 @@ export default function SignUp() {
 
       response = await response.json();
       console.log("Create Account Response", response);
-      //To Do: Loading Screen
+
+      if (response.status === 200) {
+        router.back();
+      } else if (response.error) {
+        // set error message
+      }
     } else {
       console.log("Invalid Sign Up Details");
     }
+    setLoading(false);
   }
 
   return (
