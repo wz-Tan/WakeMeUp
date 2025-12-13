@@ -7,14 +7,12 @@ function ErrorPopUp(errorMessage: string, clearError: Function) {
     <View
       style={[
         styles.errorBackground,
-        { justifyContent: "center", alignItems: "center" },
+        { justifyContent: "center", alignItems: "center", gap: 10 },
       ]}
     >
-      <Icon name="face-frown" color="#0000BB" size={40} />
-      <Text style={[styles.errorMessage, { marginTop: 10 }]}>
-        Oops! Something Went Wrong.
-      </Text>
-      <Text style={styles.errorMessage}>Error: {errorMessage}</Text>
+      <Icon name="face-frown" color="#000000" size={100} />
+      <Text style={[styles.errorHeader]}>Oops! Something Went Wrong.</Text>
+      <Text style={styles.errorMessage}>{errorMessage}</Text>
       <TouchableOpacity onPress={() => clearError()} style={styles.button}>
         <Text style={styles.buttonText}>Got It</Text>
       </TouchableOpacity>
@@ -33,11 +31,21 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
 
+  errorHeader: {
+    fontSize: 20,
+    fontFamily: "regular",
+    color: "#000000",
+    lineHeight: 28,
+    marginTop: 20,
+  },
+
   errorMessage: {
     fontSize: 16,
     fontFamily: "regular",
     color: "#000000",
     lineHeight: 20,
+    paddingHorizontal: 20,
+    textAlign: "center",
   },
 
   button: {

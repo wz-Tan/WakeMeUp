@@ -11,11 +11,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import LoadingPopUp from "../assets/components/Loading";
 import ErrorPopUp from "../assets/components/Error";
 import { LayoutContext } from "./_layout";
+import { useRef } from "react";
 
 export default function AuthLanding() {
-  // Context For Layout
-  const { changeLoginState } = useContext(LayoutContext);
-
   // Default is Log In, Navigate to Sign Up
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,9 +38,8 @@ export default function AuthLanding() {
       if (response.status === 200) {
         // Switch to Tabs Interface
         setLoading(false);
-        changeLoginState(true);
+        router.navigate("(tabs)");
       } else if (response.error) {
-        console.log("error is", response.error);
         setError(response.error);
       }
 

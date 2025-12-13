@@ -10,8 +10,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export const LayoutContext = createContext();
 
 export default function RootLayout() {
-  const [loggedIn, setLoggedIn] = useState(false);
-
   const [fontsLoaded] = useFonts({
     regular: require("../assets/fonts/Poppins-Regular.ttf"),
     bold: require("../assets/fonts/Poppins-Bold.ttf"),
@@ -20,10 +18,6 @@ export default function RootLayout() {
 
     ...FontAwesome6.font,
   });
-
-  function changeLoginState(state) {
-    setLoggedIn(state);
-  }
 
   if (!fontsLoaded) {
     return (
@@ -34,32 +28,16 @@ export default function RootLayout() {
   }
 
   // Display Login Screen
-  if (!loggedIn) {
-    return (
-      <LayoutContext.Provider value={{ changeLoginState, loggedIn }}>
-        <Stack
-          initialRouteName="authLanding"
-          screenOptions={{
-            headerShown: false,
-          }}
-        >
-          <Stack.Screen
-            name="authLanding"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen name="signUp" options={{ headerShown: false }} />
-        </Stack>
-      </LayoutContext.Provider>
-    );
-  }
-
   return (
     <GoogleMapProvider>
       <Stack
+        initialRouteName="authLanding"
         screenOptions={{
           headerShown: false,
         }}
       >
+        <Stack.Screen name="authLanding" options={{ headerShown: false }} />
+        <Stack.Screen name="signUp" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
     </GoogleMapProvider>
