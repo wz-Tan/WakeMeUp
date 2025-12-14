@@ -86,8 +86,8 @@ export async function signIn(email, password) {
       }
     }
 
-    // Found User
-    return { status: 200 };
+    // Found User, UserID for JWT
+    return { status: 200, userId: result.rows[0].id };
   } catch (err) {
     return { error: `Error Retrieving Sign In Credentials: ${err}` };
   }

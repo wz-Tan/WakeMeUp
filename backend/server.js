@@ -1,6 +1,8 @@
 import express from "express";
-import crypto, { createHash } from "crypto";
+import { createHash } from "crypto";
 import { createUser, signIn } from "./postgres.js";
+import jwt from "jsonwebtoken";
+import "dotenv/config";
 
 const app = express();
 const port = 4000;
@@ -37,5 +39,11 @@ app.post("/user/signIn", async (req, res) => {
 
   let response = await signIn(email, encryptedPassword);
   console.log("Response from signIn is", response);
-  res.json(response);
+
+  let { userId } = response;
+  
+  const token = jwt.sign({ userId }, process.env.JWT_KEY);
+
+  // Return Response and JWT
+  res.json({response, token});
 });

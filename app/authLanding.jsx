@@ -10,8 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import LoadingPopUp from "../assets/components/Loading";
 import ErrorPopUp from "../assets/components/Error";
-import { LayoutContext } from "./_layout";
-import { useRef } from "react";
+import SecureStore from "expo-secure-store";
 
 export default function AuthLanding() {
   // Default is Log In, Navigate to Sign Up
@@ -21,11 +20,13 @@ export default function AuthLanding() {
   const [error, setError] = useState("");
   const router = useRouter();
 
+  const TOKEN_NAME = "Auth_JWT";
+
   async function signIn() {
     setLoading(true);
 
     try {
-      let response = await fetch("http://192.168.0.152:4000/user/signIn", {
+      let response = await fetch("http://10.83.169.230:4000/user/signIn", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -36,9 +37,13 @@ export default function AuthLanding() {
       response = await response.json();
 
       if (response.status === 200) {
-        // Switch to Tabs Interface
         setLoading(false);
-        router.navigate("(tabs)");
+
+        // Store JWT Token
+        await SecureStore.setItemAsync(TOKEN_NAME, response.token);
+
+        // Switch to Tabs Interface
+        router.replace("(tabs)");
       } else if (response.error) {
         setError(response.error);
       }
