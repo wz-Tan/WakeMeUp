@@ -35,6 +35,11 @@
           "dark": {
             "backgroundColor": "#000000"
           }
+        },
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow WakeMeUp to use your location.",
+          "isAndroidBackgroundLocationEnabled": true
         }
       ],
       "expo-web-browser",

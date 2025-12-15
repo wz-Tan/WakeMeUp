@@ -21,7 +21,22 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  async function signIn() {
+  function checkUsername(username) {
+    // Can Consist of A-Z or Numbers or Underscore
+    const re = /^[a-zA-Z0-9_]+$/;
+    if (username.length < 3) {
+      console.log("Username is too short!");
+      return { warning: "Username should be at least 3 characters!" };
+    } else if (!re.test(username)) {
+      return {
+        warning: "No special characters allowed aside from underscore.",
+      };
+    } else {
+      return { warning: "" };
+    }
+  }
+
+  async function signUp() {
     setLoading(true);
     //Todo : Refine Sign Up Conditions
     if (password === confirmPassword && password != "") {
@@ -103,7 +118,7 @@ export default function SignUp() {
             placeholder="Confirm Password"
           />
         </View>
-        <TouchableOpacity style={styles.button} onPress={() => signIn()}>
+        <TouchableOpacity style={styles.button} onPress={() => signUp()}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
         <TouchableOpacity
