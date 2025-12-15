@@ -40,10 +40,10 @@ app.post("/user/signIn", async (req, res) => {
   let response = await signIn(email, encryptedPassword);
   console.log("Response from signIn is", response);
 
-  let { userId } = response;
-  
+  let { userId, status } = response;
+
   const token = jwt.sign({ userId }, process.env.JWT_KEY);
 
   // Return Response and JWT
-  res.json({response, token});
+  res.json({ status, token });
 });

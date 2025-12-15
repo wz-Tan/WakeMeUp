@@ -10,7 +10,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import LoadingPopUp from "../assets/components/Loading";
 import ErrorPopUp from "../assets/components/Error";
-import SecureStore from "expo-secure-store";
+import { getItemAsync, setItemAsync } from "expo-secure-store";
+import { useEffect } from "react";
 
 export default function AuthLanding() {
   // Default is Log In, Navigate to Sign Up
@@ -21,6 +22,23 @@ export default function AuthLanding() {
   const router = useRouter();
 
   const TOKEN_NAME = "Auth_JWT";
+
+  // Try Loading Token
+  useEffect(() => {
+    const loadToken = async () => {
+      try {
+        const token = await getItemAsync(TOKEN_NAME);
+
+        // Token Exists
+        if (token) {
+          router.replace("(tabs)");
+        }
+      } catch (err) {
+        console.log("Error on acquiring token:", err);
+      }
+    };
+    loadToken();
+  }, []);
 
   async function signIn() {
     setLoading(true);
@@ -40,7 +58,8 @@ export default function AuthLanding() {
         setLoading(false);
 
         // Store JWT Token
-        await SecureStore.setItemAsync(TOKEN_NAME, response.token);
+        await setItemAsync(TOKEN_NAME, response.token);
+        console.log("Stored token");
 
         // Switch to Tabs Interface
         router.replace("(tabs)");

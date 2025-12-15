@@ -1,6 +1,13 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome6";
+import { deleteItemAsync} from "expo-secure-store";
 export default function Tab() {
+  const TOKEN_NAME = "Auth_JWT";
+
+  async function signOut() {
+    deleteItemAsync(TOKEN_NAME);
+  }
+
   return (
     <View
       style={{
@@ -50,10 +57,13 @@ export default function Tab() {
           <Text style={styles.settingText}>Language</Text>
         </View>
 
-        <View style={styles.settingSelection}>
+        <TouchableOpacity
+          style={styles.settingSelection}
+          onPress={() => signOut()}
+        >
           <Icon name="right-from-bracket" color="#000000" size={30} />
           <Text style={styles.settingText}>Log Out</Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
