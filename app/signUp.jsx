@@ -14,6 +14,7 @@ import ErrorPopUp from "../assets/components/Error";
 export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [warning, setWarning] = useState("");
 
   const router = useRouter();
   const [userName, setUsername] = useState("");
@@ -21,19 +22,55 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  function checkUsername(username) {
+  function validateUsername(username) {
+    let warning = [];
+
     // Can Consist of A-Z or Numbers or Underscore
     const re = /^[a-zA-Z0-9_]+$/;
     if (username.length < 3) {
-      console.log("Username is too short!");
-      return { warning: "Username should be at least 3 characters!" };
-    } else if (!re.test(username)) {
-      return {
-        warning: "No special characters allowed aside from underscore.",
-      };
-    } else {
-      return { warning: "" };
+      warning.push("Username should be at least 3 characters!");
     }
+    if (!re.test(username)) {
+      warning.push("No special characters allowed aside from underscore.");
+    }
+    return { warning };
+  }
+
+  function validateEmail(email) {
+    let warning = [];
+
+    // Anything That's Not Space or @, + means undefined number
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!re.test(email)) {
+      warning.push("Invalid Email");
+    }
+    return { warning };
+  }
+
+  function validatePassword(password) {
+    let warning = [];
+
+    // Look for at least 1 uppercase
+    const uppercaseRe = /^(?=.*[A-Z])$/;
+    if (!uppercaseRe.test(password)) {
+      warning.push("Password should have at least 1 uppercase character.");
+    }
+
+    const lowercaseRe = /^(?=.*[a-z])$/;
+    if (!lowercaseRe.test(password)) {
+      warning.push("Password should have at least 1 lowercase character.");
+    }
+
+    const numberRe = /^(?=.*[0-9])$/;
+    if (!numberRe.test(password)) {
+      warning.push("Password should have at least 1 number.");
+    }
+
+    if (password.length < 6) {
+      warning.push("Password should be at least 6 characters long.");
+    }
+
+    return { warning };
   }
 
   async function signUp() {
