@@ -35,6 +35,8 @@ export async function createUser(name, email, password) {
       return { error: "User Already Exists" };
     }
 
+    console.log("Received data is", name, email, password);
+
     await client.query(
       `INSERT INTO ${TABLENAME} (name, email, password)
         VALUES ($1,$2,$3)

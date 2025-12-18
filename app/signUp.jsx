@@ -14,26 +14,40 @@ import ErrorPopUp from "../assets/components/Error";
 export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [warning, setWarning] = useState("");
 
   const router = useRouter();
-  const [userName, setUsername] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  // Warning States
+  const [showUsernameWarning, setShowUsernameWarning] = useState(false);
+  const [showEmailWarning, setShowEmailWarning] = useState(false);
+  const [showPasswordWarning, setShowPasswordWarning] = useState(false);
+  const [showConfirmPasswordWarning, setShowConfirmPasswordWarning] =
+    useState(false);
+
+  // Warning Content
+  const [usernameWarning, setUsernameWarning] = useState([]);
+  const [emailWarning, setEmailWarning] = useState([]);
+  const [passwordWarning, setPasswordWarning] = useState([]);
+
+  // Validators (Also Set Value)
   function validateUsername(username) {
     let warning = [];
 
     // Can Consist of A-Z or Numbers or Underscore
     const re = /^[a-zA-Z0-9_]+$/;
     if (username.length < 3) {
-      warning.push("Username should be at least 3 characters!");
+      warning.push("Username should be at least 3 characters.");
     }
     if (!re.test(username)) {
       warning.push("No special characters allowed aside from underscore.");
     }
-    return { warning };
+
+    setUsername(username);
+    setUsernameWarning(warning);
   }
 
   function validateEmail(email) {
@@ -44,7 +58,11 @@ export default function SignUp() {
     if (!re.test(email)) {
       warning.push("Invalid Email");
     }
-    return { warning };
+
+    console.log("email check:", warning);
+
+    setEmail(email);
+    setEmailWarning(warning);
   }
 
   function validatePassword(password) {
@@ -70,19 +88,28 @@ export default function SignUp() {
       warning.push("Password should be at least 6 characters long.");
     }
 
-    return { warning };
+    console.log("Password check:", warning);
+
+    setPassword(password);
+    setPasswordWarning(warning);
   }
 
   async function signUp() {
     setLoading(true);
-    //Todo : Refine Sign Up Conditions
-    if (password === confirmPassword && password != "") {
+
+    // Warnings have length of 0
+    if (
+      !usernameWarning.length &&
+      !emailWarning.length &&
+      !passwordWarning.length &&
+      password === confirmPassword
+    ) {
       try {
         let response = await fetch("http://192.168.0.152:4000/user/create", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            userName,
+            username,
             email,
             password,
           }),
@@ -127,33 +154,86 @@ export default function SignUp() {
         <View style={{ width: "95%", gap: 20 }}>
           <TextInput
             style={styles.textInput}
-            onChangeText={setUsername}
-            value={userName}
+            onChangeText={(input) => {
+              validateUsername(input);
+            }}
+            value={username}
             placeholder="Enter Username"
+            onFocus={() => setShowUsernameWarning(true)}
+            onBlur={() => setShowUsernameWarning(false)}
           />
+
+          {showUsernameWarning && usernameWarning.length > 0 && (
+            <View style={styles.warningTextContainer}>
+              {usernameWarning.map((warningMessage, key) => (
+                <Text key={key} style={styles.warningText}>
+                  {warningMessage}
+                </Text>
+              ))}
+            </View>
+          )}
 
           <TextInput
             style={styles.textInput}
-            onChangeText={setEmail}
+            onChangeText={(input) => {
+              validateEmail(input);
+            }}
             value={email}
             placeholder="Enter Your Email"
+            onFocus={() => setShowEmailWarning(true)}
+            onBlur={() => setShowEmailWarning(false)}
           />
+
+          {showEmailWarning && emailWarning.length > 0 && (
+            <View style={styles.warningTextContainer}>
+              {emailWarning.map((warningMessage, key) => (
+                <Text key={key} style={styles.warningText}>
+                  {warningMessage}
+                </Text>
+              ))}
+            </View>
+          )}
 
           <TextInput
             style={styles.textInput}
-            onChangeText={setPassword}
+            onChangeText={(input) => {
+              validatePassword(input);
+            }}
             value={password}
             secureTextEntry={true}
             placeholder="Enter Your Password"
+            onFocus={() => setShowPasswordWarning(true)}
+            onBlur={() => setShowPasswordWarning(false)}
           />
+
+          {showPasswordWarning && passwordWarning.length > 0 && (
+            <View style={styles.warningTextContainer}>
+              {passwordWarning.map((warningMessage, key) => (
+                <Text key={key} style={styles.warningText}>
+                  {warningMessage}
+                </Text>
+              ))}
+            </View>
+          )}
 
           <TextInput
             style={styles.textInput}
-            onChangeText={setConfirmPassword}
+            onChangeText={(input) => {
+              setConfirmPassword(input);
+              input !== password
+                ? setShowConfirmPasswordWarning(true)
+                : setShowConfirmPasswordWarning(false);
+            }}
             value={confirmPassword}
             secureTextEntry={true}
             placeholder="Confirm Password"
           />
+
+          {showConfirmPasswordWarning && (
+            <View style={styles.warningTextContainer}>
+              <Text style={styles.warningText}>Passwords do not match.</Text>
+            </View>
+          )}
         </View>
         <TouchableOpacity style={styles.button} onPress={() => signUp()}>
           <Text style={styles.buttonText}>Sign Up</Text>
@@ -223,5 +303,16 @@ const styles = StyleSheet.create({
     color: "#000000",
     backgroundColor: "#FAFAFA",
     height: 50,
+  },
+
+  warningText: {
+    fontSize: 12,
+    fontFamily: "medium",
+    color: "#FFA500",
+  },
+
+  warningTextContainer: {
+    width: "100%",
+    flexDirection: "column",
   },
 });

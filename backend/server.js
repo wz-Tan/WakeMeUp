@@ -22,11 +22,10 @@ app.get("/", (req, res) => {
 
 // Create User
 app.post("/user/create", async (req, res) => {
-  const { userName, email, password } = req.body;
-
+  const { username, email, password } = req.body;
   const encryptedPassword = createHash("sha256").update(password).digest("hex");
 
-  let response = await createUser(userName, email, encryptedPassword);
+  let response = await createUser(username, email, encryptedPassword);
   console.log("Response from SignUp is", response);
   res.json(response);
 });

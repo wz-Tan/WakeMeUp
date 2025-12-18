@@ -44,7 +44,7 @@ export default function AuthLanding() {
     setLoading(true);
 
     try {
-      let response = await fetch("http://10.83.169.230:4000/user/signIn", {
+      let response = await fetch("http://192.168.0.152:4000/user/signIn", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
