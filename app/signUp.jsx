@@ -22,11 +22,12 @@ export default function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   // Warning States
-  const [showUsernameWarning, setShowUsernameWarning] = useState(false);
-  const [showEmailWarning, setShowEmailWarning] = useState(false);
-  const [showPasswordWarning, setShowPasswordWarning] = useState(false);
-  const [showConfirmPasswordWarning, setShowConfirmPasswordWarning] =
-    useState(false);
+  const [shownWarning, setShownWarning] = useState({
+    username: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+  });
 
   // Warning Content
   const [usernameWarning, setUsernameWarning] = useState([]);
@@ -59,8 +60,6 @@ export default function SignUp() {
       warning.push("Invalid Email");
     }
 
-    console.log("email check:", warning);
-
     setEmail(email);
     setEmailWarning(warning);
   }
@@ -69,17 +68,17 @@ export default function SignUp() {
     let warning = [];
 
     // Look for at least 1 uppercase
-    const uppercaseRe = /^(?=.*[A-Z])$/;
+    const uppercaseRe = /^(?=.*[A-Z]).*$/;
     if (!uppercaseRe.test(password)) {
       warning.push("Password should have at least 1 uppercase character.");
     }
 
-    const lowercaseRe = /^(?=.*[a-z])$/;
+    const lowercaseRe = /^(?=.*[a-z]).*$/;
     if (!lowercaseRe.test(password)) {
       warning.push("Password should have at least 1 lowercase character.");
     }
 
-    const numberRe = /^(?=.*[0-9])$/;
+    const numberRe = /^(?=.*[0-9]).*$/;
     if (!numberRe.test(password)) {
       warning.push("Password should have at least 1 number.");
     }
@@ -88,7 +87,7 @@ export default function SignUp() {
       warning.push("Password should be at least 6 characters long.");
     }
 
-    console.log("Password check:", warning);
+    console.log("Warning for password is ", warning);
 
     setPassword(password);
     setPasswordWarning(warning);
@@ -100,8 +99,11 @@ export default function SignUp() {
     // Warnings have length of 0
     if (
       !usernameWarning.length &&
+      username.length &&
       !emailWarning.length &&
+      email.length &&
       !passwordWarning.length &&
+      password.length &&
       password === confirmPassword
     ) {
       try {
@@ -128,7 +130,7 @@ export default function SignUp() {
         setError(err.message);
       }
     } else {
-      console.log("Invalid Sign Up Details");
+      console.log("A Regex Failed");
     }
     setLoading(false);
   }
@@ -159,11 +161,21 @@ export default function SignUp() {
             }}
             value={username}
             placeholder="Enter Username"
-            onFocus={() => setShowUsernameWarning(true)}
-            onBlur={() => setShowUsernameWarning(false)}
+            onFocus={() =>
+              setShownWarning((prev) => ({
+                ...prev,
+                username: true,
+              }))
+            }
+            onBlur={() =>
+              setShownWarning((prev) => ({
+                ...prev,
+                username: false,
+              }))
+            }
           />
 
-          {showUsernameWarning && usernameWarning.length > 0 && (
+          {shownWarning.username && usernameWarning.length > 0 && (
             <View style={styles.warningTextContainer}>
               {usernameWarning.map((warningMessage, key) => (
                 <Text key={key} style={styles.warningText}>
@@ -180,11 +192,21 @@ export default function SignUp() {
             }}
             value={email}
             placeholder="Enter Your Email"
-            onFocus={() => setShowEmailWarning(true)}
-            onBlur={() => setShowEmailWarning(false)}
+            onFocus={() =>
+              setShownWarning((prev) => ({
+                ...prev,
+                email: true,
+              }))
+            }
+            onBlur={() =>
+              setShownWarning((prev) => ({
+                ...prev,
+                email: false,
+              }))
+            }
           />
 
-          {showEmailWarning && emailWarning.length > 0 && (
+          {shownWarning.email && emailWarning.length > 0 && (
             <View style={styles.warningTextContainer}>
               {emailWarning.map((warningMessage, key) => (
                 <Text key={key} style={styles.warningText}>
@@ -202,11 +224,21 @@ export default function SignUp() {
             value={password}
             secureTextEntry={true}
             placeholder="Enter Your Password"
-            onFocus={() => setShowPasswordWarning(true)}
-            onBlur={() => setShowPasswordWarning(false)}
+            onFocus={() =>
+              setShownWarning((prev) => ({
+                ...prev,
+                password: true,
+              }))
+            }
+            onBlur={() =>
+              setShownWarning((prev) => ({
+                ...prev,
+                password: false,
+              }))
+            }
           />
 
-          {showPasswordWarning && passwordWarning.length > 0 && (
+          {shownWarning.password && passwordWarning.length > 0 && (
             <View style={styles.warningTextContainer}>
               {passwordWarning.map((warningMessage, key) => (
                 <Text key={key} style={styles.warningText}>
@@ -221,15 +253,23 @@ export default function SignUp() {
             onChangeText={(input) => {
               setConfirmPassword(input);
               input !== password
-                ? setShowConfirmPasswordWarning(true)
-                : setShowConfirmPasswordWarning(false);
+                ? () =>
+                    setShownWarning((prev) => ({
+                      ...prev,
+                      confirmPassword: true,
+                    }))
+                : () =>
+                    setShownWarning((prev) => ({
+                      ...prev,
+                      confirmPassword: false,
+                    }));
             }}
             value={confirmPassword}
             secureTextEntry={true}
             placeholder="Confirm Password"
           />
 
-          {showConfirmPasswordWarning && (
+          {shownWarning.confirmPassword && (
             <View style={styles.warningTextContainer}>
               <Text style={styles.warningText}>Passwords do not match.</Text>
             </View>
