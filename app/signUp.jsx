@@ -27,6 +27,7 @@ export default function SignUp() {
     email: false,
     password: false,
     confirmPassword: false,
+    emptyFields: false,
   });
 
   // Warning Content
@@ -36,6 +37,12 @@ export default function SignUp() {
 
   // Validators (Also Set Value)
   function validateUsername(username) {
+    // Reset Empty Field Warning
+    setShownWarning((prev) => ({
+      ...prev,
+      emptyFields: false,
+    }));
+
     let warning = [];
 
     // Can Consist of A-Z or Numbers or Underscore
@@ -52,6 +59,12 @@ export default function SignUp() {
   }
 
   function validateEmail(email) {
+    // Reset Empty Field Warning
+    setShownWarning((prev) => ({
+      ...prev,
+      emptyFields: false,
+    }));
+
     let warning = [];
 
     // Anything That's Not Space or @, + means undefined number
@@ -65,6 +78,12 @@ export default function SignUp() {
   }
 
   function validatePassword(password) {
+    // Reset Empty Field Warning
+    setShownWarning((prev) => ({
+      ...prev,
+      emptyFields: false,
+    }));
+
     let warning = [];
 
     // Look for at least 1 uppercase
@@ -87,25 +106,64 @@ export default function SignUp() {
       warning.push("Password should be at least 6 characters long.");
     }
 
-    console.log("Warning for password is ", warning);
-
     setPassword(password);
     setPasswordWarning(warning);
   }
 
   async function signUp() {
-    setLoading(true);
+    let conditionFailed = false;
 
-    // Warnings have length of 0
+    // Edge Cases
     if (
-      !usernameWarning.length &&
-      username.length &&
-      !emailWarning.length &&
-      email.length &&
-      !passwordWarning.length &&
-      password.length &&
-      password === confirmPassword
+      !username.length ||
+      !email.length ||
+      !password.length ||
+      !confirmPassword.length
     ) {
+      setShownWarning((prev) => ({
+        ...prev,
+        emptyFields: true,
+      }));
+      console.log("Some fields are emptu");
+      conditionFailed = true;
+    }
+
+    // Warning for Each Field
+    if (usernameWarning.length) {
+      setShownWarning((prev) => ({
+        ...prev,
+        username: true,
+      }));
+      conditionFailed = true;
+    }
+
+    if (emailWarning.length) {
+      setShownWarning((prev) => ({
+        ...prev,
+        email: true,
+      }));
+      conditionFailed = true;
+    }
+
+    if (passwordWarning.length) {
+      setShownWarning((prev) => ({
+        ...prev,
+        password: true,
+      }));
+      conditionFailed = true;
+    }
+
+    if (confirmPassword !== password) {
+      setShownWarning((prev) => ({
+        ...prev,
+        confirmPassword: true,
+      }));
+      conditionFailed = true;
+    }
+
+    // Run if No Warning
+    if (!conditionFailed) {
+      setLoading(true);
       try {
         let response = await fetch("http://192.168.0.152:4000/user/create", {
           method: "POST",
@@ -129,9 +187,8 @@ export default function SignUp() {
       } catch (err) {
         setError(err.message);
       }
-    } else {
-      console.log("A Regex Failed");
     }
+
     setLoading(false);
   }
 
@@ -252,17 +309,21 @@ export default function SignUp() {
             style={styles.textInput}
             onChangeText={(input) => {
               setConfirmPassword(input);
+              console.log(
+                "password and confirm password is",
+                password,
+                confirmPassword,
+              );
+
               input !== password
-                ? () =>
-                    setShownWarning((prev) => ({
-                      ...prev,
-                      confirmPassword: true,
-                    }))
-                : () =>
-                    setShownWarning((prev) => ({
-                      ...prev,
-                      confirmPassword: false,
-                    }));
+                ? setShownWarning((prev) => ({
+                    ...prev,
+                    confirmPassword: true,
+                  }))
+                : setShownWarning((prev) => ({
+                    ...prev,
+                    confirmPassword: false,
+                  }));
             }}
             value={confirmPassword}
             secureTextEntry={true}
@@ -272,6 +333,14 @@ export default function SignUp() {
           {shownWarning.confirmPassword && (
             <View style={styles.warningTextContainer}>
               <Text style={styles.warningText}>Passwords do not match.</Text>
+            </View>
+          )}
+
+          {shownWarning.emptyFields && (
+            <View style={styles.warningTextContainer}>
+              <Text style={styles.warningText}>
+                Ensure There Are No Empty Fields!
+              </Text>
             </View>
           )}
         </View>
