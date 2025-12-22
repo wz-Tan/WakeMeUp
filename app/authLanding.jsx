@@ -14,7 +14,6 @@ import { useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function AuthLanding() {
-  const TOKEN_NAME = "Auth_JWT";
   const { loadAuthToken, authSignIn } = useAuth();
 
   // Default is Log In, Navigate to Sign Up
@@ -26,6 +25,7 @@ export default function AuthLanding() {
 
   // Try Loading Token
   useEffect(() => {
+    console.log("Running use effect");
     const loadToken = async () => {
       let response = await loadAuthToken();
       if (response === true) {

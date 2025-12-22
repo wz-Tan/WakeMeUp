@@ -13,7 +13,7 @@ import ErrorPopUp from "../assets/components/Error";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function SignUp() {
-  const { authSignUp } = useAuth();
+  const { authSignUp, authSignIn } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -126,7 +126,6 @@ export default function SignUp() {
         ...prev,
         emptyFields: true,
       }));
-      console.log("Some fields are emptu");
       conditionFailed = true;
     }
 
@@ -170,7 +169,15 @@ export default function SignUp() {
       // Run Sign Up Function
       let response = await authSignUp(username, email, password);
       if (response.status === 200) {
-        router.back();
+        try {
+          await authSignIn(email, password);
+        } catch (err) {
+          console.log(
+            "Error trying to sign in automatically after signing up",
+            err,
+          );
+        }
+        router.replace("authLanding");
       } else {
         setError(response.error);
       }
@@ -330,7 +337,7 @@ export default function SignUp() {
         </TouchableOpacity>
         <TouchableOpacity
           style={[{ width: "95%", marginTop: 10 }]}
-          onPress={() => router.back()}
+          onPress={() => router.replace("authLanding")}
         >
           <Text
             style={[
