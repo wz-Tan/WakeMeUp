@@ -56,9 +56,31 @@ export const AuthContextProvider = ({ children }) => {
     }
   }
 
-  async function authSignUp() {}
+  async function authSignUp(username, email, password) {
+    try {
+      let response = await fetch("http://192.168.0.152:4000/user/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+        }),
+      });
+
+      response = await response.json();
+      console.log("Create Account Response", response);
+
+      // Return Response JSON Object
+      return response;
+    } catch (err) {
+      return { error: err.message };
+    }
+  }
   return (
-    <AuthContext.Provider value={{ loadAuthToken, authSignIn, authSignOut }}>
+    <AuthContext.Provider
+      value={{ loadAuthToken, authSignIn, authSignOut, authSignUp }}
+    >
       {children}
     </AuthContext.Provider>
   );

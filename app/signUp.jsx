@@ -10,8 +10,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import LoadingPopUp from "../assets/components/Loading";
 import ErrorPopUp from "../assets/components/Error";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function SignUp() {
+  const { authSignUp } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -164,32 +166,16 @@ export default function SignUp() {
     // Run if No Warning
     if (!conditionFailed) {
       setLoading(true);
-      try {
-        let response = await fetch("http://192.168.0.152:4000/user/create", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            username,
-            email,
-            password,
-          }),
-        });
 
-        response = await response.json();
-        console.log("Create Account Response", response);
-
-        // Successful Sign Up, Return to Sign In Page
-        if (response.status === 200) {
-          router.back();
-        } else if (response.error) {
-          setError(response.error);
-        }
-      } catch (err) {
-        setError(err.message);
+      // Run Sign Up Function
+      let response = await authSignUp(username, email, password);
+      if (response.status === 200) {
+        router.back();
+      } else {
+        setError(response.error);
       }
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   return (
@@ -309,11 +295,6 @@ export default function SignUp() {
             style={styles.textInput}
             onChangeText={(input) => {
               setConfirmPassword(input);
-              console.log(
-                "password and confirm password is",
-                password,
-                confirmPassword,
-              );
 
               input !== password
                 ? setShownWarning((prev) => ({
