@@ -1,69 +1,85 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome6";
-import { deleteItemAsync} from "expo-secure-store";
+import ErrorPopUp from "@/assets/components/Error";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+
 export default function Tab() {
-  const TOKEN_NAME = "Auth_JWT";
+  const { authSignOut } = useAuth();
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   async function signOut() {
-    deleteItemAsync(TOKEN_NAME);
+    let response = await authSignOut();
+    console.log("Sign Out Response", response);
+
+    if (response.status === 200) {
+      router.replace("/authLanding");
+    } else {
+      setError(response.error);
+    }
   }
 
   return (
-    <View
-      style={{
-        flex: 1,
-        padding: 20,
-        flexDirection: "column",
-      }}
-    >
-      <Text style={styles.headerText}>Profile</Text>
-
-      {/* Profile Image and Username*/}
+    <View style={{ flex: 1 }}>
+      {error && ErrorPopUp(error, () => setError(""))}
       <View
         style={{
-          width: "100%",
+          flex: 1,
+          padding: 20,
           flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          marginTop: 10,
         }}
       >
-        <View style={styles.profilePictureContainer}></View>
-        <Text style={styles.headerText}>John Doe</Text>
-        <Text style={styles.headerSubText}>abc123@gmail.com</Text>
-      </View>
+        <Text style={styles.headerText}>Profile</Text>
 
-      <Text style={[styles.headerText, { marginTop: 10 }]}>Preferences</Text>
-
-      {/* Selections */}
-      <View style={styles.settingsBox}>
-        <View style={styles.settingSelection}>
-          <Icon name="bell" color="#000000" size={30} />
-          <Text style={styles.settingText}>Notifications</Text>
-        </View>
-
-        <View style={styles.settingSelection}>
-          <Icon name="clock" color="#000000" size={30} />
-          <Text style={styles.settingText}>Alarm</Text>
-        </View>
-
-        <View style={styles.settingSelection}>
-          <Icon name="palette" color="#000000" size={30} />
-          <Text style={styles.settingText}>Theme</Text>
-        </View>
-
-        <View style={styles.settingSelection}>
-          <Icon name="language" color="#000000" size={30} />
-          <Text style={styles.settingText}>Language</Text>
-        </View>
-
-        <TouchableOpacity
-          style={styles.settingSelection}
-          onPress={() => signOut()}
+        {/* Profile Image and Username*/}
+        <View
+          style={{
+            width: "100%",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: 10,
+          }}
         >
-          <Icon name="right-from-bracket" color="#000000" size={30} />
-          <Text style={styles.settingText}>Log Out</Text>
-        </TouchableOpacity>
+          <View style={styles.profilePictureContainer}></View>
+          <Text style={styles.headerText}>John Doe</Text>
+          <Text style={styles.headerSubText}>abc123@gmail.com</Text>
+        </View>
+
+        <Text style={[styles.headerText, { marginTop: 10 }]}>Preferences</Text>
+
+        {/* Selections */}
+        <View style={styles.settingsBox}>
+          <View style={styles.settingSelection}>
+            <Icon name="bell" color="#000000" size={30} />
+            <Text style={styles.settingText}>Notifications</Text>
+          </View>
+
+          <View style={styles.settingSelection}>
+            <Icon name="clock" color="#000000" size={30} />
+            <Text style={styles.settingText}>Alarm</Text>
+          </View>
+
+          <View style={styles.settingSelection}>
+            <Icon name="palette" color="#000000" size={30} />
+            <Text style={styles.settingText}>Theme</Text>
+          </View>
+
+          <View style={styles.settingSelection}>
+            <Icon name="language" color="#000000" size={30} />
+            <Text style={styles.settingText}>Language</Text>
+          </View>
+
+          <TouchableOpacity
+            style={styles.settingSelection}
+            onPress={() => signOut()}
+          >
+            <Icon name="right-from-bracket" color="#000000" size={30} />
+            <Text style={styles.settingText}>Log Out</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );

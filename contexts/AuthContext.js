@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { createContext } from "react";
-import { getItemAsync, setItemAsync } from "expo-secure-store";
+import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 
 const AuthContext = createContext();
 
@@ -46,11 +46,19 @@ export const AuthContextProvider = ({ children }) => {
       return { error: err };
     }
   }
-  async function authSignOut() {}
+  async function authSignOut() {
+    try {
+      await deleteItemAsync(TOKEN_NAME);
+      return { status: 200 };
+    } catch (err) {
+      console.log("Error signing out", err);
+      return { error: err };
+    }
+  }
 
   async function authSignUp() {}
   return (
-    <AuthContext.Provider value={{ loadAuthToken, authSignIn, aurhSignOut }}>
+    <AuthContext.Provider value={{ loadAuthToken, authSignIn, authSignOut }}>
       {children}
     </AuthContext.Provider>
   );

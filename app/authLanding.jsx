@@ -10,7 +10,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import LoadingPopUp from "../assets/components/Loading";
 import ErrorPopUp from "../assets/components/Error";
-import { getItemAsync, setItemAsync } from "expo-secure-store";
 import { useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 
