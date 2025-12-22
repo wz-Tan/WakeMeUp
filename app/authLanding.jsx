@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import {
   Text,
   View,
@@ -12,8 +12,12 @@ import LoadingPopUp from "../assets/components/Loading";
 import ErrorPopUp from "../assets/components/Error";
 import { getItemAsync, setItemAsync } from "expo-secure-store";
 import { useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function AuthLanding() {
+  const TOKEN_NAME = "Auth_JWT";
+  const { loadAuthToken, authSignIn } = useAuth();
+
   // Default is Log In, Navigate to Sign Up
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,20 +25,12 @@ export default function AuthLanding() {
   const [error, setError] = useState("");
   const router = useRouter();
 
-  const TOKEN_NAME = "Auth_JWT";
-
   // Try Loading Token
   useEffect(() => {
     const loadToken = async () => {
-      try {
-        const token = await getItemAsync(TOKEN_NAME);
-
-        // Token Exists
-        if (token) {
-          router.replace("(tabs)");
-        }
-      } catch (err) {
-        console.log("Error on acquiring token:", err);
+      let response = await loadAuthToken();
+      if (response === true) {
+        router.replace("(tabs)");
       }
     };
     loadToken();
@@ -43,35 +39,18 @@ export default function AuthLanding() {
   async function signIn() {
     setLoading(true);
 
-    try {
-      let response = await fetch("http://192.168.0.152:4000/user/signIn", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
-      response = await response.json();
+    let response = await authSignIn(email, password);
+    console.log("Response is", response);
 
-      if (response.status === 200) {
-        setLoading(false);
-
-        // Store JWT Token
-        await setItemAsync(TOKEN_NAME, response.token);
-        console.log("Stored token");
-
-        // Switch to Tabs Interface
-        router.replace("(tabs)");
-      } else if (response.error) {
-        setError(response.error);
-      }
-
-      console.log("Sign in response from the backend is ", response);
-    } catch (err) {
-      // Server Side Error
-      setError(err.message);
+    if (response.status === 200) {
+      setLoading(false);
+      // Switch to Tabs Interface
+      router.replace("(tabs)");
+    } else if (response.error) {
+      setError(response.error);
     }
+
+    console.log("Sign in response from the backend is ", response);
 
     setLoading(false);
   }

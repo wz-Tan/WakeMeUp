@@ -37,12 +37,18 @@ app.post("/user/signIn", async (req, res) => {
   const encryptedPassword = createHash("sha256").update(password).digest("hex");
 
   let response = await signIn(email, encryptedPassword);
-  console.log("Response from signIn is", response);
+  console.log("Response from SignIn is", response);
 
-  let { userId, status } = response;
+  // Return SignIn Response
+  if (response.error) {
+    console.log("Error is", response.error);
+    res.json({ error: response.error });
+  } else {
+    let { userId, status } = response;
 
-  const token = jwt.sign({ userId }, process.env.JWT_KEY);
+    const token = jwt.sign({ userId }, process.env.JWT_KEY);
 
-  // Return Response and JWT
-  res.json({ status, token });
+    // Return Response and JWT
+    res.json({ status, token });
+  }
 });

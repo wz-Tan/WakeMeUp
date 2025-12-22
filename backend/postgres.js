@@ -1,7 +1,8 @@
 import "dotenv/config";
 import { Pool } from "pg";
 
-const TABLENAME = "users";
+const USERS = "users";
+const LOCATIONS = "locations";
 
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
@@ -16,7 +17,7 @@ const client = await pool.connect();
 // Create Table for Use
 export async function init() {
   try {
-    await client.query(`CREATE TABLE IF NOT EXISTS ${TABLENAME}(
+    await client.query(`CREATE TABLE IF NOT EXISTS ${USERS}(
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
@@ -35,10 +36,8 @@ export async function createUser(name, email, password) {
       return { error: "User Already Exists" };
     }
 
-    console.log("Received data is", name, email, password);
-
     await client.query(
-      `INSERT INTO ${TABLENAME} (name, email, password)
+      `INSERT INTO ${USERS} (name, email, password)
         VALUES ($1,$2,$3)
       `,
       [name, email, password],
@@ -52,7 +51,7 @@ export async function createUser(name, email, password) {
 async function checkUserExists(email) {
   try {
     let result = await client.query(
-      `SELECT * FROM ${TABLENAME}
+      `SELECT * FROM ${USERS}
       where email = $1
       `,
       [email],
@@ -69,14 +68,14 @@ export async function signIn(email, password) {
   try {
     // Find Email and Password Match
     let result = await client.query(
-      `SELECT * from ${TABLENAME} where email=$1 AND password=$2`,
+      `SELECT * from ${USERS} where email=$1 AND password=$2`,
       [email, password],
     );
 
     // No Match
     if (!result.rowCount) {
       let emailExists = await client.query(
-        `SELECT * from ${TABLENAME} where email=$1`,
+        `SELECT * from ${USERS} where email=$1`,
         [email],
       );
 
@@ -92,5 +91,21 @@ export async function signIn(email, password) {
     return { status: 200, userId: result.rows[0].id };
   } catch (err) {
     return { error: `Error Retrieving Sign In Credentials: ${err}` };
+  }
+}
+
+// Add Location to User DB
+export async function addLocation(userId, locationData) {
+  console.log("Add Location Called");
+  try {
+    const result = await client.query(
+      `INSERT INTO ${LOCATIONS} (userId, location)
+      VALUES ($1,$2)`,
+      [userId, locationData],
+    );
+
+    console.log("Result of adding location is", result);
+  } catch (err) {
+    console.log("Error adding location into database", err);
   }
 }

@@ -1,13 +1,10 @@
 import { GoogleMapProvider } from "../contexts/GoogleMapContext";
+import { AuthContextProvider } from "../contexts/AuthContext";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import { createContext, useContext, useState } from "react";
 import { Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-// To Set Login State from Auth Landing
-export const LayoutContext = createContext();
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -29,17 +26,19 @@ export default function RootLayout() {
 
   // Display Login Screen
   return (
-    <GoogleMapProvider>
-      <Stack
-        initialRouteName="authLanding"
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        <Stack.Screen name="authLanding" options={{ headerShown: false }} />
-        <Stack.Screen name="signUp" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
-    </GoogleMapProvider>
+    <AuthContextProvider>
+      <GoogleMapProvider>
+        <Stack
+          initialRouteName="authLanding"
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen name="authLanding" options={{ headerShown: false }} />
+          <Stack.Screen name="signUp" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </GoogleMapProvider>
+    </AuthContextProvider>
   );
 }
