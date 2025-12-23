@@ -1,17 +1,32 @@
-import { useContext } from "react";
-import { createContext } from "react";
+import { useContext, createContext, useState, useEffect } from "react";
 import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 
 const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
   const TOKEN_NAME = "Auth_JWT";
+  const [userId, setUserId] = useState("");
+
+  function extractUserId(token) {
+    try {
+      // Convert Base64 into Readable Text, Then Parse
+      let payload = atob(
+        token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"),
+      );
+
+      payload = JSON.parse(payload);
+      setUserId(payload.userId);
+    } catch (err) {
+      console.log("Error decoding token", err);
+    }
+  }
 
   async function loadAuthToken() {
     try {
       const token = await getItemAsync(TOKEN_NAME);
 
       if (token) {
+        extractUserId(token);
         return true;
       } else {
         return false;
@@ -49,6 +64,7 @@ export const AuthContextProvider = ({ children }) => {
   async function authSignOut() {
     try {
       await deleteItemAsync(TOKEN_NAME);
+      setUserId("");
       return { status: 200 };
     } catch (err) {
       console.log("Error signing out", err);
