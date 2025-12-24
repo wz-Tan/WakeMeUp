@@ -11,7 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 //Main Layout (Safe Area -> Gesture -> View -> Outlet)
 export default function TabLayout() {
   const { loading } = useGoogleMap();
-  console.log("Tab init has been called");
+
   if (loading) {
     return (
       <SafeAreaView style={{ flex: 1 }}>

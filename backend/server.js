@@ -1,6 +1,6 @@
 import express from "express";
 import { createHash } from "crypto";
-import { createUser, signIn } from "./postgres.js";
+import { addLocation, createUser, signIn } from "./postgres.js";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 
@@ -51,4 +51,13 @@ app.post("/user/signIn", async (req, res) => {
     // Return Response and JWT
     res.json({ status, token });
   }
+});
+
+// Add Location
+app.post("/location/add", async (req, res) => {
+  const { userId, locationData } = req.body;
+
+  let response = await addLocation(userId, locationData);
+
+  res.json(response);
 });

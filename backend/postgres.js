@@ -23,8 +23,8 @@ export async function init() {
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL
     )`);
-  } catch (err) {
-    console.log("Error creating table ", err);
+  } catch (error) {
+    console.log("error creating table ", error);
   }
 }
 
@@ -43,8 +43,8 @@ export async function createUser(name, email, password) {
       [name, email, password],
     );
     return { status: 200 }; // On Success Return Code 200
-  } catch (err) {
-    return { error: `Error when creating user, ${err}` };
+  } catch (error) {
+    return { error: `error when creating user, ${error}` };
   }
 }
 
@@ -57,8 +57,8 @@ async function checkUserExists(email) {
       [email],
     );
     return result.rowCount > 0;
-  } catch (err) {
-    console.error("Error when checking user exists, ", err);
+  } catch (error) {
+    console.error("error when checking user exists, ", error);
   }
 }
 
@@ -89,14 +89,14 @@ export async function signIn(email, password) {
 
     // Found User, UserID for JWT
     return { status: 200, userId: result.rows[0].id };
-  } catch (err) {
-    return { error: `Error Retrieving Sign In Credentials: ${err}` };
+  } catch (error) {
+    return { error: `error Retrieving Sign In Credentials: ${error}` };
   }
 }
 
 // Add Location to User DB
 export async function addLocation(userId, locationData) {
-  console.log("Add Location Called");
+  console.log("Add Location Called with", userId, locationData);
   try {
     const result = await client.query(
       `INSERT INTO ${LOCATIONS} (userId, location)
@@ -105,7 +105,9 @@ export async function addLocation(userId, locationData) {
     );
 
     console.log("Result of adding location is", result);
-  } catch (err) {
-    console.log("Error adding location into database", err);
+    return { status: 200 };
+  } catch (error) {
+    console.log("error adding location into database", error);
+    return { error };
   }
 }

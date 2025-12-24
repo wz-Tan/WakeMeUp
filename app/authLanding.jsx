@@ -25,7 +25,6 @@ export default function AuthLanding() {
 
   // Try Loading Token
   useEffect(() => {
-    console.log("Running use effect");
     const loadToken = async () => {
       let response = await loadAuthToken();
       if (response === true) {
