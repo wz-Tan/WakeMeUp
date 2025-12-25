@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useRef, useState } from "react";
+import * as Location from "expo-location";
 
 //Context as a Shareable Item, Provider as a Definition and Usage, useContext to Allow Usage of Provider
 const GoogleMapContext = createContext();
@@ -7,6 +8,35 @@ export const GoogleMapProvider = ({ children }) => {
   const APIKEY = process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY;
   const AUTOCOMPLETERESULTS = 6;
   const DETECTRADIUS = 50; //Max 50KM radius
+
+  async function getCurrentLocation() {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+
+    // User Did Not Grant Location Permission
+    if (status !== "granted") {
+      console.log("User did not allow location permission!");
+    }
+
+    // Permission Granted
+    else {
+      console.log("User has granted location permission");
+
+      let { coords } = await Location.getCurrentPositionAsync();
+      let { latitude, longitude } = coords;
+      setCurrentRegion((prev) => ({
+        ...prev,
+        latitude: latitude,
+        longitude: longitude,
+      }));
+
+      console.log("User coordinates are", coords);
+    }
+  }
+
+  // Get Current Location on Start
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
 
   //TODO : Change to CURRENT Location
   // User Location
@@ -28,7 +58,8 @@ export const GoogleMapProvider = ({ children }) => {
   });
 
   // Map Value Changes
-  function recenterCamera() {
+  async function recenterCamera() {
+    await getCurrentLocation();
     setCameraValues({
       center: {
         latitude: currentRegion.latitude,
@@ -176,7 +207,6 @@ export const GoogleMapProvider = ({ children }) => {
       let coordinates = response.location;
       let photoName = response.photos;
 
-
       if (photoName) {
         return {
           locationName,
@@ -212,6 +242,7 @@ export const GoogleMapProvider = ({ children }) => {
         cameraValues,
         setCameraValues,
         recenterCamera,
+        getCurrentLocation,
       }}
     >
       {children}

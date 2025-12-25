@@ -16,6 +16,7 @@ export default function Tab() {
     currentDestination,
     setCurrentDestination,
     recenterCamera,
+    getCurrentLocation,
   } = useGoogleMap();
   const [locationName, setLocationName] = useState("");
   const [address, setAddress] = useState("");
