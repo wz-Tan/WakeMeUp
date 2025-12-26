@@ -30,7 +30,6 @@ export default function Tab() {
     if (mapRef.current) {
       mapRef.current.animateCamera(cameraValues);
       console.log("the camera values are", cameraValues);
-      console.log("animated camera");
     } else {
       console.log("The reference is not found.");
     }
@@ -132,7 +131,11 @@ export default function Tab() {
 
       {/* Recenter Button */}
       <TouchableOpacity
-        onPress={() => recenterCamera()}
+        onPress={async () => {
+          setLoading(true);
+          await recenterCamera();
+          setLoading(false);
+        }}
         style={styles.recenterButton}
       >
         <Icon name="location-crosshairs" color="#000000" size={20} />

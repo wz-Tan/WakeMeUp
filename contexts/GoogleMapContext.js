@@ -15,8 +15,6 @@ export const GoogleMapProvider = ({ children }) => {
   const AUTOCOMPLETERESULTS = 6;
   const DETECTRADIUS = 50; //Max 50KM radius
 
-  const [loading, setLoading] = useState("");
-
   // User Location
   const [currentRegion, setCurrentRegion] = useState({
     latitude: 3.2144774,
@@ -25,8 +23,9 @@ export const GoogleMapProvider = ({ children }) => {
     longitudeDelta: 0.0421,
   });
 
-  // Todo: Handle Logic, Add Loading and Error Catch
+  // Todo: Handle Logic, and Error Catch
   async function getCurrentLocation() {
+    console.log("Acquiring current location...");
     let { status } = await Location.requestForegroundPermissionsAsync();
 
     // User Did Not Grant Location Permission
@@ -36,9 +35,10 @@ export const GoogleMapProvider = ({ children }) => {
 
     // Permission Granted
     else {
-      
-      let { coords } = await Location.getCurrentPositionAsync();
+      let { coords } = await Location.getLastKnownPositionAsync();
       let { latitude, longitude, altitude } = coords;
+      console.log("Fetched location succesfully.", latitude, longitude);
+
       setCurrentRegion((prev) => ({
         ...prev,
         latitude: latitude,
@@ -46,12 +46,16 @@ export const GoogleMapProvider = ({ children }) => {
         altitude: altitude,
       }));
 
+      console.log("Set Current region.");
     }
+
+    false;
   }
 
   // Get Current Location on Start
   useEffect(() => {
-    getCurrentLocation();
+    recenterCamera(); // Get Current Location and Recenter on Start
+    setCurrentDestination(currentRegion); // Reset Message Box Info
   }, []);
 
   // Camera Location
@@ -76,6 +80,7 @@ export const GoogleMapProvider = ({ children }) => {
         longitude: currentRegion.longitude,
       },
     }));
+    console.log("Recentered Camera");
   }
 
   // Current Destination is Used for the Detail Box on Map Screen, Updated Via Dragging Map or Selecting Autocomplete Result
@@ -119,6 +124,8 @@ export const GoogleMapProvider = ({ children }) => {
 
     response = await response.json();
 
+    false;
+
     try {
       let suggestions = response.suggestions;
       for (let i = 0; i < suggestions.length; i++) {
@@ -158,6 +165,7 @@ export const GoogleMapProvider = ({ children }) => {
 
         response = await response.json();
         places = response.places;
+
         return places[0].id;
       } else if (placeCoordinates) {
         let response = await fetch(
@@ -174,6 +182,7 @@ export const GoogleMapProvider = ({ children }) => {
 
         response = await response.json();
         places = response.results;
+
         return places[0].placeId;
       }
     } catch (e) {
