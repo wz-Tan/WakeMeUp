@@ -197,7 +197,7 @@ export default function SignUp() {
           backgroundColor: "#FAFAFA",
         }}
       >
-        {loading && LoadingPopUp("Creating Account...")}
+        {loading && <LoadingPopUp loadingMessage="Creating Account..." />}
 
         {error && ErrorPopUp(error, () => setError(""))}
 

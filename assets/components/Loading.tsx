@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { Wander } from "react-native-animated-spinkit";
 
-function LoadingPopUp(loadingMessage: string) {
+function LoadingPopUp({ loadingMessage }: {loadingMessage: string}) {
   return (
     <View
       style={[

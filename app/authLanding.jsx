@@ -60,7 +60,7 @@ export default function AuthLanding() {
       }}
     >
       {/* Loading Message*/}
-      {loading && LoadingPopUp("Signing You In...")}
+      {loading && <LoadingPopUp loadingMessage="Signing You In..." />}
 
       {/* Error Message*/}
       {error && ErrorPopUp(error, () => setError(""))}

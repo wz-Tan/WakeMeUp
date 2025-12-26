@@ -6,6 +6,7 @@ import MapView from "react-native-maps";
 import Icon from "react-native-vector-icons/FontAwesome6";
 import { Toast } from "toastify-react-native";
 import { useNavigation } from "@react-navigation/native";
+import LoadingPopUp from "@/assets/components/Loading";
 
 export default function Tab() {
   const navigation = useNavigation();
@@ -16,6 +17,7 @@ export default function Tab() {
     currentDestination,
     setCurrentDestination,
     recenterCamera,
+    mapInit,
   } = useGoogleMap();
   const [locationName, setLocationName] = useState("");
   const [address, setAddress] = useState("");
@@ -78,6 +80,7 @@ export default function Tab() {
         flexDirection: "column",
       }}
     >
+      {mapInit && <LoadingPopUp loadingMessage="Initialising Map"/>}
       <View style={{ flex: 1 }}>
         <MapView
           ref={mapRef}

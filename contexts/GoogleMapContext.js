@@ -15,6 +15,9 @@ export const GoogleMapProvider = ({ children }) => {
   const AUTOCOMPLETERESULTS = 6;
   const DETECTRADIUS = 50; //Max 50KM radius
 
+  // Used for First Acquiring User Location
+  const [mapInit, setMapInit] = useState(true);
+
   // User Location
   const [currentRegion, setCurrentRegion] = useState({
     latitude: 3.2144774,
@@ -54,8 +57,14 @@ export const GoogleMapProvider = ({ children }) => {
 
   // Get Current Location on Start
   useEffect(() => {
-    recenterCamera(); // Get Current Location and Recenter on Start
-    setCurrentDestination(currentRegion); // Reset Message Box Info
+    async function init() {
+      setMapInit(true);
+      await recenterCamera(); // Get Current Location and Recenter on Start
+      setCurrentDestination(currentRegion); // Reset Message Box Info
+      setMapInit(false);
+      console.log("Completed Map Init");
+    }
+    init();
   }, []);
 
   // Camera Location
@@ -260,6 +269,7 @@ export const GoogleMapProvider = ({ children }) => {
         setCameraValues,
         recenterCamera,
         getCurrentLocation,
+        mapInit,
       }}
     >
       {children}
