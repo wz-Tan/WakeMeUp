@@ -10,13 +10,12 @@ import { useNavigation } from "@react-navigation/native";
 export default function Tab() {
   const navigation = useNavigation();
 
-  const {
+  let {
     getPlaceDetails,
     cameraValues,
     currentDestination,
     setCurrentDestination,
     recenterCamera,
-    getCurrentLocation,
   } = useGoogleMap();
   const [locationName, setLocationName] = useState("");
   const [address, setAddress] = useState("");
@@ -30,6 +29,8 @@ export default function Tab() {
   useEffect(() => {
     if (mapRef.current) {
       mapRef.current.animateCamera(cameraValues);
+      console.log("the camera values are", cameraValues);
+      console.log("animated camera");
     } else {
       console.log("The reference is not found.");
     }

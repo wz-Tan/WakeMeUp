@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useRef, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import * as Location from "expo-location";
 
 //Context as a Shareable Item, Provider as a Definition and Usage, useContext to Allow Usage of Provider
@@ -9,6 +15,17 @@ export const GoogleMapProvider = ({ children }) => {
   const AUTOCOMPLETERESULTS = 6;
   const DETECTRADIUS = 50; //Max 50KM radius
 
+  const [loading, setLoading] = useState("");
+
+  // User Location
+  const [currentRegion, setCurrentRegion] = useState({
+    latitude: 3.2144774,
+    longitude: 101.6721846,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+
+  // Todo: Handle Logic, Add Loading and Error Catch
   async function getCurrentLocation() {
     let { status } = await Location.requestForegroundPermissionsAsync();
 
@@ -19,17 +36,16 @@ export const GoogleMapProvider = ({ children }) => {
 
     // Permission Granted
     else {
-      console.log("User has granted location permission");
-
+      
       let { coords } = await Location.getCurrentPositionAsync();
-      let { latitude, longitude } = coords;
+      let { latitude, longitude, altitude } = coords;
       setCurrentRegion((prev) => ({
         ...prev,
         latitude: latitude,
         longitude: longitude,
+        altitude: altitude,
       }));
 
-      console.log("User coordinates are", coords);
     }
   }
 
@@ -38,36 +54,28 @@ export const GoogleMapProvider = ({ children }) => {
     getCurrentLocation();
   }, []);
 
-  //TODO : Change to CURRENT Location
-  // User Location
-  const [currentRegion, setCurrentRegion] = useState({
-    latitude: 3.2144774,
-    longitude: 101.6721846,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
-
   // Camera Location
   const [cameraValues, setCameraValues] = useState({
     center: {
       latitude: currentRegion.latitude,
       longitude: currentRegion.longitude,
     },
-    pitch: 5,
-    heading: 5,
+    zoom: 17, // For Android
+    altitude: 100, // For IOS
+    pitch: 0,
+    heading: 0,
   });
 
-  // Map Value Changes
+  // Recenter Camera
   async function recenterCamera() {
     await getCurrentLocation();
-    setCameraValues({
+    setCameraValues((prev) => ({
+      ...prev,
       center: {
         latitude: currentRegion.latitude,
         longitude: currentRegion.longitude,
       },
-      pitch: 10,
-      heading: 10,
-    });
+    }));
   }
 
   // Current Destination is Used for the Detail Box on Map Screen, Updated Via Dragging Map or Selecting Autocomplete Result
