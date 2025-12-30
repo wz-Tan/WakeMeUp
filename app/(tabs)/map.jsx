@@ -17,7 +17,8 @@ export default function Tab() {
     currentDestination,
     setCurrentDestination,
     recenterCamera,
-    mapInit,
+    init,
+    mapInitStatus,
   } = useGoogleMap();
   const [locationName, setLocationName] = useState("");
   const [address, setAddress] = useState("");
@@ -27,6 +28,14 @@ export default function Tab() {
 
   const mapRef = useRef(null);
 
+  // Initialise Map (Getting First Location)
+  useEffect(() => {
+    const mapInit = async () => {
+      await init();
+    };
+    mapInit();
+  }, []);
+
   // Animate Camera Value on Context Value Change
   useEffect(() => {
     if (mapRef.current) {
@@ -35,7 +44,7 @@ export default function Tab() {
     } else {
       console.log("The reference is not found.");
     }
-  }, [cameraValues]);
+  }, [cameraValues.center]);
 
   //Fetches and Sets Location Data
   async function refreshLocationData() {
@@ -80,7 +89,7 @@ export default function Tab() {
         flexDirection: "column",
       }}
     >
-      {mapInit && <LoadingPopUp loadingMessage="Initialising Map"/>}
+      {mapInitStatus && <LoadingPopUp loadingMessage="Initialising Map" />}
       <View style={{ flex: 1 }}>
         <MapView
           ref={mapRef}

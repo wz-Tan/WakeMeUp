@@ -15,8 +15,7 @@ export const GoogleMapProvider = ({ children }) => {
   const AUTOCOMPLETERESULTS = 6;
   const DETECTRADIUS = 50; //Max 50KM radius
 
-  // Used for First Acquiring User Location
-  const [mapInit, setMapInit] = useState(true);
+  const [mapInitStatus, setMapInitStatus] = useState(true);
 
   // User Location
   const [currentRegion, setCurrentRegion] = useState({
@@ -40,32 +39,18 @@ export const GoogleMapProvider = ({ children }) => {
     else {
       let { coords } = await Location.getLastKnownPositionAsync();
       let { latitude, longitude, altitude } = coords;
-      console.log("Fetched location succesfully.", latitude, longitude);
 
-      setCurrentRegion((prev) => ({
-        ...prev,
-        latitude: latitude,
-        longitude: longitude,
-        altitude: altitude,
-      }));
-
-      console.log("Set Current region.");
+      return { latitude, longitude, altitude };
     }
-
-    false;
   }
 
   // Get Current Location on Start
-  useEffect(() => {
-    async function init() {
-      setMapInit(true);
-      await recenterCamera(); // Get Current Location and Recenter on Start
-      setCurrentDestination(currentRegion); // Reset Message Box Info
-      setMapInit(false);
-      console.log("Completed Map Init");
-    }
-    init();
-  }, []);
+  async function init() {
+    setMapInitStatus(true);
+    await recenterCamera(); // Get Current Location and Recenter on Start
+    setCurrentDestination(currentRegion); // Reset Message Box Info
+    setMapInitStatus(false);
+  }
 
   // Camera Location
   const [cameraValues, setCameraValues] = useState({
@@ -81,13 +66,20 @@ export const GoogleMapProvider = ({ children }) => {
 
   // Recenter Camera
   async function recenterCamera() {
-    await getCurrentLocation();
+    const coordinates = await getCurrentLocation(); // Current Region is Not Changing Fast enough
     setCameraValues((prev) => ({
       ...prev,
       center: {
-        latitude: currentRegion.latitude,
-        longitude: currentRegion.longitude,
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
       },
+    }));
+
+    setCurrentRegion((prev) => ({
+      ...prev,
+      latitude: coordinates.latitude,
+      longitude: coordinates.longitude,
+      altitude: coordinates.altitude,
     }));
     console.log("Recentered Camera");
   }
@@ -269,7 +261,8 @@ export const GoogleMapProvider = ({ children }) => {
         setCameraValues,
         recenterCamera,
         getCurrentLocation,
-        mapInit,
+        init,
+        mapInitStatus,
       }}
     >
       {children}
