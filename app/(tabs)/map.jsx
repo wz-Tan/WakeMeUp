@@ -40,9 +40,6 @@ export default function Tab() {
   useEffect(() => {
     if (mapRef.current) {
       mapRef.current.animateCamera(cameraValues);
-      console.log("the camera values are", cameraValues);
-    } else {
-      console.log("The reference is not found.");
     }
   }, [cameraValues.center]);
 

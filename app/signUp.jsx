@@ -199,7 +199,9 @@ export default function SignUp() {
       >
         {loading && <LoadingPopUp loadingMessage="Creating Account..." />}
 
-        {error && ErrorPopUp(error, () => setError(""))}
+        {error && (
+          <ErrorPopUp errorMessage={error} clearError={() => setError("")} />
+        )}
 
         <Text style={styles.headerText}>WakeMeUp</Text>
         <Text style={styles.headerSubText}>Create An Account</Text>

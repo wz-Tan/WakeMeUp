@@ -111,3 +111,19 @@ export async function addLocation(userId, locationData) {
     return { error };
   }
 }
+
+export async function getSavedLocation(userId) {
+  try {
+    const result = await client.query(
+      `SELECT * from ${LOCATIONS} where userId=$1`,
+      [userId],
+    );
+
+    console.log("Acquired Location is", result);
+    // TODO: Return Retrieved Locations and Pass into frontend
+    return { status: 200 };
+  } catch (error) {
+    console.log("error acquiring user location", error);
+    return { error };
+  }
+}

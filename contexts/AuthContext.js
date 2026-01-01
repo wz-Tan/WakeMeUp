@@ -56,9 +56,9 @@ export const AuthContextProvider = ({ children }) => {
       }
 
       return response;
-    } catch (err) {
+    } catch (error) {
       // Server Side Error
-      return { error: err };
+      return { error };
     }
   }
   async function authSignOut() {

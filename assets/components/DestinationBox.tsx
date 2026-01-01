@@ -11,8 +11,6 @@ import Icon from "react-native-vector-icons/FontAwesome6";
 
 // To Do: Pass Arguments into Destination Box
 function DestinationBox() {
-  
-
   const offset = useSharedValue<number>(0);
   const direction = useSharedValue("");
   const [originalWidth, setOriginalWidth] = useState(0);

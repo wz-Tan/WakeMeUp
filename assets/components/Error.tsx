@@ -2,7 +2,13 @@ import React from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome6";
 
-function ErrorPopUp(errorMessage: string, clearError: Function) {
+function ErrorPopUp({
+  errorMessage,
+  clearError,
+}: {
+  errorMessage: string;
+  clearError: Function;
+}) {
   return (
     <View
       style={[

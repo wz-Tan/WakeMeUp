@@ -19,8 +19,8 @@ export const GoogleMapProvider = ({ children }) => {
 
   // User Location
   const [currentRegion, setCurrentRegion] = useState({
-    latitude: 3.2144774,
-    longitude: 101.6721846,
+    latitude: 0,
+    longitude: 0,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
@@ -81,7 +81,6 @@ export const GoogleMapProvider = ({ children }) => {
       longitude: coordinates.longitude,
       altitude: coordinates.altitude,
     }));
-    console.log("Recentered Camera");
   }
 
   // Current Destination is Used for the Detail Box on Map Screen, Updated Via Dragging Map or Selecting Autocomplete Result
@@ -125,8 +124,6 @@ export const GoogleMapProvider = ({ children }) => {
 
     response = await response.json();
 
-    false;
-
     try {
       let suggestions = response.suggestions;
       for (let i = 0; i < suggestions.length; i++) {
@@ -140,7 +137,7 @@ export const GoogleMapProvider = ({ children }) => {
     } catch (error) {
       //If Error -> No Results Found
       console.log("Autocomplete Context Error: ", error);
-      return { error: error };
+      return { error };
     }
   }
 

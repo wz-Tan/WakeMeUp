@@ -1,6 +1,11 @@
 import express from "express";
 import { createHash } from "crypto";
-import { addLocation, createUser, signIn } from "./postgres.js";
+import {
+  addLocation,
+  createUser,
+  signIn,
+  getSavedLocation,
+} from "./postgres.js";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 
@@ -58,6 +63,16 @@ app.post("/location/add", async (req, res) => {
   const { userId, locationData } = req.body;
 
   let response = await addLocation(userId, locationData);
+
+  res.json(response);
+});
+
+// Acquire Location at Home Page
+app.post("/location/get", async (req, res) => {
+  console.log(req.body);
+  const { userId } = req.body;
+
+  let response = await getSavedLocation(userId);
 
   res.json(response);
 });
