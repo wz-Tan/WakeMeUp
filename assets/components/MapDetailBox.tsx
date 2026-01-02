@@ -32,6 +32,25 @@ const MapDetailBox = ({
   setHideDestinationIcon: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
 }) => {
+  // Logic
+  const { userId } = useAuth();
+
+  async function addLocation() {
+    try {
+      let response = await fetch("http://192.168.0.152:4000/location/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          locationData: "dummy data",
+        }),
+      });
+
+      console.log("response for adding location", response);
+    } catch (error) {}
+  }
+  
+  
   //UI Sizes
   let ScreenHeight = Dimensions.get("screen").height;
 
@@ -128,24 +147,6 @@ const MapDetailBox = ({
     bottom: offsetY.value,
     opacity: boxOpacity.value,
   }));
-
-  // Logic
-  const { userId } = useAuth();
-
-  async function addLocation() {
-    try {
-      let response = await fetch("http://192.168.0.152:4000/location/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId,
-          locationData: "dummy data",
-        }),
-      });
-
-      console.log("response for adding location", response);
-    } catch (error) {}
-  }
 
   return (
     <GestureDetector gesture={pan}>

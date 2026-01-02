@@ -32,6 +32,7 @@ export default function Tab() {
   useEffect(() => {
     const mapInit = async () => {
       await init();
+      await refreshLocationData();
     };
     mapInit();
   }, []);
@@ -47,6 +48,7 @@ export default function Tab() {
   async function refreshLocationData() {
     setLoading(true);
     try {
+      console.log("Current destination in the front end is", currentDestination.current)
       let result = await getPlaceDetails(null, [
         currentDestination.current.latitude,
         currentDestination.current.longitude,
@@ -69,15 +71,6 @@ export default function Tab() {
 
     setLoading(false);
   }
-
-  // Get The Details of The Current Location (Only Needed Once on Startup)
-  useEffect(() => {
-    async function startUpFunction() {
-      await refreshLocationData();
-    }
-
-    startUpFunction();
-  }, []);
 
   return (
     <View

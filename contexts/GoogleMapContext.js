@@ -25,9 +25,16 @@ export const GoogleMapProvider = ({ children }) => {
     longitudeDelta: 0.0421,
   });
 
+  // Current Destination is Used for the Detail Box on Map Screen, Updated Via Dragging Map or Selecting Autocomplete Result
+  // Default Value is Current Region
+  let currentDestination = useRef(currentRegion);
+
+  function setCurrentDestination(newDestination) {
+    currentDestination.current = newDestination;
+  }
+
   // Todo: Handle Logic, and Error Catch
   async function getCurrentLocation() {
-    console.log("Acquiring current location...");
     let { status } = await Location.requestForegroundPermissionsAsync();
 
     // User Did Not Grant Location Permission
@@ -49,6 +56,7 @@ export const GoogleMapProvider = ({ children }) => {
     setMapInitStatus(true);
     await recenterCamera(); // Get Current Location and Recenter on Start
     setCurrentDestination(currentRegion); // Reset Message Box Info
+    console.log("Current destination is ", currentDestination.current);
     setMapInitStatus(false);
   }
 
@@ -81,13 +89,6 @@ export const GoogleMapProvider = ({ children }) => {
       longitude: coordinates.longitude,
       altitude: coordinates.altitude,
     }));
-  }
-
-  // Current Destination is Used for the Detail Box on Map Screen, Updated Via Dragging Map or Selecting Autocomplete Result
-  let currentDestination = useRef(currentRegion);
-
-  function setCurrentDestination(newDestination) {
-    currentDestination.current = newDestination;
   }
 
   // Google Map API Calls
