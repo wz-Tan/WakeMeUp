@@ -12,10 +12,9 @@ export default function Tab() {
   const { userId } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState("");
+  const [savedLocation, setSavedLocation] = useState([]);
 
   async function fetchSavedLocation() {
-    console.log("Fetching saved location");
-    console.log("User id is", userId);
     try {
       let response = await fetch("http://192.168.0.152:4000/location/get", {
         method: "POST",
@@ -26,16 +25,14 @@ export default function Tab() {
       });
 
       response = await response.json();
-      console.log("response is", response);
 
       if (response.status == 200) {
-        // TODO: Store Array as Destination Boxes
+        setSavedLocation(response.location); // Store Passed In Locations
       } else if (response.error) {
-        console.log("Response error is", response.error);
         setError(response.error);
       }
     } catch (error) {
-      console.log("Error fetching saved location", error);
+      setError(error);
     }
   }
 
@@ -74,14 +71,9 @@ export default function Tab() {
       {/* List Here */}
       <View style={styleSheet.List}>
         <Text style={styleSheet.listTitle}>Recents</Text>
-        <DestinationBox />
-        <DestinationBox />
-        <DestinationBox />
-      </View>
-
-      <View style={styleSheet.List}>
-        <Text style={styleSheet.listTitle}>Favourites</Text>
-        <DestinationBox />
+        {savedLocation.map((v, k) => (
+          <DestinationBox key={k} locationData={v} />
+        ))}
       </View>
     </ScrollView>
   );

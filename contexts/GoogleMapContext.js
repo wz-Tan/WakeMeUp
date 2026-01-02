@@ -33,13 +33,13 @@ export const GoogleMapProvider = ({ children }) => {
     currentDestination.current = newDestination;
   }
 
-  // Todo: Handle Logic, and Error Catch
   async function getCurrentLocation() {
     let { status } = await Location.requestForegroundPermissionsAsync();
 
     // User Did Not Grant Location Permission
     if (status !== "granted") {
       console.log("User did not allow location permission!");
+      // Todo: Prompt User to Give Permission
     }
 
     // Permission Granted
@@ -77,7 +77,7 @@ export const GoogleMapProvider = ({ children }) => {
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0421,
     });
-    
+
     setMapInitStatus(false);
   }
 

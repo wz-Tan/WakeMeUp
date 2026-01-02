@@ -9,8 +9,15 @@ import Animated, {
 } from "react-native-reanimated";
 import Icon from "react-native-vector-icons/FontAwesome6";
 
-// To Do: Pass Arguments into Destination Box
-function DestinationBox() {
+interface locationData {
+  location_name: string;
+  longitude: number;
+  latitude: number;
+}
+
+function DestinationBox({ locationData }: { locationData: locationData }) {
+  const { location_name, latitude, longitude } = locationData;
+
   const offset = useSharedValue<number>(0);
   const direction = useSharedValue("");
   const [originalWidth, setOriginalWidth] = useState(0);
@@ -123,7 +130,7 @@ function DestinationBox() {
                 paddingRight={10}
                 color="#FF0000"
               />
-              <Text style={styleSheet.locationText}>LRT USJ 7 </Text>
+              <Text style={styleSheet.locationText}>{location_name}</Text>
             </View>
 
             <View style={styleSheet.flexRow}>

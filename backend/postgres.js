@@ -103,7 +103,6 @@ export async function addLocation(userId, locationName, latitude, longitude) {
       [userId, locationName, latitude, longitude],
     );
 
-    console.log("Result of adding location is", result);
     return { status: 200 };
   } catch (error) {
     console.log("error adding location into database", error);
@@ -118,9 +117,7 @@ export async function getSavedLocation(userId) {
       [userId],
     );
 
-    console.log("Acquired Location is", result);
-    // TODO: Return Retrieved Locations and Pass into frontend
-    return { status: 200 };
+    return { status: 200, location: result.rows };
   } catch (error) {
     console.log("error acquiring user location", error);
     return { error };
