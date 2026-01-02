@@ -48,7 +48,6 @@ export default function Tab() {
   async function refreshLocationData() {
     setLoading(true);
     try {
-      console.log("Current destination in the front end is", currentDestination.current)
       let result = await getPlaceDetails(null, [
         currentDestination.current.latitude,
         currentDestination.current.longitude,

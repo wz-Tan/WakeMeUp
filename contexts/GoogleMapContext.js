@@ -51,12 +51,33 @@ export const GoogleMapProvider = ({ children }) => {
     }
   }
 
-  // Get Current Location on Start
+  // Get Current Location on Start (Get Current Location, Assign to All)
   async function init() {
     setMapInitStatus(true);
-    await recenterCamera(); // Get Current Location and Recenter on Start
-    setCurrentDestination(currentRegion); // Reset Message Box Info
-    console.log("Current destination is ", currentDestination.current);
+
+    const coordinates = await getCurrentLocation();
+    setCameraValues((prev) => ({
+      ...prev,
+      center: {
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
+      },
+    }));
+
+    setCurrentRegion((prev) => ({
+      ...prev,
+      latitude: coordinates.latitude,
+      longitude: coordinates.longitude,
+      altitude: coordinates.altitude,
+    }));
+
+    setCurrentDestination({
+      latitude: coordinates.latitude,
+      longitude: coordinates.longitude,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    });
+    
     setMapInitStatus(false);
   }
 
@@ -74,7 +95,7 @@ export const GoogleMapProvider = ({ children }) => {
 
   // Recenter Camera
   async function recenterCamera() {
-    const coordinates = await getCurrentLocation(); // Current Region is Not Changing Fast enough
+    const coordinates = await getCurrentLocation();
     setCameraValues((prev) => ({
       ...prev,
       center: {
