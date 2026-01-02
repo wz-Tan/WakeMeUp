@@ -60,9 +60,9 @@ app.post("/user/signIn", async (req, res) => {
 
 // Add Location
 app.post("/location/add", async (req, res) => {
-  const { userId, locationData } = req.body;
+  const { userId, locationName, latitude, longitude } = req.body;
 
-  let response = await addLocation(userId, locationData);
+  let response = await addLocation(userId, locationName, latitude, longitude);
 
   res.json(response);
 });

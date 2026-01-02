@@ -96,16 +96,9 @@ export async function signIn(email, password) {
 
 // Add Location to User DB
 export async function addLocation(userId, locationName, latitude, longitude) {
-  console.log(
-    "Add Location Called with",
-    userId,
-    locationName,
-    latitude,
-    longitude,
-  );
   try {
     const result = await client.query(
-      `INSERT INTO ${LOCATIONS} (userId, locationName, latitude, longitude)
+      `INSERT INTO ${LOCATIONS} (userId, location_name, latitude, longitude)
       VALUES ($1,$2,$3,$4)`,
       [userId, locationName, latitude, longitude],
     );

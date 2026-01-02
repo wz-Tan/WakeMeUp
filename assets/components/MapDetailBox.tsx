@@ -1,5 +1,6 @@
 import ImageNotFound from "@/assets/icon/noImage.png";
 import { useAuth } from "@/contexts/AuthContext";
+import { useGoogleMap } from "@/contexts/GoogleMapContext";
 import React, { useEffect, useState } from "react";
 import {
   Dimensions,
@@ -18,6 +19,7 @@ import Animated, {
 } from "react-native-reanimated";
 import Icon from "react-native-vector-icons/FontAwesome6";
 import { scheduleOnRN } from "react-native-worklets";
+import { Toast } from "toastify-react-native";
 
 const MapDetailBox = ({
   locationName,
@@ -34,23 +36,35 @@ const MapDetailBox = ({
 }) => {
   // Logic
   const { userId } = useAuth();
+  const { currentDestination } = useGoogleMap();
 
   async function addLocation() {
+    console.log("Current destination is", currentDestination.current);
+    console.log("Location name is", locationName);
     try {
-      let response = await fetch("http://192.168.0.152:4000/location/add", {
+      let Response = await fetch("http://192.168.0.152:4000/location/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId,
-          locationData: "dummy data",
+          locationName,
+          latitude: currentDestination.current.latitude,
+          longitude: currentDestination.current.longitude,
         }),
       });
 
-      console.log("response for adding location", response);
-    } catch (error) {}
+      let response = await Response.json();
+
+      if (response.status == 200) {
+        Toast.success("Successfully Added Location!", "bottom");
+      } else if (response.error) {
+        Toast.error(`Error Adding Location: ${response.error}`, "bottom");
+      }
+    } catch (error) {
+      Toast.error(`Error Adding Location: ${error}`, "bottom");
+    }
   }
-  
-  
+
   //UI Sizes
   let ScreenHeight = Dimensions.get("screen").height;
 
