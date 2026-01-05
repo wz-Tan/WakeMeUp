@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Toast } from "toastify-react-native";
 
 export default function Tab() {
-  const { authSignOut } = useAuth();
+  const { authSignOut, userData } = useAuth();
   const router = useRouter();
 
   async function signOut() {
@@ -43,8 +43,8 @@ export default function Tab() {
           }}
         >
           <View style={styles.profilePictureContainer}></View>
-          <Text style={styles.headerText}>John Doe</Text>
-          <Text style={styles.headerSubText}>abc123@gmail.com</Text>
+          <Text style={styles.headerText}>{userData.name}</Text>
+          <Text style={styles.headerSubText}>{userData.email}</Text>
         </View>
 
         <Text style={[styles.headerText, { marginTop: 10 }]}>Preferences</Text>

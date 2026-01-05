@@ -38,7 +38,7 @@ export const AuthContextProvider = ({ children }) => {
       response = await response.json();
 
       if (response.status == 200) {
-        // TODO: Set User Info
+        setUserData(response.info);
       } else if (response.error) {
         console.log("Error getting user info ", response.error);
       }
@@ -109,6 +109,7 @@ export const AuthContextProvider = ({ children }) => {
         authSignIn,
         authSignOut,
         authSignUp,
+        userData,
         token,
       }}
     >

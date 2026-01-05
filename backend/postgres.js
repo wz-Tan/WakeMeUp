@@ -101,15 +101,13 @@ export async function getUserInfo(userId) {
   try {
     const result = await client.query(
       `
-      SELECT * from ${USERS}
+      SELECT name, email from ${USERS}
       WHERE id = $1
       `,
       [userId],
     );
 
-    console.log("Result of getting user info is ", result);
-
-    return { status: 200 };
+    return { status: 200, info: result.rows[0] };
   } catch (error) {
     return { error };
   }
