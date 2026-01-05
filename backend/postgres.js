@@ -123,3 +123,18 @@ export async function getSavedLocation(userId) {
     return { error };
   }
 }
+
+export async function deleteSavedLocation(userId, latitude, longitude) {
+  console.log("Deleting Saved Location");
+  try {
+    const result = await client.query(
+      `DELETE from ${LOCATIONS} WHERE userId=$1 and latitude=$2 and longitude=$3`,
+      [userId, latitude, longitude],
+    );
+
+    return { status: 200 };
+  } catch (error) {
+    console.log("error deleting saved location", error);
+    return { error };
+  }
+}
