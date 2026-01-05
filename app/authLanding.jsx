@@ -13,7 +13,6 @@ import ErrorPopUp from "../assets/components/Error";
 import { useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { Toast } from "toastify-react-native";
-import ToastManager from "toastify-react-native/components/ToastManager";
 
 export default function AuthLanding() {
   const { loadAuthToken, authSignIn } = useAuth();
@@ -38,8 +37,13 @@ export default function AuthLanding() {
   async function signIn() {
     setLoading(true);
     try {
+      if (email == "" || password == "") {
+        Toast.error("Fields cannot be empty!", "bottom");
+        setLoading(false);
+        return;
+      }
+
       let response = await authSignIn(email, password);
-      console.log("Response is", response);
 
       if (response.status === 200) {
         Toast.success("Sign In Successful!", "bottom");
@@ -51,7 +55,7 @@ export default function AuthLanding() {
         Toast.error(response.error, "bottom");
       }
     } catch (error) {
-      Toast.error(error, "bottom");
+      Toast.error(error.message, "bottom");
     }
 
     setLoading(false);
@@ -63,7 +67,6 @@ export default function AuthLanding() {
         flex: 1,
       }}
     >
-
       {/* Loading Message*/}
       {loading && <LoadingPopUp loadingMessage="Signing You In..." />}
 

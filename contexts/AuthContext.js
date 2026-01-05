@@ -23,7 +23,6 @@ export const AuthContextProvider = ({ children }) => {
   }
 
   async function authSignIn(email, password) {
-    console.log("Auth Signed In Called");
     try {
       let response = await fetch("http://192.168.0.152:4000/user/signIn", {
         method: "POST",
@@ -44,7 +43,7 @@ export const AuthContextProvider = ({ children }) => {
       return response;
     } catch (error) {
       // Server Side Error
-      return { error };
+      return { error: error.message };
     }
   }
   async function authSignOut() {
@@ -53,7 +52,7 @@ export const AuthContextProvider = ({ children }) => {
       return { status: 200 };
     } catch (error) {
       console.log("Error signing out", error);
-      return { error };
+      return { error: error.message };
     }
   }
 
@@ -74,8 +73,8 @@ export const AuthContextProvider = ({ children }) => {
 
       // Return Response JSON Object
       return response;
-    } catch (err) {
-      return { error: err.message };
+    } catch (error) {
+      return { error: error.message };
     }
   }
   return (

@@ -5,7 +5,7 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import ToastManager from "toastify-react-native/components/ToastManager";
+import ToastManager from "toastify-react-native";
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -39,6 +39,7 @@ export default function RootLayout() {
           <Stack.Screen name="signUp" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
+        <ToastManager/>
       </GoogleMapProvider>
     </AuthContextProvider>
   );

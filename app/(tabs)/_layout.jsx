@@ -6,7 +6,6 @@ import ToastManager from "toastify-react-native";
 import { Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
 
 //Main Layout (Safe Area -> Gesture -> View -> Outlet)
 export default function TabLayout() {

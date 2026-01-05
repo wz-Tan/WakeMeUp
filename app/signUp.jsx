@@ -181,7 +181,7 @@ export default function SignUp() {
         Toast.success("Sign Up Successful!", "bottom");
         router.replace("authLanding");
       } else {
-        Toast.error(response.error);
+        Toast.error(response.error, "bottom");
       }
       setLoading(false);
     }
