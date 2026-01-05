@@ -35,7 +35,7 @@ function DestinationBox({
         method: "POST",
         headers: {
           "Content-type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token.current}`,
         },
         body: JSON.stringify({
           latitude,
@@ -64,7 +64,7 @@ function DestinationBox({
         method: "POST",
         headers: {
           "Content-type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token.current}`,
         },
         body: JSON.stringify({
           latitude,
@@ -147,6 +147,7 @@ function DestinationBox({
     })
     .onFinalize(() => {
       offset.value = withSpring(0); // TODO: Fix Not Finalised Properly Issue (Some Leftover Padding Based on Location)
+
       if (userAction.current == 1) {
         scheduleOnRN(deleteSavedLocation);
       } else if (userAction.current == 2) {
@@ -159,6 +160,7 @@ function DestinationBox({
     });
 
   //Animated Style
+  // TODO: This Offset Might be Causing Issues
   const containerStyle = useAnimatedStyle(() => ({
     transform: [
       {
@@ -193,7 +195,7 @@ function DestinationBox({
           styleSheet.sideContainer,
           leftActionContainerStyle,
           {
-            backgroundColor: "#FF007F",
+            backgroundColor: "#001F3F",
             position: "absolute",
             left: 0,
             top: 0,

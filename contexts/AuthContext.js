@@ -1,17 +1,19 @@
-import { useContext, createContext, useState, useEffect } from "react";
+import { useContext, createContext, useState, useEffect, useRef } from "react";
 import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 
 const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
   const TOKEN_NAME = "Auth_JWT";
-  const [token, setToken] = useState("");
+  const token = useRef("");
+  const [userData, setUserData] = useState();
 
   async function loadAuthToken() {
     try {
-      const token = await getItemAsync(TOKEN_NAME);
-      if (token) {
-        setToken(token);
+      const authToken = await getItemAsync(TOKEN_NAME);
+      if (authToken) {
+        token.current = authToken;
+        await getUserInfo();
         return true;
       } else {
         return false;
@@ -19,6 +21,29 @@ export const AuthContextProvider = ({ children }) => {
     } catch (err) {
       console.log("Error retrieving auth token", err);
       return false;
+    }
+  }
+
+  // Get User Info to Display in App
+  async function getUserInfo() {
+    try {
+      let response = await fetch("http://192.168.0.152:4000/user/get", {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token.current}`,
+        },
+      });
+
+      response = await response.json();
+
+      if (response.status == 200) {
+        // TODO: Set User Info
+      } else if (response.error) {
+        console.log("Error getting user info ", response.error);
+      }
+    } catch (error) {
+      console.log("Error getting user info ", error.message);
     }
   }
 
@@ -79,7 +104,13 @@ export const AuthContextProvider = ({ children }) => {
   }
   return (
     <AuthContext.Provider
-      value={{ loadAuthToken, authSignIn, authSignOut, authSignUp, token }}
+      value={{
+        loadAuthToken,
+        authSignIn,
+        authSignOut,
+        authSignUp,
+        token,
+      }}
     >
       {children}
     </AuthContext.Provider>

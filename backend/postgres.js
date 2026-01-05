@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { Pool } from "pg";
 
+// Table Names
 const USERS = "users";
 const LOCATIONS = "locations";
 
@@ -28,6 +29,7 @@ export async function init() {
   }
 }
 
+// Auth
 export async function createUser(name, email, password) {
   try {
     let userExists = await checkUserExists(email);
@@ -94,6 +96,26 @@ export async function signIn(email, password) {
   }
 }
 
+export async function getUserInfo(userId) {
+  console.log("Getting user info...");
+  try {
+    const result = await client.query(
+      `
+      SELECT * from ${USERS}
+      WHERE id = $1
+      `,
+      [userId],
+    );
+
+    console.log("Result of getting user info is ", result);
+
+    return { status: 200 };
+  } catch (error) {
+    return { error };
+  }
+}
+
+// Core Functions
 // Add Location to User DB
 export async function addLocation(userId, locationName, latitude, longitude) {
   try {
@@ -139,7 +161,6 @@ export async function deleteSavedLocation(userId, latitude, longitude) {
   }
 }
 
-// TODO
 export async function editSavedLocationName(
   userId,
   latitude,
@@ -149,7 +170,7 @@ export async function editSavedLocationName(
   console.log("Editing saved location name");
 
   try {
-    const result = await client.query(
+    await client.query(
       `UPDATE ${LOCATIONS}
       SET location_name = $1
       WHERE userId=$2 and latitude=$3 and longitude=$4

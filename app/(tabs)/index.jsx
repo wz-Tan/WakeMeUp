@@ -19,7 +19,7 @@ export default function Tab() {
         method: "POST",
         headers: {
           "Content-type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token.current}`,
         },
       });
 
@@ -28,7 +28,7 @@ export default function Tab() {
       if (response.status == 200) {
         setSavedLocation(response.location); // Store Passed In Locations
       } else if (response.error) {
-        Toast.error(response.error, "bottom");
+        Toast.error(response.error.message, "bottom");
       }
     } catch (error) {
       if (

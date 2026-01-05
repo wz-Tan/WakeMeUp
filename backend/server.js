@@ -7,6 +7,7 @@ import {
   getSavedLocation,
   deleteSavedLocation,
   editSavedLocationName,
+  getUserInfo,
 } from "./postgres.js";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
@@ -28,6 +29,7 @@ function JWT_Middleware(req, res, next) {
     req.userId = payload.userId; // Pass On
     next();
   } catch (error) {
+    console.log("Error verifying jwt", error);
     res.json({ error });
     return;
   }
@@ -81,6 +83,15 @@ app.post("/user/signIn", async (req, res) => {
 
 // Middleware (Token Issued only After User Signs In)
 app.use(JWT_Middleware);
+
+// Get User Info
+app.get("/user/get", async (req, res) => {
+  const userId = req.userId;
+
+  let response = await getUserInfo(userId);
+
+  res.json(response);
+});
 
 // Add Location
 app.post("/location/add", async (req, res) => {

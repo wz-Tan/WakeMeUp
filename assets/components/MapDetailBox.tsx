@@ -46,7 +46,7 @@ const MapDetailBox = ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token.current}`,
         },
         body: JSON.stringify({
           locationName,
