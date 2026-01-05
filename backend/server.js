@@ -6,6 +6,7 @@ import {
   signIn,
   getSavedLocation,
   deleteSavedLocation,
+  editSavedLocationName,
 } from "./postgres.js";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
@@ -106,6 +107,21 @@ app.post("/location/delete", async (req, res) => {
   const { latitude, longitude } = req.body;
 
   let response = await deleteSavedLocation(userId, latitude, longitude);
+
+  res.json(response);
+});
+
+// Edit Location Name
+app.post("/location/edit", async (req, res) => {
+  const userId = req.userId;
+  const { location_name, longitude, latitude } = req.body;
+
+  let response = await editSavedLocationName(
+    userId,
+    latitude,
+    longitude,
+    location_name,
+  );
 
   res.json(response);
 });

@@ -26,6 +26,36 @@ function DestinationBox({
   const { location_name, latitude, longitude } = locationData;
   const { token } = useAuth();
 
+  // Edit Location Name
+  async function editSavedLocationName() {
+    console.log("Edit saved location name", location_name);
+
+    try {
+      let response = await fetch("http://192.168.0.152:4000/location/edit", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          latitude,
+          longitude,
+          location_name: "edited_name",
+        }),
+      });
+
+      let data = await response.json();
+      if (data.status == 200) {
+        console.log("Successfully Edited Location name");
+        refreshPage();
+      } else if (data.error) {
+        console.log("Error editing location name ", data.error);
+      }
+    } catch (error) {
+      console.log("Error editing location", (error as any).message);
+    }
+  }
+
   // Delete Location
   async function deleteSavedLocation() {
     console.log("Deleting saved location", location_name);
@@ -98,6 +128,12 @@ function DestinationBox({
       if (direction.value === "LTR") {
         // Move Container as Long as Within Bounds
         if (dragPoint <= allowedMovement) offset.value = dragPoint;
+
+        // Edit Location Name
+        if (dragPoint >= allowedMovement && actionAllowed.current) {
+          userAction.current = 2;
+          actionAllowed.current = false;
+        }
       } else if (direction.value === "RTL") {
         let difference = originalWidth - dragPoint;
         if (difference <= allowedMovement) offset.value = -difference;
@@ -115,6 +151,7 @@ function DestinationBox({
         scheduleOnRN(deleteSavedLocation);
       } else if (userAction.current == 2) {
         // Edit Location Name
+        scheduleOnRN(editSavedLocationName);
       }
 
       userAction.current = 0;
@@ -165,7 +202,7 @@ function DestinationBox({
         ]}
       >
         <Animated.View style={iconStyle}>
-          <Icon name="heart" size={25} color="#FFFFFF" />
+          <Icon name="pen" size={25} color="#FFFFFF" />
         </Animated.View>
       </Animated.View>
 

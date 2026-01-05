@@ -87,7 +87,7 @@ export const GoogleMapProvider = ({ children }) => {
       latitude: currentRegion.latitude,
       longitude: currentRegion.longitude,
     },
-    zoom: 17, // For Android
+    zoom: 20, // For Android
     altitude: 100, // For IOS
     pitch: 0,
     heading: 0,
