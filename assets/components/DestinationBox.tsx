@@ -1,5 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -8,6 +8,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import Icon from "react-native-vector-icons/FontAwesome6";
+import { scheduleOnRN } from "react-native-worklets";
 
 interface locationData {
   location_name: string;
@@ -17,7 +18,17 @@ interface locationData {
 
 function DestinationBox({ locationData }: { locationData: locationData }) {
   const { location_name, latitude, longitude } = locationData;
+  const { token } = useAuth();
 
+  // Delete Location
+  function deleteSavedLocation() {
+    console.log("Deleting saved location", location_name);
+  }
+
+  // UseRef to Prevent Multiple Calls in Same Swipe
+  const actionAllowed = useRef(true);
+
+  // UI Variables
   const offset = useSharedValue<number>(0);
   const direction = useSharedValue("");
   const [originalWidth, setOriginalWidth] = useState(0);
@@ -55,16 +66,22 @@ function DestinationBox({ locationData }: { locationData: locationData }) {
       if (dragPoint < 0 || dragPoint > originalWidth) return;
 
       if (direction.value === "LTR") {
+        // Move Container as Long as Within Bounds
         if (dragPoint <= allowedMovement) offset.value = dragPoint;
       } else if (direction.value === "RTL") {
         let difference = originalWidth - dragPoint;
         if (difference <= allowedMovement) offset.value = -difference;
-      } else {
-        return;
+
+        // Logic to Trigger Action (Delete Location) - Move More Than Half
+        if (difference >= allowedMovement / 2 && actionAllowed.current) {
+          scheduleOnRN(deleteSavedLocation);
+          actionAllowed.current = false;
+        }
       }
     })
     .onFinalize(() => {
-      offset.value = withSpring(0);
+      offset.value = withSpring(0); // TODO: Fix Not Finalised Properly Issue (Some Leftover Padding Based on Location)
+      actionAllowed.current = true;
     });
 
   //Animated Style
@@ -81,11 +98,13 @@ function DestinationBox({ locationData }: { locationData: locationData }) {
     ],
   }));
 
-  const leftContainerStyle = useAnimatedStyle(() => ({
+  // Only Show if Swiping Right
+  const leftActionContainerStyle = useAnimatedStyle(() => ({
     width: direction.value === "LTR" ? offset.value : 0,
   }));
 
-  const rightContainerStyle = useAnimatedStyle(() => ({
+  // Only Show if Swiping Left
+  const rightActionContainerStyle = useAnimatedStyle(() => ({
     width: direction.value === "RTL" ? Math.abs(offset.value) : 0,
   }));
 
@@ -95,12 +114,10 @@ function DestinationBox({ locationData }: { locationData: locationData }) {
 
   return (
     <View style={{ flexDirection: "row" }}>
-      {/* Side Bar */}
-
       <Animated.View
         style={[
           styleSheet.sideContainer,
-          leftContainerStyle,
+          leftActionContainerStyle,
           {
             backgroundColor: "#FF007F",
             position: "absolute",
@@ -144,7 +161,7 @@ function DestinationBox({ locationData }: { locationData: locationData }) {
       <Animated.View
         style={[
           styleSheet.sideContainer,
-          rightContainerStyle,
+          rightActionContainerStyle,
           {
             backgroundColor: "#FF0000",
             position: "absolute",

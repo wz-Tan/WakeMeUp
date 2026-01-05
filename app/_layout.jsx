@@ -7,6 +7,7 @@ import { Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RootLayout() {
+  
   const [fontsLoaded] = useFonts({
     regular: require("../assets/fonts/Poppins-Regular.ttf"),
     bold: require("../assets/fonts/Poppins-Bold.ttf"),
