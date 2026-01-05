@@ -3,11 +3,11 @@ import { AuthContextProvider } from "../contexts/AuthContext";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import ToastManager from "toastify-react-native/components/ToastManager";
 
 export default function RootLayout() {
-  
   const [fontsLoaded] = useFonts({
     regular: require("../assets/fonts/Poppins-Regular.ttf"),
     bold: require("../assets/fonts/Poppins-Bold.ttf"),

@@ -12,6 +12,8 @@ import LoadingPopUp from "../assets/components/Loading";
 import ErrorPopUp from "../assets/components/Error";
 import { useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import { Toast } from "toastify-react-native";
+import ToastManager from "toastify-react-native/components/ToastManager";
 
 export default function AuthLanding() {
   const { loadAuthToken, authSignIn } = useAuth();
@@ -20,7 +22,6 @@ export default function AuthLanding() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const router = useRouter();
 
   // Try Loading Token
@@ -36,19 +37,22 @@ export default function AuthLanding() {
 
   async function signIn() {
     setLoading(true);
+    try {
+      let response = await authSignIn(email, password);
+      console.log("Response is", response);
 
-    let response = await authSignIn(email, password);
-    console.log("Response is", response);
-
-    if (response.status === 200) {
-      setLoading(false);
-      // Switch to Tabs Interface
-      router.replace("(tabs)");
-    } else if (response.error) {
-      setError(response.error);
+      if (response.status === 200) {
+        Toast.success("Sign In Successful!", "bottom");
+        // Switch to Tabs Interface
+        router.replace("(tabs)");
+      }
+      if (response.error) {
+        console.log("Error signing in ", response.error);
+        Toast.error(response.error, "bottom");
+      }
+    } catch (error) {
+      Toast.error(error, "bottom");
     }
-
-    console.log("Sign in response from the backend is ", response);
 
     setLoading(false);
   }
@@ -59,13 +63,9 @@ export default function AuthLanding() {
         flex: 1,
       }}
     >
+
       {/* Loading Message*/}
       {loading && <LoadingPopUp loadingMessage="Signing You In..." />}
-
-      {/* Error Message*/}
-      {error && (
-        <ErrorPopUp errorMessage={error} clearError={() => setError("")} />
-      )}
 
       <View
         style={{

@@ -50,7 +50,6 @@ export const AuthContextProvider = ({ children }) => {
   async function authSignOut() {
     try {
       await deleteItemAsync(TOKEN_NAME);
-      setUserId("");
       return { status: 200 };
     } catch (error) {
       console.log("Error signing out", error);

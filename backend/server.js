@@ -45,9 +45,6 @@ app.get("/", (req, res) => {
   res.send("This Port is Running.");
 });
 
-// Middleware
-app.use(JWT_Middleware);
-
 // Create User
 app.post("/user/create", async (req, res) => {
   const { username, email, password } = req.body;
@@ -80,6 +77,9 @@ app.post("/user/signIn", async (req, res) => {
     res.json({ status, token });
   }
 });
+
+// Middleware (Token Issued only After User Signs In)
+app.use(JWT_Middleware);
 
 // Add Location
 app.post("/location/add", async (req, res) => {

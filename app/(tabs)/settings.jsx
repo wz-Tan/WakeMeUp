@@ -4,26 +4,25 @@ import ErrorPopUp from "@/assets/components/Error";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "expo-router";
 import { useState } from "react";
+import { Toast } from "toastify-react-native";
 
 export default function Tab() {
   const { authSignOut } = useAuth();
-  const [error, setError] = useState("");
   const router = useRouter();
 
   async function signOut() {
     let response = await authSignOut();
-    console.log("Sign Out Response", response);
 
     if (response.status === 200) {
+      Toast.success("Sign Out Successful!", "bottom");
       router.replace("/authLanding");
     } else {
-      setError(response.error);
+      Toast.error(response.error, "bottom");
     }
   }
 
   return (
     <View style={{ flex: 1 }}>
-      {error && ErrorPopUp(error, () => setError(""))}
       <View
         style={{
           flex: 1,

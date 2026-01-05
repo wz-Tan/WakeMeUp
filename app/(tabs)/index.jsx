@@ -7,10 +7,10 @@ import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { Toast } from "toastify-react-native";
 
 export default function Tab() {
   const { token } = useAuth();
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState("");
   const [savedLocation, setSavedLocation] = useState([]);
 
@@ -29,15 +29,14 @@ export default function Tab() {
       if (response.status == 200) {
         setSavedLocation(response.location); // Store Passed In Locations
       } else if (response.error) {
-        setError(response.error);
-        console.log("Error received ", response.error);
+        Toast.error(response.error, "bottom");
       }
     } catch (error) {
       if (
         error instanceof TypeError &&
         error.message == "Network request failed"
       ) {
-        setError("Failed Connection to Server");
+        Toast.error("Failed Connection to Server", "bottom");
       }
     }
   }
@@ -59,10 +58,6 @@ export default function Tab() {
         flexDirection: "column",
       }}
     >
-      {error && (
-        <ErrorPopUp errorMessage={error} clearError={() => setError("")} />
-      )}
-
       {loading && <LoadingPopUp loadingMessage={loading} />}
 
       {/* Header, Left is Title and Time, Right is Weather Icon */}

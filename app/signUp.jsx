@@ -11,11 +11,12 @@ import { useRouter } from "expo-router";
 import LoadingPopUp from "../assets/components/Loading";
 import ErrorPopUp from "../assets/components/Error";
 import { useAuth } from "../contexts/AuthContext";
+import { Toast } from "toastify-react-native";
+import ToastManager from "toastify-react-native/components/ToastManager";
 
 export default function SignUp() {
   const { authSignUp, authSignIn } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const router = useRouter();
   const [username, setUsername] = useState("");
@@ -177,9 +178,10 @@ export default function SignUp() {
             err,
           );
         }
+        Toast.success("Sign Up Successful!", "bottom");
         router.replace("authLanding");
       } else {
-        setError(response.error);
+        Toast.error(response.error);
       }
       setLoading(false);
     }
@@ -187,6 +189,7 @@ export default function SignUp() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <ToastManager />
       <View
         style={{
           flex: 1,
@@ -198,10 +201,6 @@ export default function SignUp() {
         }}
       >
         {loading && <LoadingPopUp loadingMessage="Creating Account..." />}
-
-        {error && (
-          <ErrorPopUp errorMessage={error} clearError={() => setError("")} />
-        )}
 
         <Text style={styles.headerText}>WakeMeUp</Text>
         <Text style={styles.headerSubText}>Create An Account</Text>

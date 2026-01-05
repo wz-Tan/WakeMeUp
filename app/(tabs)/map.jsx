@@ -64,8 +64,8 @@ export default function Tab() {
           setPhotoURL(null);
         }
       }
-    } catch (e) {
-      console.log("Error getting place details ", e);
+    } catch (error) {
+      Toast.error(`Error getting place details: ${error}`, "bottom");
     }
 
     setLoading(false);
