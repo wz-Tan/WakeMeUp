@@ -9,7 +9,7 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 export default function Tab() {
-  const { userId } = useAuth();
+  const { token } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState("");
   const [savedLocation, setSavedLocation] = useState([]);
@@ -18,10 +18,10 @@ export default function Tab() {
     try {
       let response = await fetch("http://192.168.0.152:4000/location/get", {
         method: "POST",
-        headers: { "Content-type": "application/json" },
-        body: JSON.stringify({
-          userId,
-        }),
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       response = await response.json();
@@ -30,9 +30,15 @@ export default function Tab() {
         setSavedLocation(response.location); // Store Passed In Locations
       } else if (response.error) {
         setError(response.error);
+        console.log("Error received ", response.error);
       }
     } catch (error) {
-      setError(error);
+      if (
+        error instanceof TypeError &&
+        error.message == "Network request failed"
+      ) {
+        setError("Failed Connection to Server");
+      }
     }
   }
 
@@ -58,6 +64,7 @@ export default function Tab() {
       )}
 
       {loading && <LoadingPopUp loadingMessage={loading} />}
+
       {/* Header, Left is Title and Time, Right is Weather Icon */}
       <View style={styleSheet.headerView}>
         <View style={styleSheet.flexCol}>
@@ -70,7 +77,7 @@ export default function Tab() {
 
       {/* List Here */}
       <View style={styleSheet.List}>
-        <Text style={styleSheet.listTitle}>Recents</Text>
+        <Text style={styleSheet.listTitle}>Favourites</Text>
         {savedLocation.map((v, k) => (
           <DestinationBox key={k} locationData={v} />
         ))}

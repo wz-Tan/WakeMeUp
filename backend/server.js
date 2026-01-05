@@ -12,6 +12,25 @@ import "dotenv/config";
 const app = express();
 const port = 4000;
 
+// JWT Check
+function JWT_Middleware(req, res, next) {
+  // Check if Header Exists
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return;
+
+  const token = authHeader.split(" ")[1]; // Retrieve Token
+
+  // Verify Token Matches Signature
+  try {
+    const payload = jwt.verify(token, process.env.JWT_KEY);
+    req.userId = payload.userId; // Pass On
+    next();
+  } catch (error) {
+    res.json({ error });
+    return;
+  }
+}
+
 // Extracts Data from JSON
 app.use(express.json());
 
@@ -24,6 +43,9 @@ app.listen(port, () => {
 app.get("/", (req, res) => {
   res.send("This Port is Running.");
 });
+
+// Middleware
+app.use(JWT_Middleware);
 
 // Create User
 app.post("/user/create", async (req, res) => {
@@ -60,7 +82,8 @@ app.post("/user/signIn", async (req, res) => {
 
 // Add Location
 app.post("/location/add", async (req, res) => {
-  const { userId, locationName, latitude, longitude } = req.body;
+  const { locationName, latitude, longitude } = req.body;
+  const userId = req.userId;
 
   let response = await addLocation(userId, locationName, latitude, longitude);
 
@@ -69,8 +92,7 @@ app.post("/location/add", async (req, res) => {
 
 // Acquire Location at Home Page
 app.post("/location/get", async (req, res) => {
-  console.log(req.body);
-  const { userId } = req.body;
+  const userId = req.userId;
 
   let response = await getSavedLocation(userId);
 

@@ -35,7 +35,7 @@ const MapDetailBox = ({
   loading: boolean;
 }) => {
   // Logic
-  const { userId } = useAuth();
+  const { token } = useAuth();
   const { currentDestination } = useGoogleMap();
 
   async function addLocation() {
@@ -44,9 +44,11 @@ const MapDetailBox = ({
     try {
       let Response = await fetch("http://192.168.0.152:4000/location/add", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
         body: JSON.stringify({
-          userId,
           locationName,
           latitude: currentDestination.current.latitude,
           longitude: currentDestination.current.longitude,
