@@ -21,8 +21,30 @@ function DestinationBox({ locationData }: { locationData: locationData }) {
   const { token } = useAuth();
 
   // Delete Location
-  function deleteSavedLocation() {
+  async function deleteSavedLocation() {
     console.log("Deleting saved location", location_name);
+    try {
+      let response = await fetch("http://192.168.0.152:4000/location/delete", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          latitude,
+          longitude,
+        }),
+      });
+
+      let data = await response.json();
+      if (data.status == 200) {
+        console.log("Successfully deleted location");
+      } else if (data.error) {
+        console.log("Error deleting location", data.error);
+      }
+    } catch (error) {
+      console.log("Error deleting location", error);
+    }
   }
 
   // UseRef to Prevent Multiple Calls in Same Swipe
