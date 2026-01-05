@@ -74,7 +74,11 @@ export default function Tab() {
       <View style={styleSheet.List}>
         <Text style={styleSheet.listTitle}>Favourites</Text>
         {savedLocation.map((v, k) => (
-          <DestinationBox key={k} locationData={v} />
+          <DestinationBox
+            key={k}
+            locationData={v}
+            refreshPage={fetchSavedLocation}
+          />
         ))}
       </View>
     </ScrollView>

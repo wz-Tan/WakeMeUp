@@ -16,7 +16,13 @@ interface locationData {
   latitude: number;
 }
 
-function DestinationBox({ locationData }: { locationData: locationData }) {
+function DestinationBox({
+  locationData,
+  refreshPage,
+}: {
+  locationData: locationData;
+  refreshPage: Function;
+}) {
   const { location_name, latitude, longitude } = locationData;
   const { token } = useAuth();
 
@@ -39,6 +45,7 @@ function DestinationBox({ locationData }: { locationData: locationData }) {
       let data = await response.json();
       if (data.status == 200) {
         console.log("Successfully deleted location");
+        refreshPage();
       } else if (data.error) {
         console.log("Error deleting location", data.error);
       }
@@ -95,7 +102,9 @@ function DestinationBox({ locationData }: { locationData: locationData }) {
         if (difference <= allowedMovement) offset.value = -difference;
 
         // Logic to Trigger Action (Delete Location) - Move More Than Half
-        if (difference >= allowedMovement / 2 && actionAllowed.current) {
+        if (difference >= allowedMovement && actionAllowed.current) {
+          console.log("Current difference is ", difference);
+          console.log("Allowed movement is ", allowedMovement);
           scheduleOnRN(deleteSavedLocation);
           actionAllowed.current = false;
         }
