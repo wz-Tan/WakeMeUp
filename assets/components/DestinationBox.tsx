@@ -56,6 +56,7 @@ function DestinationBox({
 
   // UseRef to Prevent Multiple Calls in Same Swipe
   const actionAllowed = useRef(true);
+  const userAction = useRef(0); // 0 to Do Nothing, 1 to Delete, 2 to Edit
 
   // UI Variables
   const offset = useSharedValue<number>(0);
@@ -101,17 +102,22 @@ function DestinationBox({
         let difference = originalWidth - dragPoint;
         if (difference <= allowedMovement) offset.value = -difference;
 
-        // Logic to Trigger Action (Delete Location) - Move More Than Half
+        // Logic to Trigger Action (Delete Location)
         if (difference >= allowedMovement && actionAllowed.current) {
-          console.log("Current difference is ", difference);
-          console.log("Allowed movement is ", allowedMovement);
-          scheduleOnRN(deleteSavedLocation);
+          userAction.current = 1;
           actionAllowed.current = false;
         }
       }
     })
     .onFinalize(() => {
       offset.value = withSpring(0); // TODO: Fix Not Finalised Properly Issue (Some Leftover Padding Based on Location)
+      if (userAction.current == 1) {
+        scheduleOnRN(deleteSavedLocation);
+      } else if (userAction.current == 2) {
+        // Edit Location Name
+      }
+
+      userAction.current = 0;
       actionAllowed.current = true;
     });
 

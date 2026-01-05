@@ -3,9 +3,8 @@ import ErrorPopUp from "@/assets/components/Error";
 import LoadingPopUp from "@/assets/components/Loading";
 import CloudyIcon from "@/assets/icon/cloudy.png";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Toast } from "toastify-react-native";
 
@@ -67,7 +66,9 @@ export default function Tab() {
           <Text style={styleSheet.headerSubText}>Monday, 10:30 a.m.</Text>
         </View>
 
-        <Image source={CloudyIcon} style={{ width: 40, height: 40 }} />
+        <TouchableOpacity onPress={fetchSavedLocation}>
+          <Image source={CloudyIcon} style={{ width: 40, height: 40 }} />
+        </TouchableOpacity>
       </View>
 
       {/* List Here */}
