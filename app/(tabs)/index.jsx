@@ -4,7 +4,6 @@ import CloudyIcon from "@/assets/icon/cloudy.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import { Toast } from "toastify-react-native";
 import { TextInputContainer } from "@/assets/components/TextInputContainer";
 
@@ -59,7 +58,12 @@ export default function Tab() {
       {loading && <LoadingPopUp loadingMessage={loading} />}
       {showTextInput && (
         // Todo: Pass in Functions
-        <TextInputContainer previousName="Previous Location Name" />
+        <TextInputContainer
+          previousName="Previous Location Name"
+          cancelEdit={() => {
+            setShowTextInput(false);
+          }}
+        />
       )}
 
       <View style={{ padding: 20, flexDirection: "column" }}>

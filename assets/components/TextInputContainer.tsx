@@ -36,7 +36,7 @@ export function TextInputContainer({
           {/* Delete Button */}
           <TouchableOpacity
             style={[styles.button, { backgroundColor: "#FF358C" }]}
-            onPress={() => cancelEdit}
+            onPress={() => cancelEdit()}
           >
             <Text style={[styles.boldText, { color: "#FFFFFF" }]}>Cancel</Text>
           </TouchableOpacity>
