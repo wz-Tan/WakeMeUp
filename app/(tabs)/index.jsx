@@ -1,5 +1,4 @@
 import DestinationBox from "@/assets/components/DestinationBox";
-import ErrorPopUp from "@/assets/components/Error";
 import LoadingPopUp from "@/assets/components/Loading";
 import CloudyIcon from "@/assets/icon/cloudy.png";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,11 +6,13 @@ import { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Toast } from "toastify-react-native";
+import { TextInputContainer } from "@/assets/components/TextInputContainer";
 
 export default function Tab() {
   const { token } = useAuth();
   const [loading, setLoading] = useState("");
   const [savedLocation, setSavedLocation] = useState([]);
+  const [showTextInput, setShowTextInput] = useState(true);
 
   async function fetchSavedLocation() {
     try {
@@ -50,39 +51,43 @@ export default function Tab() {
   }, []);
 
   return (
-    <ScrollView
+    <View
       style={{
         flex: 1,
-        padding: 20,
-        flexDirection: "column",
       }}
     >
       {loading && <LoadingPopUp loadingMessage={loading} />}
+      {showTextInput && (
+        // Todo: Pass in Functions
+        <TextInputContainer previousName="Previous Location Name" />
+      )}
 
-      {/* Header, Left is Title and Time, Right is Weather Icon */}
-      <View style={styleSheet.headerView}>
-        <View style={styleSheet.flexCol}>
-          <Text style={styleSheet.headerText}>WakeMeUp</Text>
-          <Text style={styleSheet.headerSubText}>Monday, 10:30 a.m.</Text>
+      <View style={{ padding: 20, flexDirection: "column" }}>
+        {/* Header, Left is Title and Time, Right is Weather Icon */}
+        <View style={styleSheet.headerView}>
+          <View style={styleSheet.flexCol}>
+            <Text style={styleSheet.headerText}>WakeMeUp</Text>
+            <Text style={styleSheet.headerSubText}>Monday, 10:30 a.m.</Text>
+          </View>
+
+          <TouchableOpacity onPress={fetchSavedLocation}>
+            <Image source={CloudyIcon} style={{ width: 40, height: 40 }} />
+          </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={fetchSavedLocation}>
-          <Image source={CloudyIcon} style={{ width: 40, height: 40 }} />
-        </TouchableOpacity>
+        {/* List Here */}
+        <View style={styleSheet.List}>
+          <Text style={styleSheet.listTitle}>Favourites</Text>
+          {savedLocation.map((v, k) => (
+            <DestinationBox
+              key={k}
+              locationData={v}
+              refreshPage={fetchSavedLocation}
+            />
+          ))}
+        </View>
       </View>
-
-      {/* List Here */}
-      <View style={styleSheet.List}>
-        <Text style={styleSheet.listTitle}>Favourites</Text>
-        {savedLocation.map((v, k) => (
-          <DestinationBox
-            key={k}
-            locationData={v}
-            refreshPage={fetchSavedLocation}
-          />
-        ))}
-      </View>
-    </ScrollView>
+    </View>
   );
 }
 
