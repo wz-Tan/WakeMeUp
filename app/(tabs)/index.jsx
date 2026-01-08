@@ -75,6 +75,33 @@ export default function Tab() {
     setLoading(false);
   }
 
+  // Delete Location
+  async function deleteSavedLocation(latitude, longitude) {
+    try {
+      let response = await fetch("http://192.168.0.152:4000/location/delete", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token.current}`,
+        },
+        body: JSON.stringify({
+          latitude,
+          longitude,
+        }),
+      });
+
+      let data = await response.json();
+      if (data.status == 200) {
+        console.log("Successfully deleted location");
+        fetchSavedLocation();
+      } else if (data.error) {
+        console.log("Error deleting location", data.error);
+      }
+    } catch (error) {
+      console.log("Error deleting location", error);
+    }
+  }
+
   useEffect(() => {
     const init = async () => {
       setLoading("Fetching Saved Location...");
@@ -126,7 +153,11 @@ export default function Tab() {
               key={k}
               locationData={v}
               refreshPage={fetchSavedLocation}
+              deleteSavedLocation={() => {
+                deleteSavedLocation(v.latitude, v.longitude);
+              }}
               showEditNameContainer={() => {
+                console.log("Show edit name container");
                 const { latitude, longitude, location_name } = v;
                 editedLocationData.current = {
                   latitude,

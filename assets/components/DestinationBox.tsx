@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
+  AnimationCallback,
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
@@ -19,43 +20,14 @@ interface locationData {
 
 function DestinationBox({
   locationData,
-  refreshPage,
+  deleteSavedLocation,
   showEditNameContainer,
 }: {
   locationData: locationData;
-  refreshPage: Function;
-  showEditNameContainer: Function;
+  deleteSavedLocation: () => unknown;
+  showEditNameContainer: () => unknown;
 }) {
-  const { location_name, latitude, longitude } = locationData;
-  const { token } = useAuth();
-
-  // Delete Location
-  async function deleteSavedLocation() {
-    console.log("Deleting saved location", location_name);
-    try {
-      let response = await fetch("http://192.168.0.152:4000/location/delete", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${token.current}`,
-        },
-        body: JSON.stringify({
-          latitude,
-          longitude,
-        }),
-      });
-
-      let data = await response.json();
-      if (data.status == 200) {
-        console.log("Successfully deleted location");
-        refreshPage();
-      } else if (data.error) {
-        console.log("Error deleting location", data.error);
-      }
-    } catch (error) {
-      console.log("Error deleting location", error);
-    }
-  }
+  const { location_name } = locationData;
 
   // UseRef to Prevent Multiple Calls in Same Swipe
   const actionAllowed = useSharedValue(false);
@@ -78,7 +50,7 @@ function DestinationBox({
     setMarginGap((Dimensions.get("window").width - width) / 2);
   }
 
-  const handleUserAction = (finished) => {
+  const handleUserAction = (finished: boolean) => {
     "worklet";
     if (finished) {
       direction.value = "";
@@ -136,7 +108,7 @@ function DestinationBox({
     })
 
     .onFinalize(() => {
-      offset.value = withSpring(0, {}, handleUserAction);
+      offset.value = withSpring(0, {}, handleUserAction as any);
     });
 
   const containerStyle = useAnimatedStyle(() => ({
