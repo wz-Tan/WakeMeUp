@@ -78,7 +78,7 @@ function DestinationBox({
     setMarginGap((Dimensions.get("window").width - width) / 2);
   }
 
-  const handleUserAction = ((finished) => {
+  const handleUserAction = (finished) => {
     "worklet";
     if (finished) {
       direction.value = "";
@@ -86,14 +86,13 @@ function DestinationBox({
         scheduleOnRN(deleteSavedLocation);
       } else if (userAction.value == 2) {
         // Edit Location Name
-        // Todo: Keeps Crashing (Can't Call useState via scheduleOnRn)
         scheduleOnRN(showEditNameContainer);
       }
 
       userAction.value = 0;
       actionAllowed.value = true;
     }
-  });
+  };
 
   //On Drag Change X and Spring Back the 0 When Released
   const drag = Gesture.Pan()

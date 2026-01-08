@@ -47,6 +47,7 @@ export default function Tab() {
 
   // Edit Location Name
   async function editSavedLocationName(latitude, longitude, location_name) {
+    setLoading("Editing location name...");
     try {
       let response = await fetch("http://192.168.0.152:4000/location/edit", {
         method: "POST",
@@ -63,14 +64,15 @@ export default function Tab() {
 
       let data = await response.json();
       if (data.status == 200) {
-        Toast.success("Successfully Edited Location name", "bottom");
         setShowTextInput(false);
+        fetchSavedLocation();
       } else if (data.error) {
         Toast.error("Error editing location name " + data.error, "bottom");
       }
     } catch (error) {
       Toast.error("Error editing location" + error.message, "bottom");
     }
+    setLoading(false);
   }
 
   useEffect(() => {

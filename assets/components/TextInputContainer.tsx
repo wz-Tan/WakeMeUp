@@ -48,7 +48,7 @@ export function TextInputContainer({
           {/* Confirm Button */}
           <TouchableOpacity
             style={[styles.button, { backgroundColor: "#359DFF" }]}
-            onPress={() => confirmEdit(latitude, longitude, previousName)}
+            onPress={() => confirmEdit(latitude, longitude, locationName)}
           >
             <Text style={[styles.boldText, { color: "#FFFFFF" }]}>Confirm</Text>
           </TouchableOpacity>
