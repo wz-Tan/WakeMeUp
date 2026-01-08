@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -19,42 +20,14 @@ interface locationData {
 function DestinationBox({
   locationData,
   refreshPage,
+  showEditNameContainer,
 }: {
   locationData: locationData;
   refreshPage: Function;
+  showEditNameContainer: Function;
 }) {
   const { location_name, latitude, longitude } = locationData;
   const { token } = useAuth();
-
-  // Edit Location Name
-  async function editSavedLocationName() {
-    console.log("Edit saved location name", location_name);
-
-    try {
-      let response = await fetch("http://192.168.0.152:4000/location/edit", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${token.current}`,
-        },
-        body: JSON.stringify({
-          latitude,
-          longitude,
-          location_name: "edited_name",
-        }),
-      });
-
-      let data = await response.json();
-      if (data.status == 200) {
-        console.log("Successfully Edited Location name");
-        refreshPage();
-      } else if (data.error) {
-        console.log("Error editing location name ", data.error);
-      }
-    } catch (error) {
-      console.log("Error editing location", (error as any).message);
-    }
-  }
 
   // Delete Location
   async function deleteSavedLocation() {
@@ -85,8 +58,8 @@ function DestinationBox({
   }
 
   // UseRef to Prevent Multiple Calls in Same Swipe
-  const actionAllowed = useRef(true);
-  const userAction = useRef(0); // 0 to Do Nothing, 1 to Delete, 2 to Edit
+  const actionAllowed = useSharedValue(false);
+  const userAction = useSharedValue(0); // 0 to Do Nothing, 1 to Delete, 2 to Edit
 
   // UI Variables
   const offset = useSharedValue<number>(0);
@@ -104,6 +77,23 @@ function DestinationBox({
     setAllowedMovement(width / 4);
     setMarginGap((Dimensions.get("window").width - width) / 2);
   }
+
+  const handleUserAction = ((finished) => {
+    "worklet";
+    if (finished) {
+      direction.value = "";
+      if (userAction.value == 1) {
+        scheduleOnRN(deleteSavedLocation);
+      } else if (userAction.value == 2) {
+        // Edit Location Name
+        // Todo: Keeps Crashing (Can't Call useState via scheduleOnRn)
+        scheduleOnRN(showEditNameContainer);
+      }
+
+      userAction.value = 0;
+      actionAllowed.value = true;
+    }
+  });
 
   //On Drag Change X and Spring Back the 0 When Released
   const drag = Gesture.Pan()
@@ -130,37 +120,26 @@ function DestinationBox({
         if (dragPoint <= allowedMovement) offset.value = dragPoint;
 
         // Edit Location Name
-        if (dragPoint >= allowedMovement && actionAllowed.current) {
-          userAction.current = 2;
-          actionAllowed.current = false;
+        if (dragPoint >= allowedMovement && actionAllowed.value) {
+          userAction.value = 2;
+          actionAllowed.value = false;
         }
       } else if (direction.value === "RTL") {
         let difference = originalWidth - dragPoint;
         if (difference <= allowedMovement) offset.value = -difference;
 
         // Logic to Trigger Action (Delete Location)
-        if (difference >= allowedMovement && actionAllowed.current) {
-          userAction.current = 1;
-          actionAllowed.current = false;
+        if (difference >= allowedMovement && actionAllowed.value) {
+          userAction.value = 1;
+          actionAllowed.value = false;
         }
       }
     })
+
     .onFinalize(() => {
-      offset.value = withSpring(0); // TODO: Fix Not Finalised Properly Issue (Some Leftover Padding Based on Location)
-
-      if (userAction.current == 1) {
-        scheduleOnRN(deleteSavedLocation);
-      } else if (userAction.current == 2) {
-        // Edit Location Name
-        scheduleOnRN(editSavedLocationName);
-      }
-
-      userAction.current = 0;
-      actionAllowed.current = true;
+      offset.value = withSpring(0, {}, handleUserAction);
     });
 
-  //Animated Style
-  // TODO: This Offset Might be Causing Issues
   const containerStyle = useAnimatedStyle(() => ({
     transform: [
       {

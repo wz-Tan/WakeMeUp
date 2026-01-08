@@ -3,7 +3,7 @@ import { AuthContextProvider } from "../contexts/AuthContext";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import { Text, View } from "react-native";
+import { Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ToastManager from "toastify-react-native";
 

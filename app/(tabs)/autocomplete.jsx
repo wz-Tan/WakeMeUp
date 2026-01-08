@@ -28,7 +28,9 @@ export default function Tab() {
     } else {
       //Successfully Acquiring The Data
       if (setShowNoResults) setShowNoResults(false);
-      setLocationData(response.data);
+      setLocationData(
+        response.data.sort((a, b) => a.distanceMeters - b.distanceMeters),
+      );
     }
   }
 

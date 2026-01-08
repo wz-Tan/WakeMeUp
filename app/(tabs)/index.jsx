@@ -2,7 +2,7 @@ import DestinationBox from "@/assets/components/DestinationBox";
 import LoadingPopUp from "@/assets/components/Loading";
 import CloudyIcon from "@/assets/icon/cloudy.png";
 import { useAuth } from "@/contexts/AuthContext";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Toast } from "toastify-react-native";
 import { TextInputContainer } from "@/assets/components/TextInputContainer";
@@ -11,7 +11,12 @@ export default function Tab() {
   const { token } = useAuth();
   const [loading, setLoading] = useState("");
   const [savedLocation, setSavedLocation] = useState([]);
-  const [showTextInput, setShowTextInput] = useState(true);
+  const [showTextInput, setShowTextInput] = useState(false);
+  const editedLocationData = useRef({
+    previousName: "",
+    latitude: "",
+    longitude: "",
+  });
 
   async function fetchSavedLocation() {
     try {
@@ -40,6 +45,34 @@ export default function Tab() {
     }
   }
 
+  // Edit Location Name
+  async function editSavedLocationName(latitude, longitude, location_name) {
+    try {
+      let response = await fetch("http://192.168.0.152:4000/location/edit", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token.current}`,
+        },
+        body: JSON.stringify({
+          latitude,
+          longitude,
+          location_name,
+        }),
+      });
+
+      let data = await response.json();
+      if (data.status == 200) {
+        Toast.success("Successfully Edited Location name", "bottom");
+        setShowTextInput(false);
+      } else if (data.error) {
+        Toast.error("Error editing location name " + data.error, "bottom");
+      }
+    } catch (error) {
+      Toast.error("Error editing location" + error.message, "bottom");
+    }
+  }
+
   useEffect(() => {
     const init = async () => {
       setLoading("Fetching Saved Location...");
@@ -57,11 +90,15 @@ export default function Tab() {
     >
       {loading && <LoadingPopUp loadingMessage={loading} />}
       {showTextInput && (
-        // Todo: Pass in Functions
         <TextInputContainer
-          previousName="Previous Location Name"
+          previousName={editedLocationData.current.previousName}
+          latitude={editedLocationData.current.latitude}
+          longitude={editedLocationData.current.longitude}
           cancelEdit={() => {
             setShowTextInput(false);
+          }}
+          confirmEdit={(latitude, longitude, newName) => {
+            editSavedLocationName(latitude, longitude, newName);
           }}
         />
       )}
@@ -87,6 +124,19 @@ export default function Tab() {
               key={k}
               locationData={v}
               refreshPage={fetchSavedLocation}
+              showEditNameContainer={() => {
+                const { latitude, longitude, location_name } = v;
+                editedLocationData.current = {
+                  latitude,
+                  longitude,
+                  previousName: location_name,
+                };
+                console.log(
+                  "Edited location data is now ",
+                  editedLocationData.current,
+                );
+                setShowTextInput(true);
+              }}
             />
           ))}
         </View>

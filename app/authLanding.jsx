@@ -37,6 +37,8 @@ export default function AuthLanding() {
   async function signIn() {
     setLoading(true);
     try {
+      email = email.replace(" ", "");
+      password = password.replace(" ", "");
       if (email == "" || password == "") {
         Toast.error("Fields cannot be empty!", "bottom");
         setLoading(false);

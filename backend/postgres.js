@@ -166,6 +166,9 @@ export async function editSavedLocationName(
   location_name,
 ) {
   console.log("Editing saved location name");
+  console.log(
+    `User ID is ${userId}, latitude is ${latitude}, longitude is ${longitude}`,
+  );
 
   try {
     await client.query(
