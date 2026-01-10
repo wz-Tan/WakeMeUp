@@ -131,6 +131,7 @@ export async function addLocation(userId, locationName, latitude, longitude) {
 }
 
 export async function getSavedLocation(userId) {
+  
   try {
     const result = await client.query(
       `SELECT * from ${LOCATIONS} where userId=$1`,

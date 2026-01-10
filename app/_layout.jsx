@@ -39,7 +39,7 @@ export default function RootLayout() {
           <Stack.Screen name="signUp" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
-        <ToastManager/>
+        <ToastManager />
       </GoogleMapProvider>
     </AuthContextProvider>
   );

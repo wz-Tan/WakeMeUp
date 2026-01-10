@@ -106,6 +106,7 @@ app.post("/location/add", async (req, res) => {
 // Acquire Location at Home Page
 app.post("/location/get", async (req, res) => {
   const userId = req.userId;
+  
 
   let response = await getSavedLocation(userId);
 

@@ -80,8 +80,13 @@ export default function Tab() {
     >
       {mapInitStatus && <LoadingPopUp loadingMessage="Initialising Map" />}
       <View style={{ flex: 1 }}>
+        {/* Allow User Movement when the Destination Icon is Not Hidden*/}
         <MapView
           ref={mapRef}
+          scrollEnabled={!hideDestinationIcon}
+          zoomEnabled={!hideDestinationIcon}
+          rotateEnabled={!hideDestinationIcon}
+          pitchEnabled={!hideDestinationIcon}
           style={{ zIndex: -10, flex: 1, height: "100%", width: "100%" }}
           loadingEnabled={true}
           initialRegion={currentDestination.current}

@@ -20,7 +20,7 @@ export default function Tab() {
 
   async function fetchSavedLocation() {
     try {
-      let response = await fetch("http://192.168.0.152:4000/location/get", {
+      let response = await fetch("http://192.168.0.154:4000/location/get", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -49,7 +49,7 @@ export default function Tab() {
   async function editSavedLocationName(latitude, longitude, location_name) {
     setLoading("Editing location name...");
     try {
-      let response = await fetch("http://192.168.0.152:4000/location/edit", {
+      let response = await fetch("http://192.168.0.154:4000/location/edit", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -78,7 +78,7 @@ export default function Tab() {
   // Delete Location
   async function deleteSavedLocation(latitude, longitude) {
     try {
-      let response = await fetch("http://192.168.0.152:4000/location/delete", {
+      let response = await fetch("http://192.168.0.154:4000/location/delete", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
