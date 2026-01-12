@@ -18,7 +18,7 @@ export const GoogleMapProvider = ({ children }) => {
   const [mapInitStatus, setMapInitStatus] = useState(true);
 
   // User Location
-  const [currentRegion, setCurrentRegion] = useState({
+  const [currentLocation, setCurrentLocation] = useState({
     latitude: 0,
     longitude: 0,
     latitudeDelta: 0.0922,
@@ -27,7 +27,13 @@ export const GoogleMapProvider = ({ children }) => {
 
   // Current Destination is Used for the Detail Box on Map Screen, Updated Via Dragging Map or Selecting Autocomplete Result
   // Default Value is Current Region
-  let currentDestination = useRef(currentRegion);
+  let currentDestination = useRef(currentLocation);
+  const [activeDestination, setActiveDestination] = useState({
+    latitude: 0,
+    longitude: 0,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
 
   function setCurrentDestination(newDestination) {
     currentDestination.current = newDestination;
@@ -64,7 +70,7 @@ export const GoogleMapProvider = ({ children }) => {
       },
     }));
 
-    setCurrentRegion((prev) => ({
+    setCurrentLocation((prev) => ({
       ...prev,
       latitude: coordinates.latitude,
       longitude: coordinates.longitude,
@@ -84,8 +90,8 @@ export const GoogleMapProvider = ({ children }) => {
   // Camera Location
   const [cameraValues, setCameraValues] = useState({
     center: {
-      latitude: currentRegion.latitude,
-      longitude: currentRegion.longitude,
+      latitude: currentLocation.latitude,
+      longitude: currentLocation.longitude,
     },
     zoom: 20, // For Android
     altitude: 100, // For IOS
@@ -94,8 +100,14 @@ export const GoogleMapProvider = ({ children }) => {
   });
 
   // Recenter Camera
-  async function recenterCamera() {
-    const coordinates = await getCurrentLocation();
+  async function recenterCamera(target) {
+    let coordinates;
+    if (target === "current") {
+      coordinates = await getCurrentLocation();
+    } else if (target === "destination") {
+      coordinates = activeDestination;
+    }
+
     setCameraValues((prev) => ({
       ...prev,
       center: {
@@ -104,7 +116,7 @@ export const GoogleMapProvider = ({ children }) => {
       },
     }));
 
-    setCurrentRegion((prev) => ({
+    setCurrentLocation((prev) => ({
       ...prev,
       latitude: coordinates.latitude,
       longitude: coordinates.longitude,
@@ -114,7 +126,7 @@ export const GoogleMapProvider = ({ children }) => {
 
   // Google Map API Calls
   async function getPlaceAutocomplete(inputLocationName) {
-    let { latitude, longitude } = currentRegion;
+    let { latitude, longitude } = currentLocation;
     let response = await fetch(
       "https://places.googleapis.com/v1/places:autocomplete",
       {
@@ -272,8 +284,10 @@ export const GoogleMapProvider = ({ children }) => {
       value={{
         getPlaceDetails,
         getPlaceAutocomplete,
-        currentRegion,
-        setCurrentRegion,
+        currentLocation,
+        activeDestination,
+        setActiveDestination,
+        setCurrentLocation,
         currentDestination,
         setCurrentDestination,
         cameraValues,

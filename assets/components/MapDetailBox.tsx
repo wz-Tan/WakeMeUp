@@ -26,12 +26,14 @@ const MapDetailBox = ({
   address,
   photoURL,
   setHideDestinationIcon,
+  setActiveDestination,
   loading,
 }: {
   locationName: string;
   address: string;
   photoURL: string;
   setHideDestinationIcon: React.Dispatch<React.SetStateAction<boolean>>;
+  setActiveDestination: React.Dispatch<React.SetStateAction<object>>;
   loading: boolean;
 }) => {
   // Logic
@@ -198,6 +200,7 @@ const MapDetailBox = ({
           </View>
 
           <TouchableOpacity
+            onPress={setActiveDestination}
             style={[styles.button, { backgroundColor: "#359DFF" }]}
           >
             <Text style={styles.buttonText}>Set Active ✅</Text>
