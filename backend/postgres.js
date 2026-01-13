@@ -117,7 +117,19 @@ export async function getUserInfo(userId) {
 // Add Location to User DB
 export async function addLocation(userId, locationName, latitude, longitude) {
   try {
-    const result = await client.query(
+    const response = await client.query(
+      `
+      SELECT FROM ${LOCATIONS}
+      where userId=$1 and location_name=$2 and latitude=$3 and longitude=$4
+      `,
+      [userId, locationName, latitude, longitude],
+    );
+
+    if (response.rowCount) {
+      return { error: "Location Already Saved!" };
+    }
+
+    await client.query(
       `INSERT INTO ${LOCATIONS} (userId, location_name, latitude, longitude)
       VALUES ($1,$2,$3,$4)`,
       [userId, locationName, latitude, longitude],
@@ -131,7 +143,6 @@ export async function addLocation(userId, locationName, latitude, longitude) {
 }
 
 export async function getSavedLocation(userId) {
-  
   try {
     const result = await client.query(
       `SELECT * from ${LOCATIONS} where userId=$1`,
