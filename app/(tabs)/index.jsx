@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Toast } from "toastify-react-native";
 import { TextInputContainer } from "@/assets/components/TextInputContainer";
+import { requestPermissions } from "@/contexts/LocationContext";
 
 export default function Tab() {
   const { token } = useAuth();
@@ -103,6 +104,7 @@ export default function Tab() {
   }
 
   useEffect(() => {
+    // requestPermissions();
     const init = async () => {
       setLoading("Fetching Saved Location...");
       await fetchSavedLocation();
@@ -157,17 +159,12 @@ export default function Tab() {
                 deleteSavedLocation(v.latitude, v.longitude);
               }}
               showEditNameContainer={() => {
-                console.log("Show edit name container");
                 const { latitude, longitude, location_name } = v;
                 editedLocationData.current = {
                   latitude,
                   longitude,
                   previousName: location_name,
                 };
-                console.log(
-                  "Edited location data is now ",
-                  editedLocationData.current,
-                );
                 setShowTextInput(true);
               }}
             />

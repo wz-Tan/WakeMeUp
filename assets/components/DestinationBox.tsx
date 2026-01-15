@@ -1,10 +1,8 @@
-import { useAuth } from "@/contexts/AuthContext";
-import { useRef, useState } from "react";
+import { useGoogleMap } from "@/contexts/GoogleMapContext";
+import { useState } from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
-  AnimationCallback,
-  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -27,7 +25,8 @@ function DestinationBox({
   deleteSavedLocation: () => unknown;
   showEditNameContainer: () => unknown;
 }) {
-  const { location_name } = locationData;
+  const { location_name, latitude, longitude } = locationData;
+  const { setActiveDestination } = useGoogleMap();
 
   // UseRef to Prevent Multiple Calls in Same Swipe
   const actionAllowed = useSharedValue(false);
@@ -66,7 +65,28 @@ function DestinationBox({
     }
   };
 
-  //On Drag Change X and Spring Back the 0 When Released
+  function setDestinationWithProps() {
+    setActiveDestination((prev: any) => ({
+      ...prev,
+      latitude: Number(latitude),
+      longitude: Number(longitude),
+    }));
+  }
+
+  const setActiveDestinationAction = () => {
+    "worklet";
+    console.log("Set active destination");
+
+    scheduleOnRN(setDestinationWithProps);
+  };
+
+  // Double Tap (For Making Location Active)
+  const doubleTap = Gesture.Tap()
+    .maxDuration(250)
+    .numberOfTaps(2)
+    .onStart(() => setActiveDestinationAction());
+
+  //Drag Action (For Editing and Deleting)
   const drag = Gesture.Pan()
     .onBegin((event) => {
       let contactPoint = event.absoluteX - marginGap;
@@ -158,7 +178,7 @@ function DestinationBox({
         </Animated.View>
       </Animated.View>
 
-      <GestureDetector gesture={drag}>
+      <GestureDetector gesture={Gesture.Exclusive(drag, doubleTap)}>
         <Animated.View
           onLayout={(event) => {
             setWidthPresets(event.nativeEvent.layout.width);
