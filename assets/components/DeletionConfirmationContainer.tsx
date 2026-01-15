@@ -2,22 +2,23 @@ import { useGoogleMap } from "@/contexts/GoogleMapContext";
 import { useState } from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 
-export function ConfirmationContainer({
+export function DeletionConfirmationContainer({
   locationData,
+  deleteLocation,
   closeConfirmationContainer,
 }: {
   locationData: any;
+  deleteLocation: Function;
   closeConfirmationContainer: Function;
 }) {
-  const { setActiveDestination } = useGoogleMap();
-  const { latitude, longitude } = locationData;
+  const { latitude, longitude } = locationData.current;
 
   return (
     <View style={styles.grayOverlay}>
       <View></View>
       <View style={styles.mainContainer}>
         <Text style={[styles.boldText, { fontSize: 16, textAlign: "center" }]}>
-          Set Active Destination?
+          Delete Saved Location?
         </Text>
 
         <View style={styles.buttonSplitContainer}>
@@ -26,12 +27,7 @@ export function ConfirmationContainer({
           <TouchableOpacity
             style={[styles.button, { backgroundColor: "#359DFF" }]}
             onPress={() => {
-              setActiveDestination((prev: any) => ({
-                ...prev,
-                latitude: Number(latitude),
-                longitude: Number(longitude),
-              }));
-
+              deleteLocation(Number(latitude), Number(longitude));
               closeConfirmationContainer();
             }}
           >

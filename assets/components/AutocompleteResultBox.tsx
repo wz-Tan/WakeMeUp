@@ -23,11 +23,8 @@ const AutocompleteResultBox = ({
   useEffect(() => {
     async function GetPlaceDetails() {
       let result = await getPlaceDetails(mainLocationText, null);
-      console.log("Result is ", result);
       latitude = result.coordinates.latitude;
       longitude = result.coordinates.longitude;
-      console.log("Longitude and latitude is ");
-      console.log(latitude, longitude);
     }
     GetPlaceDetails();
   });

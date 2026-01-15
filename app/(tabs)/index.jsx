@@ -7,15 +7,18 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Toast } from "toastify-react-native";
 import { TextInputContainer } from "@/assets/components/TextInputContainer";
 import { requestPermissions } from "@/contexts/LocationContext";
-import { ConfirmationContainer } from "@/assets/components/ConfirmationContainer";
+import { ActivationConfirmationContainer } from "@/assets/components/ActivationConfirmationContainer";
+import { DeletionConfirmationContainer } from "@/assets/components/DeletionConfirmationContainer";
 
 export default function Tab() {
   const { token } = useAuth();
   const [loading, setLoading] = useState("");
   const [savedLocation, setSavedLocation] = useState([]);
   const [showTextInput, setShowTextInput] = useState(false);
-  const [showConfirmationContainer, setShowConfirmationContainer] =
-    useState(false);
+  const [confirmationContainer, setConfirmationContainer] = useState({
+    activationContainer: false,
+    deletionContainer: false,
+  });
   const selectedActiveLocation = useRef();
   const editedLocationData = useRef({
     previousName: "",
@@ -25,7 +28,7 @@ export default function Tab() {
 
   async function fetchSavedLocation() {
     try {
-      let response = await fetch("http://192.168.0.154:4000/location/get", {
+      let response = await fetch("http://192.168.0.155:4000/location/get", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -54,7 +57,7 @@ export default function Tab() {
   async function editSavedLocationName(latitude, longitude, location_name) {
     setLoading("Editing location name...");
     try {
-      let response = await fetch("http://192.168.0.154:4000/location/edit", {
+      let response = await fetch("http://192.168.0.155:4000/location/edit", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -82,8 +85,9 @@ export default function Tab() {
 
   // Delete Location
   async function deleteSavedLocation(latitude, longitude) {
+    console.log("Deleting location with coordinates", latitude, longitude);
     try {
-      let response = await fetch("http://192.168.0.154:4000/location/delete", {
+      let response = await fetch("http://192.168.0.155:4000/location/delete", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -123,13 +127,40 @@ export default function Tab() {
         flex: 1,
       }}
     >
+      {/* Loading */}
       {loading && <LoadingPopUp loadingMessage={loading} />}
-      {showConfirmationContainer && (
-        <ConfirmationContainer
+
+      {/* Confirmation UI */}
+      {/* Set Active Destination*/}
+      {confirmationContainer.activationContainer && (
+        <ActivationConfirmationContainer
           locationData={selectedActiveLocation.current}
-          closeConfirmationContainer={() => setShowConfirmationContainer(false)}
+          closeConfirmationContainer={() =>
+            setConfirmationContainer((prev) => ({
+              ...prev,
+              activationContainer: false,
+            }))
+          }
         />
       )}
+
+      {/* Delete Selected Destination */}
+      {confirmationContainer.deletionContainer && (
+        <DeletionConfirmationContainer
+          locationData={selectedActiveLocation}
+          deleteLocation={(latitude, longitude) =>
+            deleteSavedLocation(latitude, longitude)
+          }
+          closeConfirmationContainer={() =>
+            setConfirmationContainer((prev) => ({
+              ...prev,
+              deletionContainer: false,
+            }))
+          }
+        />
+      )}
+
+      {/* Edit Location Name */}
       {showTextInput && (
         <TextInputContainer
           previousName={editedLocationData.current.previousName}
@@ -181,7 +212,16 @@ export default function Tab() {
                 (selectedActiveLocation.current = locationData)
               }
               showActiveConfirmationContainer={() =>
-                setShowConfirmationContainer(true)
+                setConfirmationContainer((prev) => ({
+                  ...prev,
+                  activationContainer: true,
+                }))
+              }
+              showDeleteConfirmationContainer={() =>
+                setConfirmationContainer((prev) => ({
+                  ...prev,
+                  deletionContainer: true,
+                }))
               }
             />
           ))}

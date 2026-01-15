@@ -18,19 +18,18 @@ interface locationData {
 
 function DestinationBox({
   locationData,
-  deleteSavedLocation,
   showEditNameContainer,
   setSelectedActiveLocation,
   showActiveConfirmationContainer,
+  showDeleteConfirmationContainer,
 }: {
   locationData: locationData;
-  deleteSavedLocation: () => unknown;
   showEditNameContainer: () => unknown;
   setSelectedActiveLocation: Function;
   showActiveConfirmationContainer: () => unknown;
+  showDeleteConfirmationContainer: () => unknown;
 }) {
-  const { location_name, latitude, longitude } = locationData;
-  const { setActiveDestination } = useGoogleMap();
+  const { location_name } = locationData;
 
   // UseRef to Prevent Multiple Calls in Same Swipe
   const actionAllowed = useSharedValue(false);
@@ -58,7 +57,8 @@ function DestinationBox({
     if (finished) {
       direction.value = "";
       if (userAction.value == 1) {
-        scheduleOnRN(deleteSavedLocation);
+        scheduleOnRN(setDestinationWithProps);
+        scheduleOnRN(showDeleteConfirmationContainer);
       } else if (userAction.value == 2) {
         // Edit Location Name
         scheduleOnRN(showEditNameContainer);
@@ -75,7 +75,6 @@ function DestinationBox({
 
   const setActiveDestinationAction = () => {
     "worklet";
-    console.log("Set active destination");
     scheduleOnRN(setDestinationWithProps);
     scheduleOnRN(showActiveConfirmationContainer);
   };

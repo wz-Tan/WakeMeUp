@@ -27,7 +27,7 @@ export const AuthContextProvider = ({ children }) => {
   // Get User Info to Display in App
   async function getUserInfo() {
     try {
-      let response = await fetch("http://192.168.0.154:4000/user/get", {
+      let response = await fetch("http://192.168.0.155:4000/user/get", {
         method: "GET",
         headers: {
           "Content-type": "application/json",
@@ -49,7 +49,7 @@ export const AuthContextProvider = ({ children }) => {
 
   async function authSignIn(email, password) {
     try {
-      let response = await fetch("http://192.168.0.154:4000/user/signIn", {
+      let response = await fetch("http://192.168.0.155:4000/user/signIn", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -83,7 +83,7 @@ export const AuthContextProvider = ({ children }) => {
 
   async function authSignUp(username, email, password) {
     try {
-      let response = await fetch("http://192.168.0.154:4000/user/create", {
+      let response = await fetch("http://192.168.0.155:4000/user/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

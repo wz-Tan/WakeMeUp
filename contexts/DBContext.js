@@ -7,7 +7,7 @@ export default DBContextProvider = ({ children }) => {
   // Edit Location Name
   async function editSavedLocationName(latitude, longitude, location_name) {
     try {
-      let response = await fetch("http://192.168.0.154:4000/location/edit", {
+      let response = await fetch("http://192.168.0.155:4000/location/edit", {
         method: "POST",
         headers: {
           "Content-type": "application/json",

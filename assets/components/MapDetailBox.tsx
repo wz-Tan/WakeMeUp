@@ -44,7 +44,7 @@ const MapDetailBox = ({
     console.log("Current destination is", currentDestination.current);
     console.log("Location name is", locationName);
     try {
-      let Response = await fetch("http://192.168.0.154:4000/location/add", {
+      let Response = await fetch("http://192.168.0.155:4000/location/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

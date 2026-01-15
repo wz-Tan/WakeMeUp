@@ -1,5 +1,5 @@
 import * as TaskManager from "expo-task-manager";
-import * as Notifications from "expo-notifications";
+// import * as Notifications from "expo-notifications";
 import * as Location from "expo-location";
 
 const LOCATION_TASK_NAME = "background-location-task";
