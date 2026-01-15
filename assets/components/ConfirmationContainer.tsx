@@ -1,54 +1,48 @@
+import { useGoogleMap } from "@/contexts/GoogleMapContext";
 import { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  TextInput,
-} from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 
-export function TextInputContainer({
-  previousName,
-  latitude,
-  longitude,
-  cancelEdit,
-  confirmEdit,
+export function ConfirmationContainer({
+  locationData,
+  closeConfirmationContainer,
 }: {
-  previousName: string;
-  latitude: any;
-  longitude: any;
-  cancelEdit: Function;
-  confirmEdit: Function;
+  locationData: any;
+  closeConfirmationContainer: Function;
 }) {
-  const [locationName, setLocationName] = useState(previousName);
+  const { setActiveDestination } = useGoogleMap();
+  const { latitude, longitude } = locationData;
 
   return (
     <View style={styles.grayOverlay}>
       <View></View>
       <View style={styles.mainContainer}>
-        <Text style={[styles.boldText, { fontSize: 16 }]}>
-          Edit Location Name
+        <Text style={[styles.boldText, { fontSize: 16, textAlign: "center" }]}>
+          Set Active Destination?
         </Text>
-        <View style={styles.inputField}>
-          <TextInput
-            style={styles.regularText}
-            value={locationName}
-            onChangeText={(text) => setLocationName(text)}
-          />
-        </View>
+
         <View style={styles.buttonSplitContainer}>
           {/* Confirm Button */}
+          {/* On Confirmation Set the Active Location */}
           <TouchableOpacity
             style={[styles.button, { backgroundColor: "#359DFF" }]}
-            onPress={() => confirmEdit(latitude, longitude, locationName)}
+            onPress={() => {
+              setActiveDestination((prev: any) => ({
+                ...prev,
+                latitude: Number(latitude),
+                longitude: Number(longitude),
+              }));
+
+              closeConfirmationContainer();
+            }}
           >
             <Text style={[styles.boldText, { color: "#FFFFFF" }]}>Confirm</Text>
           </TouchableOpacity>
-
-          {/* Delete Button */}
+          {/* Cancel Button */}
           <TouchableOpacity
             style={[styles.button, { backgroundColor: "#FF358C" }]}
-            onPress={() => cancelEdit()}
+            onPress={() => {
+              closeConfirmationContainer();
+            }}
           >
             <Text style={[styles.boldText, { color: "#FFFFFF" }]}>Cancel</Text>
           </TouchableOpacity>

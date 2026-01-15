@@ -35,10 +35,6 @@ export const GoogleMapProvider = ({ children }) => {
     longitudeDelta: 0.0421,
   });
 
-  useEffect(() => {
-    console.log("The new active destination is ", activeDestination);
-  }, [activeDestination]);
-
   function setCurrentDestination(newDestination) {
     currentDestination.current = newDestination;
   }

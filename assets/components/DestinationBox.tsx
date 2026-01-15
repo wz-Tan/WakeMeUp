@@ -20,10 +20,14 @@ function DestinationBox({
   locationData,
   deleteSavedLocation,
   showEditNameContainer,
+  setSelectedActiveLocation,
+  showActiveConfirmationContainer,
 }: {
   locationData: locationData;
   deleteSavedLocation: () => unknown;
   showEditNameContainer: () => unknown;
+  setSelectedActiveLocation: Function;
+  showActiveConfirmationContainer: () => unknown;
 }) {
   const { location_name, latitude, longitude } = locationData;
   const { setActiveDestination } = useGoogleMap();
@@ -66,18 +70,14 @@ function DestinationBox({
   };
 
   function setDestinationWithProps() {
-    setActiveDestination((prev: any) => ({
-      ...prev,
-      latitude: Number(latitude),
-      longitude: Number(longitude),
-    }));
+    setSelectedActiveLocation(locationData);
   }
 
   const setActiveDestinationAction = () => {
     "worklet";
     console.log("Set active destination");
-
     scheduleOnRN(setDestinationWithProps);
+    scheduleOnRN(showActiveConfirmationContainer);
   };
 
   // Double Tap (For Making Location Active)

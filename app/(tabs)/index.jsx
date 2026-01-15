@@ -7,12 +7,16 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Toast } from "toastify-react-native";
 import { TextInputContainer } from "@/assets/components/TextInputContainer";
 import { requestPermissions } from "@/contexts/LocationContext";
+import { ConfirmationContainer } from "@/assets/components/ConfirmationContainer";
 
 export default function Tab() {
   const { token } = useAuth();
   const [loading, setLoading] = useState("");
   const [savedLocation, setSavedLocation] = useState([]);
   const [showTextInput, setShowTextInput] = useState(false);
+  const [showConfirmationContainer, setShowConfirmationContainer] =
+    useState(false);
+  const selectedActiveLocation = useRef();
   const editedLocationData = useRef({
     previousName: "",
     latitude: "",
@@ -120,6 +124,12 @@ export default function Tab() {
       }}
     >
       {loading && <LoadingPopUp loadingMessage={loading} />}
+      {showConfirmationContainer && (
+        <ConfirmationContainer
+          locationData={selectedActiveLocation.current}
+          closeConfirmationContainer={() => setShowConfirmationContainer(false)}
+        />
+      )}
       {showTextInput && (
         <TextInputContainer
           previousName={editedLocationData.current.previousName}
@@ -167,6 +177,12 @@ export default function Tab() {
                 };
                 setShowTextInput(true);
               }}
+              setSelectedActiveLocation={(locationData) =>
+                (selectedActiveLocation.current = locationData)
+              }
+              showActiveConfirmationContainer={() =>
+                setShowConfirmationContainer(true)
+              }
             />
           ))}
         </View>
