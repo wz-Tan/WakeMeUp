@@ -41,10 +41,10 @@ const MapDetailBox = ({
   const { currentDestination } = useGoogleMap();
 
   async function addLocation() {
-    console.log("Current destination is", currentDestination.current);
-    console.log("Location name is", locationName);
+    const URL_ENDPOINT = process.env.EXPO_PUBLIC_WIFI_ENDPOINT;
+
     try {
-      let Response = await fetch("http://192.168.0.155:4000/location/add", {
+      let Response = await fetch(`${URL_ENDPOINT}/location/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

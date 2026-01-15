@@ -11,6 +11,8 @@ import { ActivationConfirmationContainer } from "@/assets/components/ActivationC
 import { DeletionConfirmationContainer } from "@/assets/components/DeletionConfirmationContainer";
 
 export default function Tab() {
+  const URL_ENDPOINT = process.env.EXPO_PUBLIC_WIFI_ENDPOINT;
+
   const { token } = useAuth();
   const [loading, setLoading] = useState("");
   const [savedLocation, setSavedLocation] = useState([]);
@@ -28,7 +30,7 @@ export default function Tab() {
 
   async function fetchSavedLocation() {
     try {
-      let response = await fetch("http://192.168.0.155:4000/location/get", {
+      let response = await fetch(`${URL_ENDPOINT}/location/get`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -57,7 +59,7 @@ export default function Tab() {
   async function editSavedLocationName(latitude, longitude, location_name) {
     setLoading("Editing location name...");
     try {
-      let response = await fetch("http://192.168.0.155:4000/location/edit", {
+      let response = await fetch(`${URL_ENDPOINT}/location/edit`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -87,7 +89,7 @@ export default function Tab() {
   async function deleteSavedLocation(latitude, longitude) {
     console.log("Deleting location with coordinates", latitude, longitude);
     try {
-      let response = await fetch("http://192.168.0.155:4000/location/delete", {
+      let response = await fetch(`${URL_ENDPOINT}/location/delete`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",

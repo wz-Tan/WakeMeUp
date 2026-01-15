@@ -4,10 +4,12 @@ import { createContext } from "react";
 const DBContext = createContext();
 
 export default DBContextProvider = ({ children }) => {
+  const URL_ENDPOINT = process.env.EXPO_PUBLIC_WIFI_ENDPOINT;
+
   // Edit Location Name
   async function editSavedLocationName(latitude, longitude, location_name) {
     try {
-      let response = await fetch("http://192.168.0.155:4000/location/edit", {
+      let response = await fetch(`${URL_ENDPOINT}/location/edit`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",
