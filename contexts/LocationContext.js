@@ -20,12 +20,12 @@ export const requestPermissions = async () => {
   }
 };
 
-// TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
-//   if (error) {
-//     console.log("error defining task ", error);
-//     return;
-//   }
-//   if (data) {
-//     console.log("The data retrieved is ", data);
-//   }
-// });
+TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
+  if (error) {
+    console.log("error defining task ", error);
+    return;
+  }
+  if (data) {
+    console.log("The data retrieved is ", data);
+  }
+});

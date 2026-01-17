@@ -39,22 +39,32 @@ export const GoogleMapProvider = ({ children }) => {
     currentDestination.current = newDestination;
   }
 
+  // Grant Location Permission
+  async function requestLocationPermission() {
+    const { status: foregroundStatus } =
+      await Location.requestForegroundPermissionsAsync();
+    console.log("Foreground Status is ", foregroundStatus);
+
+    if (foregroundStatus === "granted") {
+      const { status: backgroundStatus } =
+        await Location.requestBackgroundPermissionsAsync();
+      console.log("Background status is ", backgroundStatus);
+
+      if (backgroundStatus === "granted") {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
   async function getCurrentLocation() {
-    let { status } = await Location.requestForegroundPermissionsAsync();
+    let { coords } = await Location.getLastKnownPositionAsync();
+    let { latitude, longitude, altitude } = coords;
 
-    // User Did Not Grant Location Permission
-    if (status !== "granted") {
-      console.log("User did not allow location permission!");
-      // Todo: Prompt User to Give Permission
-    }
-
-    // Permission Granted
-    else {
-      let { coords } = await Location.getLastKnownPositionAsync();
-      let { latitude, longitude, altitude } = coords;
-
-      return { latitude, longitude, altitude };
-    }
+    return { latitude, longitude, altitude };
   }
 
   // Get Current Location on Start (Get Current Location, Assign to All)
@@ -282,6 +292,7 @@ export const GoogleMapProvider = ({ children }) => {
   return (
     <GoogleMapContext.Provider
       value={{
+        requestLocationPermission,
         getPlaceDetails,
         getPlaceAutocomplete,
         currentLocation,
@@ -302,5 +313,4 @@ export const GoogleMapProvider = ({ children }) => {
     </GoogleMapContext.Provider>
   );
 };
-
 export const useGoogleMap = () => useContext(GoogleMapContext);

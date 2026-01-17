@@ -7,6 +7,7 @@ import Icon from "react-native-vector-icons/FontAwesome6";
 import { Toast } from "toastify-react-native";
 import { useNavigation } from "@react-navigation/native";
 import LoadingPopUp from "@/assets/components/Loading";
+import PermissionRequest from "@/assets/components/PermissionRequest";
 
 export default function Tab() {
   const navigation = useNavigation();
@@ -22,6 +23,7 @@ export default function Tab() {
     recenterCamera,
     init,
     mapInitStatus,
+    requestLocationPermission,
   } = useGoogleMap();
   const [locationName, setLocationName] = useState("");
   const [address, setAddress] = useState("");
