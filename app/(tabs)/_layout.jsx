@@ -1,20 +1,40 @@
 import NavBar from "@/assets/components/NavBar";
 import { useGoogleMap } from "@/contexts/GoogleMapContext";
 import { Tabs } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ToastManager from "toastify-react-native";
 import { Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
+import PermissionRequest from "@/assets/components/PermissionRequest";
 
 //Main Layout (Safe Area -> Gesture -> View -> Outlet)
 export default function TabLayout() {
-  const { loading } = useGoogleMap();
+  const { loading, requestLocationPermission } = useGoogleMap();
+  const [permissionGranted, setPermissionGranted] = useState(false);
 
+  // Load Google Map
   if (loading) {
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <Text>Loading Google Map...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  // Ask for Permission
+  useEffect(() => {
+    const requestPermissions = async () => {
+      setPermissionGranted(await requestLocationPermission());
+    };
+    requestPermissions();
+  }, []);
+
+  // Return Permission Screen Until It is Granted
+  if (!permissionGranted) {
+    return (
+      <SafeAreaView style={{ flex: 1 }}>
+        <PermissionRequest clearPopUp={() => setPermissionGranted(true)} />
       </SafeAreaView>
     );
   }
