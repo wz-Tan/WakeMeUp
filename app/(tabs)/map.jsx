@@ -116,20 +116,19 @@ export default function Tab() {
           />
         </MapView>
         {/* Center Icon */}
-        {hideDestinationIcon ? null : (
-          <View
-            style={{
-              zIndex: 10,
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: [{ translateX: -20 }, { translateY: -45 }],
-              opacity: 0.7,
-            }}
-          >
-            <Icon name="location-crosshairs" color="#333333" size={40} />
-          </View>
-        )}
+
+        <View
+          style={{
+            zIndex: 10,
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: [{ translateX: -20 }, { translateY: -45 }],
+            opacity: 0.7,
+          }}
+        >
+          <Icon name="location-crosshairs" color="#333333" size={40} />
+        </View>
       </View>
 
       {/* Search Bar Click -> Redirect to Another Page*/}

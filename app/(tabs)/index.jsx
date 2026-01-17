@@ -28,6 +28,19 @@ export default function Tab() {
     longitude: "",
   });
 
+  const [time, setTime] = useState({
+    hours: Number,
+    minutes: Number,
+  });
+
+  setInterval(() => {
+    let now = new Date();
+    setTime({
+      hours: now.getHours(),
+      minutes: now.getMinutes(),
+    });
+  }, 60000);
+
   async function fetchSavedLocation() {
     try {
       let response = await fetch(`${URL_ENDPOINT}/location/get`, {
@@ -182,7 +195,9 @@ export default function Tab() {
         <View style={styleSheet.headerView}>
           <View style={styleSheet.flexCol}>
             <Text style={styleSheet.headerText}>WakeMeUp</Text>
-            <Text style={styleSheet.headerSubText}>Monday, 10:30 a.m.</Text>
+            <Text
+              style={styleSheet.headerSubText}
+            >{`${time.hours % 12}:${time.minutes} ${time.hours > 12 ? "PM" : "AM"}`}</Text>
           </View>
 
           <TouchableOpacity onPress={fetchSavedLocation}>

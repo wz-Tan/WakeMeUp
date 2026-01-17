@@ -191,13 +191,13 @@ const MapDetailBox = ({
             <Text style={styles.addressText}>{loading ? "" : address}</Text>
           </View>
 
-          <View style={styles.imageBox}>
+          {/*<View style={styles.imageBox}>
             {photoURL ? (
               <Image style={styles.image} source={{ uri: `${photoURL}` }} />
             ) : (
               <Image style={styles.image} source={ImageNotFound} />
             )}
-          </View>
+          </View>*/}
 
           <TouchableOpacity
             onPress={setActiveDestination}
