@@ -17,13 +17,13 @@ export default function Tab() {
     cameraValues,
     currentLocation,
     activeDestination,
+    setActiveDestinationName,
     setActiveDestination,
     currentDestination,
     setCurrentDestination,
     recenterCamera,
     init,
     mapInitStatus,
-    requestLocationPermission,
   } = useGoogleMap();
   const [locationName, setLocationName] = useState("");
   const [address, setAddress] = useState("");
@@ -150,9 +150,10 @@ export default function Tab() {
         locationName={locationName}
         address={address}
         photoURL={photoURL}
-        setActiveDestination={() =>
-          setActiveDestination(currentDestination.current)
-        }
+        setActiveDestination={() => {
+          setActiveDestination(currentDestination.current);
+          setActiveDestinationName(locationName);
+        }}
         setHideDestinationIcon={setHideDestinationIcon}
         loading={loading}
       />

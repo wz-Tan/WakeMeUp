@@ -35,6 +35,8 @@ export const GoogleMapProvider = ({ children }) => {
     longitudeDelta: 0.0421,
   });
 
+  const [activeDestinationName, setActiveDestinationName] = useState("");
+
   function setCurrentDestination(newDestination) {
     currentDestination.current = newDestination;
   }
@@ -297,6 +299,8 @@ export const GoogleMapProvider = ({ children }) => {
         getPlaceAutocomplete,
         currentLocation,
         activeDestination,
+        activeDestinationName,
+        setActiveDestinationName,
         setActiveDestination,
         setCurrentLocation,
         currentDestination,

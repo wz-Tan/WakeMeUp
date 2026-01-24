@@ -9,10 +9,12 @@ import { TextInputContainer } from "@/assets/components/TextInputContainer";
 import { requestPermissions } from "@/contexts/LocationContext";
 import { ActivationConfirmationContainer } from "@/assets/components/ActivationConfirmationContainer";
 import { DeletionConfirmationContainer } from "@/assets/components/DeletionConfirmationContainer";
+import { useGoogleMap } from "@/contexts/GoogleMapContext";
 
 export default function Tab() {
   const URL_ENDPOINT = process.env.EXPO_PUBLIC_WIFI_ENDPOINT;
 
+  const { activeDestinationName, activeDestination } = useGoogleMap();
   const { token } = useAuth();
   const [loading, setLoading] = useState("");
   const [savedLocation, setSavedLocation] = useState([]);
@@ -204,6 +206,17 @@ export default function Tab() {
             <Image source={CloudyIcon} style={{ width: 40, height: 40 }} />
           </TouchableOpacity>
         </View>
+
+        {/* Current Active Destination */}
+        {/* Todo: Reset Active Location */}
+        {activeDestinationName && (
+          <View style={styleSheet.List}>
+            <Text style={styleSheet.listTitle}>Active Destination</Text>
+            <DestinationBox
+              locationData={{ location_name: activeDestinationName }}
+            />
+          </View>
+        )}
 
         {/* List Here */}
         <View style={styleSheet.List}>

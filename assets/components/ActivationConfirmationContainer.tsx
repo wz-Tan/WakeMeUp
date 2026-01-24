@@ -9,8 +9,8 @@ export function ActivationConfirmationContainer({
   locationData: any;
   closeConfirmationContainer: Function;
 }) {
-  const { setActiveDestination } = useGoogleMap();
-  const { latitude, longitude } = locationData;
+  const { setActiveDestination, setActiveDestinationName } = useGoogleMap();
+  const { latitude, longitude, location_name } = locationData;
 
   return (
     <View style={styles.grayOverlay}>
@@ -31,7 +31,7 @@ export function ActivationConfirmationContainer({
                 latitude: Number(latitude),
                 longitude: Number(longitude),
               }));
-
+              setActiveDestinationName(location_name);
               closeConfirmationContainer();
             }}
           >
