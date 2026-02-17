@@ -179,7 +179,7 @@ export default function SignUp() {
           );
         }
         Toast.success("Sign Up Successful!", "bottom");
-        router.replace("authLanding");
+        router.replace("/");
       } else {
         Toast.error(response.error, "bottom");
       }
@@ -338,7 +338,7 @@ export default function SignUp() {
         </TouchableOpacity>
         <TouchableOpacity
           style={[{ width: "95%", marginTop: 10 }]}
-          onPress={() => router.replace("authLanding")}
+          onPress={() => router.replace("/")}
         >
           <Text
             style={[

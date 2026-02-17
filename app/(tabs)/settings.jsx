@@ -15,7 +15,7 @@ export default function Tab() {
 
     if (response.status === 200) {
       Toast.success("Sign Out Successful!", "bottom");
-      router.replace("/authLanding");
+      router.push("/redirectIndex");
     } else {
       Toast.error(response.error, "bottom");
     }

@@ -30,12 +30,13 @@ export default function RootLayout() {
     <AuthContextProvider>
       <GoogleMapProvider>
         <Stack
-          initialRouteName="authLanding"
+          initialRouteName="index"
           screenOptions={{
             headerShown: false,
           }}
         >
-          <Stack.Screen name="authLanding" options={{ headerShown: false }} />
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="redirectIndex" options={{ headerShown: false }} />
           <Stack.Screen name="signUp" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
