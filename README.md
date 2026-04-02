@@ -12,16 +12,13 @@ git clone first
 Terminal 1:
 <br>
 ```
-cd into app
-<br>
+cd app
 npm run start
 ```
 
 Terminal 2:
 ```
-<br>
-cd into backend
-<br>
+cd backend
 node server.js
 ```
 
