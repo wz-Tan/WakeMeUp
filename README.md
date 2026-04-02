@@ -3,20 +3,26 @@
 ### Tech Stack
 React Native + Expo   — mobile frontend
 Express + Node        — REST API backend
-PostgreSQL (NeonDB)   — user & alarm storage
+PostgreSQL (NeonDB)   — user & alarm & location storage
 Google Geocoding API  — location to coordinates
 
 ### How to Run 
+git clone first
+
 Terminal 1:
 <br>
+```
 cd into app
 <br>
 npm run start
+```
 
 Terminal 2:
+```
 <br>
 cd into backend
 <br>
 node server.js
+```
 
 (v1 - Geofencing in Progress ) 
