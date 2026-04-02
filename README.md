@@ -2,8 +2,11 @@
 
 ### Tech Stack
 React Native + Expo   — mobile frontend
+<br>
 Express + Node        — REST API backend
+<br>
 PostgreSQL (NeonDB)   — user & alarm & location storage
+<br>
 Google Geocoding API  — location to coordinates
 
 ### How to Run 
