@@ -8,10 +8,15 @@ Google Geocoding API  — location to coordinates
 
 ### How to Run 
 Terminal 1:
+<br>
 cd into app
+<br>
 npm run start
 
+Terminal 2:
+<br>
 cd into backend
+<br>
 node server.js
 
 (v1 - Geofencing in Progress ) 
