@@ -8,6 +8,8 @@ Express + Node        — REST API backend
 PostgreSQL (NeonDB)   — user & alarm & location storage
 <br>
 Google Geocoding API  — location to coordinates
+<br>
+JWT                   — authentication
 
 ### How to Run 
 git clone first
