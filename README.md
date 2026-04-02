@@ -15,7 +15,9 @@ Google Geocoding API  — location to coordinates
 JWT                   — authentication
 
 ### How to Run 
-git clone first
+```
+git clone https://github.com/wz-Tan/WakeMeUp.git
+```
 
 Terminal 1:
 <br>
