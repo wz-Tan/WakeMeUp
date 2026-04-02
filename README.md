@@ -1,5 +1,8 @@
 ## WakeMeUp is a mobile app that automatically wakes you up when you're approaching your destination — no more sleeping past your stop.
 
+### At A Glance
+<img width="735" height="502" alt="Image" src="https://github.com/user-attachments/assets/8043bd1f-1170-43f6-b15d-5bfe9517fcfc" />
+
 ### Tech Stack
 React Native + Expo   — mobile frontend
 <br>
