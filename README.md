@@ -3,4 +3,4 @@ Alarm that rings on destination arrival.
 
 Expo, React Native, Google Geocoding API, Postgres with NeonDB, Express, Node.
 
-(Paused - Geofencing Left and Some Dev Build Quirks, Moving on to Open Source)
+(v1 - Geofencing in Progress ) 
