@@ -17,6 +17,7 @@ JWT                   — authentication
 ### How to Run 
 ```
 git clone https://github.com/wz-Tan/WakeMeUp.git
+npm install
 ```
 
 Terminal 1:
